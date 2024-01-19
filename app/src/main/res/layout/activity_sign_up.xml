@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:bind="http://schemas.android.com/tools">
+
+    <data>
+        <variable
+            name="viewModel"
+            type="com.example.user.signup.SignUpViewModel" />
+    </data>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="@color/gray"
+            android:theme="?attr/actionBarTheme">
+
+            <ImageButton
+                android:id="@+id/backBtn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="start"
+                android:onClick="@{(v) -> viewModel.onBackBtnClick(v.getContext())}"
+                android:background="?attr/selectableItemBackground"
+                android:src="@drawable/ic_back_arrow" />
+
+            <TextView
+                android:id="@+id/signUpTxt"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/sign_up_heading"
+                android:textAlignment="center"
+                android:textSize="@dimen/_36sdp"
+                android:textStyle="bold" />
+
+        </androidx.appcompat.widget.Toolbar>
+    </RelativeLayout>
+</layout>

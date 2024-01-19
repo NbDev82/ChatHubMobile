@@ -1,12 +1,12 @@
-package com.example.user;
-
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.databinding.BindingAdapter;
-import androidx.databinding.DataBindingUtil;
+package com.example.user.login;
 
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Toast;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.databinding.BindingAdapter;
+import androidx.databinding.DataBindingUtil;
 
 import com.example.R;
 import com.example.databinding.ActivityLoginBinding;

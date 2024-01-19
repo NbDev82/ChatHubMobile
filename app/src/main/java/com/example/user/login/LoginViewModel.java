@@ -1,5 +1,7 @@
-package com.example.user;
+package com.example.user.login;
 
+import android.content.Context;
+import android.content.Intent;
 import android.text.TextUtils;
 import android.util.Log;
 import android.util.Patterns;
@@ -8,6 +10,8 @@ import androidx.databinding.BaseObservable;
 import androidx.databinding.Bindable;
 
 import com.example.BR;
+import com.example.user.User;
+import com.example.user.signup.SignUpActivity;
 
 public class LoginViewModel extends BaseObservable {
 
@@ -42,20 +46,20 @@ public class LoginViewModel extends BaseObservable {
 
     @Bindable
     public String getUserPassword() {
-        return user.getPassword();
+        return user.getHashedPass();
     }
 
     public void setUserPassword(String password) {
-        user.setPassword(password);
+        user.setHashedPass(password);
         notifyPropertyChanged(BR.userPassword);
     }
 
     public LoginViewModel() {
-        user = new User("", "");
+        user = new User();
     }
 
     public void onButtonClicked() {
-        Log.i(TAG, "Button clicked");
+        Log.i(TAG, "Login button clicked");
         if (isValid())
             setToastMessage(successMessage);
         else
@@ -65,5 +69,12 @@ public class LoginViewModel extends BaseObservable {
     public boolean isValid() {
         return !TextUtils.isEmpty(getUserEmail()) && Patterns.EMAIL_ADDRESS.matcher(getUserEmail()).matches()
                 && getUserPassword().length() > 5;
+    }
+
+    public void onSignUpTextClick(Context context) {
+        Log.i(TAG, "Sign Up clicked");
+
+        Intent intent = new Intent(context, SignUpActivity.class);
+        context.startActivity(intent);
     }
 }
