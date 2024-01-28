@@ -15,7 +15,6 @@ public class BaseActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         viewModel = new ViewModelProvider(this).get(BaseViewModel.class);
-        viewModel.initializeData();
     }
 
     @Override

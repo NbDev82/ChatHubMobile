@@ -2,32 +2,46 @@ package com.example.user.login;
 
 import android.content.Context;
 import android.content.Intent;
-import android.text.TextUtils;
 import android.util.Log;
 import android.util.Patterns;
-import android.widget.Toast;
 
 import androidx.databinding.BaseObservable;
 import androidx.databinding.Bindable;
 
 import com.example.BR;
-import com.example.infrastructure.EUserField;
-import com.example.user.User;
+import com.example.home.HomeActivity;
+import com.example.user.UserService;
+import com.example.user.UserServiceImpl;
 import com.example.user.signup.SignUpActivity;
-import com.google.firebase.firestore.FirebaseFirestore;
-
-import java.util.HashMap;
 
 public class LoginViewModel extends BaseObservable {
 
     private static final String TAG = LoginViewModel.class.getSimpleName();
 
     private final Context context;
+    private UserService userService;
 
-    private User user;
+    private SignInRequest signInRequest;
 
-    private String successMessage = "Login successful";
-    private String errorMessage = "Email or Password is not valid";
+    @Bindable
+    public String getEmail() {
+        return signInRequest.getEmail();
+    }
+
+    public void setEmail(String email) {
+        signInRequest.setEmail(email);
+        notifyPropertyChanged(BR.email);
+    }
+
+    @Bindable
+    public String getPassword() {
+        return signInRequest.getPassword();
+    }
+
+    public void setPassword(String password) {
+        signInRequest.setPassword(password);
+        notifyPropertyChanged(BR.password);
+    }
 
     @Bindable
     private String toastMessage = null;
@@ -41,65 +55,41 @@ public class LoginViewModel extends BaseObservable {
         notifyPropertyChanged(BR.toastMessage);
     }
 
-    @Bindable
-    public String getUserEmail() {
-        return user.getEmail();
-    }
-
-    public void setUserEmail(String email) {
-        user.setEmail(email);
-        notifyPropertyChanged(BR.userEmail);
-    }
-
-    @Bindable
-    public String getUserPassword() {
-        return user.getHashedPass();
-    }
-
-    public void setUserPassword(String password) {
-        user.setHashedPass(password);
-        notifyPropertyChanged(BR.userPassword);
-    }
-
     public LoginViewModel(Context context) {
         this.context = context;
-        user = new User();
+        userService = new UserServiceImpl();
 
-        addDataToFirestore();
-    }
-
-    private void addDataToFirestore() {
-        FirebaseFirestore database = FirebaseFirestore.getInstance();
-        HashMap<String, Object> user = new HashMap<>();
-        user.put(EUserField.USERNAME.getName(), "vanannek");
-        user.put(EUserField.HASHED_PASS.getName(), "");
-        user.put(EUserField.FULL_NAME.getName(), "Van An");
-        user.put(EUserField.EMAIL.getName(), "vanne@gmail.com");
-        user.put(EUserField.GENDER.getName(), User.EGender.MALE);
-        user.put(EUserField.IS_DELETED.getName(), false);
-        user.put(EUserField.AVAILABILITY.getName(), 0);
-
-        database.collection(EUserField.COLLECTION_NAME.getName())
-                .add(user)
-                .addOnSuccessListener(df -> {
-                    Toast.makeText(context, "Data Inserted", Toast.LENGTH_SHORT).show();
-                })
-                .addOnFailureListener(exception -> {
-                    Toast.makeText(context,exception.getMessage(), Toast.LENGTH_SHORT).show();
-                });
+        signInRequest = new SignInRequest();
     }
 
     public void onButtonClicked() {
         Log.i(TAG, "Login button clicked");
-        if (isValid())
-            setToastMessage(successMessage);
-        else
-            setToastMessage(errorMessage);
+        performLogin();
     }
 
-    public boolean isValid() {
-        return !TextUtils.isEmpty(getUserEmail()) && Patterns.EMAIL_ADDRESS.matcher(getUserEmail()).matches()
-                && getUserPassword().length() > 5;
+    private void performLogin() {
+        String email = getEmail();
+        String password = getPassword();
+
+        if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+            setToastMessage("Enter context email.");
+        } else if (password.isEmpty() || password.length() < 6) {
+            setToastMessage("Enter proper password.");
+        } else {
+            userService.signIn(signInRequest, aVoid -> {
+                sendUserToHomeActivity();
+                setToastMessage("Login successful");
+            }, e -> {
+                setToastMessage("Please wait while login...");
+                setToastMessage(String.valueOf(e));
+            });
+        }
+    }
+
+    private void sendUserToHomeActivity() {
+        Intent intent = new Intent(context, HomeActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+        context.startActivity(intent);
     }
 
     public void onSignUpTextClick(Context context) {

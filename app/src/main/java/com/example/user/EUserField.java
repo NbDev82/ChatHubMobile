@@ -1,4 +1,4 @@
-package com.example.infrastructure;
+package com.example.user;
 
 public enum EUserField {
     COLLECTION_NAME("users"),
@@ -7,8 +7,8 @@ public enum EUserField {
     FULL_NAME("fullName"),
     EMAIL("email"),
     GENDER("gender"),
-    IS_DELETED("isDeleted"),
-    AVAILABILITY("availability");
+    IS_ONLINE("isOnline"),
+    IS_DELETED("isDeleted");
 
     private String name;
 

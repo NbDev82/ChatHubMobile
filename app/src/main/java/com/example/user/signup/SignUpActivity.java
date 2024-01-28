@@ -17,7 +17,7 @@ public class SignUpActivity extends AppCompatActivity {
         ActivitySignUpBinding activitySignUpBinding
                 = DataBindingUtil.setContentView(
                 this, R.layout.activity_sign_up);
-        activitySignUpBinding.setViewModel(new SignUpViewModel());
+        activitySignUpBinding.setViewModel(new SignUpViewModel(this));
         activitySignUpBinding.executePendingBindings();
     }
 }
