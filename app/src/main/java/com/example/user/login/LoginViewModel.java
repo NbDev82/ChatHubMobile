@@ -10,8 +10,8 @@ import androidx.databinding.Bindable;
 
 import com.example.BR;
 import com.example.home.HomeActivity;
-import com.example.user.UserService;
-import com.example.user.UserServiceImpl;
+import com.example.user.AuthService;
+import com.example.user.AuthServiceImpl;
 import com.example.user.signup.SignUpActivity;
 
 public class LoginViewModel extends BaseObservable {
@@ -19,7 +19,7 @@ public class LoginViewModel extends BaseObservable {
     private static final String TAG = LoginViewModel.class.getSimpleName();
 
     private final Context context;
-    private UserService userService;
+    private final AuthService authService;
 
     private SignInRequest signInRequest;
 
@@ -57,7 +57,7 @@ public class LoginViewModel extends BaseObservable {
 
     public LoginViewModel(Context context) {
         this.context = context;
-        userService = new UserServiceImpl();
+        authService = new AuthServiceImpl();
 
         signInRequest = new SignInRequest();
     }
@@ -76,7 +76,7 @@ public class LoginViewModel extends BaseObservable {
         } else if (password.isEmpty() || password.length() < 6) {
             setToastMessage("Enter proper password.");
         } else {
-            userService.signIn(signInRequest, aVoid -> {
+            authService.signIn(signInRequest, aVoid -> {
                 sendUserToHomeActivity();
                 setToastMessage("Login successful");
             }, e -> {
@@ -96,6 +96,12 @@ public class LoginViewModel extends BaseObservable {
         Log.i(TAG, "Sign Up clicked");
 
         Intent intent = new Intent(context, SignUpActivity.class);
+        context.startActivity(intent);
+    }
+
+    public void onGoogleLoginClick() {
+        Intent intent = new Intent(context, GoogleSignInActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         context.startActivity(intent);
     }
 }

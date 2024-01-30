@@ -10,8 +10,8 @@ import androidx.databinding.Bindable;
 
 import com.example.BR;
 import com.example.home.HomeActivity;
-import com.example.user.UserService;
-import com.example.user.UserServiceImpl;
+import com.example.user.AuthService;
+import com.example.user.AuthServiceImpl;
 import com.example.user.login.LoginActivity;
 
 public class SignUpViewModel extends BaseObservable {
@@ -19,7 +19,7 @@ public class SignUpViewModel extends BaseObservable {
     private static final String TAG = SignUpActivity.class.getSimpleName();
 
     private final Context context;
-    private UserService userService;
+    private AuthService authService;
 
     private SignUpRequest signUpRequest;
 
@@ -67,7 +67,7 @@ public class SignUpViewModel extends BaseObservable {
 
     public SignUpViewModel(Context context) {
         this.context = context;
-        userService = new UserServiceImpl();
+        authService = new AuthServiceImpl();
 
         signUpRequest = new SignUpRequest();
     }
@@ -95,7 +95,7 @@ public class SignUpViewModel extends BaseObservable {
         } else if (!password.equals(confirmPassword)) {
             setToastMessage("Password not match both fields.");
         } else {
-            userService.signUp(signUpRequest, aVoid -> {
+            authService.signUp(signUpRequest, aVoid -> {
                 sendUserToNextActivity();
                 setToastMessage("Registration successful");
             }, e -> {

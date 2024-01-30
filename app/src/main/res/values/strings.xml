@@ -1,4 +1,5 @@
 <resources>
+    <!-- UI -->
     <string name="app_name">ChatHub</string>
 
     <string name="title_login">Login</string>
@@ -8,4 +9,7 @@
     <string name="btn_login">Login</string>
 
     <string name="title_sign_up">Sign Up</string>
+
+    <!-- Authentication -->
+    <string name="default_web_client_id">44681322913-nahflnqljbaocapigpqmb90a9b3obhij.apps.googleusercontent.com</string>
 </resources>

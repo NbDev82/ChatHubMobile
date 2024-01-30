@@ -17,27 +17,15 @@
         android:background="#168BC34A"
         android:orientation="vertical">
 
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/_10sdp"
-            android:layout_marginEnd="@dimen/_10sdp">
-            <ImageButton
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                android:onClick="@{(v) -> viewModel.onBackBtnClick(v.getContext())}"
-                android:background="?attr/selectableItemBackground"
-                android:src="@drawable/ic_back_arrow" />
-
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/_10sdp"
+                android:layout_marginEnd="@dimen/_10sdp"
                 android:text="Home"
                 android:textAlignment="center"
                 android:textSize="@dimen/_36sdp"
                 android:textStyle="bold" />
-        </RelativeLayout>
 
         <RelativeLayout
             android:layout_width="wrap_content"
@@ -58,5 +46,13 @@
                 android:text="@{viewModel.email}"
                 android:layout_toEndOf="@id/emailTitleTxt" />
         </RelativeLayout>
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_60sdp"
+            android:layout_gravity="center"
+            android:text="Sign out"
+            android:onClick="@{(v) -> viewModel.onBackBtnClick(v.getContext())}" />
     </LinearLayout>
 </layout>

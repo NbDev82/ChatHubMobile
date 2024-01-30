@@ -22,7 +22,8 @@ public class User {
         isDeleted = false;
     }
 
-    public User(String email, String password) {
+    public User(String email) {
+        this();
         this.email = email;
     }
 

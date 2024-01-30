@@ -4,26 +4,26 @@ import android.app.Application;
 
 import androidx.lifecycle.AndroidViewModel;
 
-import com.example.user.UserService;
-import com.example.user.UserServiceImpl;
+import com.example.user.AuthService;
+import com.example.user.AuthServiceImpl;
 
 public class BaseViewModel extends AndroidViewModel {
 
-    private UserService userService;
+    private AuthService authService;
 
     public BaseViewModel(Application application) {
         super(application);
 
-        userService = new UserServiceImpl();
+        authService = new AuthServiceImpl();
     }
 
     public void onPause() {
-        String uid = userService.getCurrentUid();
-        userService.updateOnlineStatus(uid, false);
+        String uid = authService.getCurrentUid();
+        authService.updateOnlineStatus(uid, false);
     }
 
     public void onResume() {
-        String uid = userService.getCurrentUid();
-        userService.updateOnlineStatus(uid, true);
+        String uid = authService.getCurrentUid();
+        authService.updateOnlineStatus(uid, true);
     }
 }

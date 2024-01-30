@@ -7,29 +7,45 @@ import android.widget.Toast;
 
 import androidx.databinding.BaseObservable;
 import androidx.databinding.Bindable;
+import androidx.databinding.library.baseAdapters.BR;
 
+import com.example.user.AuthService;
+import com.example.user.AuthServiceImpl;
+import com.example.user.User;
 import com.example.user.login.LoginActivity;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 
 public class HomeViewModel extends BaseObservable {
 
     private static final String TAG = HomeViewModel.class.getSimpleName();
 
     private final Context context;
+    private final AuthService authService;
 
-    private FirebaseAuth mAuth;
-    private FirebaseUser mUser;
+    private User user = new User();
 
     @Bindable
     public String getEmail() {
-        return mUser.getEmail();
+        return user.getEmail();
+    }
+
+    public void setEmail(String email) {
+        user.setEmail(email);
+        notifyPropertyChanged(BR.email);
     }
 
     public HomeViewModel(Context context) {
         this.context = context;
-        mAuth = FirebaseAuth.getInstance();
-        mUser = mAuth.getCurrentUser();
+        authService = new AuthServiceImpl();
+
+        authService.getCurrentUser()
+                .addOnSuccessListener(user -> {
+                    this.user = user;
+
+                    setEmail(user.getEmail());
+                })
+                .addOnFailureListener(e -> {
+                    Log.e(TAG, "Error: " + e);
+                });
     }
 
     public void onBackBtnClick(Context context) {
@@ -43,6 +59,6 @@ public class HomeViewModel extends BaseObservable {
     }
 
     private void signOut() {
-        mAuth.signOut();
+        authService.signOut(context);
     }
 }
