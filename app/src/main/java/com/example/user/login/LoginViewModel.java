@@ -13,6 +13,7 @@ import com.example.home.HomeActivity;
 import com.example.user.AuthService;
 import com.example.user.AuthServiceImpl;
 import com.example.user.forgotpassword.ForgotPasswordActivity;
+import com.example.user.login.github.GithubAuthActivity;
 import com.example.user.signup.SignUpActivity;
 
 public class LoginViewModel extends BaseObservable {
@@ -63,12 +64,9 @@ public class LoginViewModel extends BaseObservable {
         signInRequest = new SignInRequest();
     }
 
-    public void onButtonClicked() {
+    public void onLoginBtnClick() {
         Log.i(TAG, "Login button clicked");
-        performLogin();
-    }
 
-    private void performLogin() {
         String email = getEmail();
         String password = getPassword();
 
@@ -109,12 +107,14 @@ public class LoginViewModel extends BaseObservable {
 
     public void onGoogleLoginClick() {
         Intent intent = new Intent(context, GoogleSignInActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
         context.startActivity(intent);
     }
 
     public void onGithubLoginClick() {
-        setToastMessage("Without implementation");
+        Intent intent = new Intent(context, GithubAuthActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+        context.startActivity(intent);
     }
 
     public void onFacebookLoginClick() {

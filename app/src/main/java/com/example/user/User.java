@@ -6,7 +6,6 @@ public class User {
         MALE, FEMALE, OTHER
     }
 
-    private String username;
     private String fullName;
     private String email;
     private EGender gender;
@@ -14,7 +13,6 @@ public class User {
     private boolean isDeleted;
 
     public User() {
-        username = "";
         fullName = "";
         email = "";
         gender = EGender.MALE;
@@ -24,25 +22,17 @@ public class User {
 
     public User(String email) {
         this();
+        fullName = "Van A";
         this.email = email;
     }
 
-    public User(String username, String fullName, String email,
-                EGender gender, boolean isOnline, boolean isDeleted) {
-        this.username = username;
+    public User(String fullName, String email, EGender gender,
+                boolean isOnline, boolean isDeleted) {
         this.fullName = fullName;
         this.email = email;
         this.gender = gender;
         this.isOnline = isOnline;
         this.isDeleted = isDeleted;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
     }
 
     public String getFullName() {

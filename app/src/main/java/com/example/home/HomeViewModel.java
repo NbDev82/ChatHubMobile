@@ -41,7 +41,9 @@ public class HomeViewModel extends BaseObservable {
                 .addOnSuccessListener(user -> {
                     this.user = user;
 
-                    setEmail(user.getEmail());
+                    if (user != null) {
+                        setEmail(user.getEmail());
+                    }
                 })
                 .addOnFailureListener(e -> {
                     Log.e(TAG, "Error: " + e);

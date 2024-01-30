@@ -117,7 +117,7 @@
             android:layout_marginTop="@dimen/_60sdp"
             android:layout_marginEnd="@dimen/_20sdp"
             android:background="#4CAF50"
-            android:onClick="@{()-> viewModel.onButtonClicked()}"
+            android:onClick="@{()-> viewModel.onLoginBtnClick()}"
             android:text="@string/btn_login"
             android:textSize="@dimen/_20ssp"
             android:textStyle="bold"

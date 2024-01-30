@@ -1,5 +1,6 @@
 package com.example.user;
 
+import android.app.Activity;
 import android.content.Context;
 import android.util.Log;
 
@@ -7,16 +8,20 @@ import com.example.user.login.SignInRequest;
 import com.example.user.signup.SignUpRequest;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthCredential;
+import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
+import com.google.firebase.auth.OAuthProvider;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.function.Consumer;
@@ -105,6 +110,55 @@ public class AuthServiceImpl implements AuthService {
                             });
 
                 });
+    }
+
+    @Override
+    public void signInOrSignUpWithGithub(Activity activity, String email,
+                                         Consumer<AuthResult> onSuccess,
+                                         Consumer<Exception> onFailure) {
+        OAuthProvider.Builder provider = OAuthProvider.newBuilder("github.com");
+        provider.addCustomParameter("login", email);
+
+        List<String> scopes =
+                new ArrayList<String>() {
+                    {
+                        add("user:email");
+                    }
+                };
+        provider.setScopes(scopes);
+
+        Task<AuthResult> pendingResultTask = mAuth.getPendingAuthResult();
+        if (pendingResultTask != null) {
+            pendingResultTask
+                    .addOnSuccessListener(onSuccess::accept)
+                    .addOnFailureListener(onFailure::accept);
+        } else {
+            mAuth
+                    .startActivityForSignInWithProvider(activity, provider.build())
+                    .addOnSuccessListener(authResult -> {
+                        FirebaseUser curUser = authResult.getUser();
+
+                        checkUserExitsByEmail(curUser.getEmail())
+                                .addOnSuccessListener(exits -> {
+                                    if (!exits) {
+                                        String uid = curUser.getUid();
+                                        User user = new User(curUser.getEmail());
+                                        addUser(uid, user, aVoid -> {
+                                            onSuccess.accept(authResult);
+                                        }, e -> {
+                                            onFailure.accept(e);
+                                            curUser.delete();
+                                        });
+                                    }
+                                })
+                                .addOnFailureListener(e -> {
+                                    Log.e(TAG, "Error fetching user data: " + e);
+                                });
+                    })
+                    .addOnFailureListener(e -> {
+                        onFailure.accept(e);
+                    });
+        }
     }
 
     @Override

@@ -15,6 +15,9 @@
         android:theme="@style/Theme.ChatHub"
         tools:targetApi="31">
         <activity
+            android:name=".user.login.github.GithubAuthActivity"
+            android:exported="false" />
+        <activity
             android:name=".user.forgotpassword.ForgotPasswordActivity"
             android:exported="false" />
         <activity
