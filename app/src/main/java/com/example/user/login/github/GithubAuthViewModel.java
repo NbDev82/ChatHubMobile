@@ -1,20 +1,16 @@
 package com.example.user.login.github;
 
 import android.app.Activity;
-import android.app.AlertDialog;
-import android.content.Context;
-import android.content.DialogInterface;
-import android.content.Intent;
 import android.util.Patterns;
 
 import androidx.databinding.BaseObservable;
 import androidx.databinding.Bindable;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
 
 import com.example.BR;
-import com.example.home.HomeActivity;
 import com.example.user.AuthService;
 import com.example.user.AuthServiceImpl;
-import com.example.user.login.LoginActivity;
 
 public class GithubAuthViewModel extends BaseObservable {
 
@@ -22,6 +18,17 @@ public class GithubAuthViewModel extends BaseObservable {
     private final AuthService authService;
 
     private String email;
+
+    private MutableLiveData<Boolean> mNavigateToLogin = new MutableLiveData<>();
+    private MutableLiveData<Boolean> mNavigateToHome = new MutableLiveData<>();
+
+    public LiveData<Boolean> getNavigateToLogin() {
+        return mNavigateToLogin;
+    }
+
+    public LiveData<Boolean> getNavigateToHome() {
+        return mNavigateToHome;
+    }
 
     @Bindable
     public String getEmail() {
@@ -50,26 +57,23 @@ public class GithubAuthViewModel extends BaseObservable {
         authService = new AuthServiceImpl();
     }
 
-    public void onBackToLoginBtnClick(Context context) {
-        Intent intent = new Intent(context, LoginActivity.class);
-        context.startActivity(intent);
+    public void navigateToLogin() {
+        mNavigateToLogin.setValue(true);
     }
 
-    public void onGithubLoginBtnClick(Context context) {
+    public void onGithubLoginBtnClick() {
         if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
             setToastMessage("Enter a proper Email");
         } else {
             authService.signInOrSignUpWithGithub(activity, email, authResult -> {
-                openHomeActivity(context);
+                navigateToHome();
             }, e -> {
                 setToastMessage(e.getMessage());
             });
         }
     }
 
-    private void openHomeActivity(Context context) {
-        Intent intent = new Intent(context, HomeActivity.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-        context.startActivity(intent);
+    public void navigateToHome() {
+        mNavigateToHome.setValue(true);
     }
 }

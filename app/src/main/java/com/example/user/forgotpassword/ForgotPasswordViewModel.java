@@ -1,16 +1,14 @@
 package com.example.user.forgotpassword;
 
-import android.content.Context;
-import android.content.Intent;
 import android.util.Log;
 
 import androidx.databinding.BaseObservable;
 import androidx.databinding.Bindable;
+import androidx.lifecycle.MutableLiveData;
 
 import com.example.BR;
 import com.example.user.AuthService;
 import com.example.user.AuthServiceImpl;
-import com.example.user.login.LoginActivity;
 
 public class ForgotPasswordViewModel extends BaseObservable {
 
@@ -19,6 +17,12 @@ public class ForgotPasswordViewModel extends BaseObservable {
     private final AuthService authService;
 
     private String email;
+
+    private MutableLiveData<Boolean> mNavigateToLogin = new MutableLiveData<>();
+
+    public MutableLiveData<Boolean> getNavigateToLogin() {
+        return mNavigateToLogin;
+    }
 
     @Bindable
     public String getEmail() {
@@ -46,15 +50,14 @@ public class ForgotPasswordViewModel extends BaseObservable {
         authService = new AuthServiceImpl();
     }
 
-    public void onBackToLoginBtnClick(Context context) {
-        Intent intent = new Intent(context, LoginActivity.class);
-        context.startActivity(intent);
+    public void navigateToLogin() {
+        mNavigateToLogin.setValue(true);
     }
 
-    public void onSendResetPasswordClick(Context context) {
+    public void onSendResetPasswordClick() {
         authService.sendPasswordResetEmail(email, aVoid -> {
             setToastMessage("Password reset link sent to your Email");
-            onBackToLoginBtnClick(context);
+            navigateToLogin();
         }, e -> {
             Log.e(TAG, "Error: " + e);
         });

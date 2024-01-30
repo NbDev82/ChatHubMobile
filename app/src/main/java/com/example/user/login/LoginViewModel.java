@@ -1,29 +1,49 @@
 package com.example.user.login;
 
-import android.content.Context;
-import android.content.Intent;
 import android.util.Log;
 import android.util.Patterns;
 
 import androidx.databinding.BaseObservable;
 import androidx.databinding.Bindable;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
 
 import com.example.BR;
-import com.example.home.HomeActivity;
 import com.example.user.AuthService;
 import com.example.user.AuthServiceImpl;
-import com.example.user.forgotpassword.ForgotPasswordActivity;
-import com.example.user.login.github.GithubAuthActivity;
-import com.example.user.signup.SignUpActivity;
 
 public class LoginViewModel extends BaseObservable {
 
     private static final String TAG = LoginViewModel.class.getSimpleName();
 
-    private final Context context;
-    private final AuthService authService;
-
+    protected final AuthService authService;
     private SignInRequest signInRequest;
+
+    private MutableLiveData<Boolean> mNavigateToForgotPassword = new MutableLiveData<>();
+    private MutableLiveData<Boolean> mNavigateToSignUp = new MutableLiveData<>();
+    private MutableLiveData<Boolean> mNavigateToHome = new MutableLiveData<>();
+    private MutableLiveData<Boolean> mNavigateToGoogleSignIn = new MutableLiveData<>();
+    private MutableLiveData<Boolean> mNavigateToGithubAuth = new MutableLiveData<>();
+
+    public LiveData<Boolean> getNavigateToForgotPassword() {
+        return mNavigateToForgotPassword;
+    }
+
+    public LiveData<Boolean> getNavigateToSignUp() {
+        return mNavigateToSignUp;
+    }
+
+    public LiveData<Boolean> getNavigateToHome() {
+        return mNavigateToHome;
+    }
+
+    public LiveData<Boolean> getNavigateToGoogleSignIn() {
+        return mNavigateToGoogleSignIn;
+    }
+
+    public LiveData<Boolean> getNavigateToGithubAuth() {
+        return mNavigateToGithubAuth;
+    }
 
     @Bindable
     public String getEmail() {
@@ -57,10 +77,8 @@ public class LoginViewModel extends BaseObservable {
         notifyPropertyChanged(BR.toastMessage);
     }
 
-    public LoginViewModel(Context context) {
-        this.context = context;
+    public LoginViewModel() {
         authService = new AuthServiceImpl();
-
         signInRequest = new SignInRequest();
     }
 
@@ -76,7 +94,7 @@ public class LoginViewModel extends BaseObservable {
             setToastMessage("Enter proper password.");
         } else {
             authService.signIn(signInRequest, aVoid -> {
-                sendUserToHomeActivity();
+                navigateToHome();
                 setToastMessage("Login successful");
             }, e -> {
                 setToastMessage("Please wait while login...");
@@ -85,36 +103,24 @@ public class LoginViewModel extends BaseObservable {
         }
     }
 
-    private void sendUserToHomeActivity() {
-        Intent intent = new Intent(context, HomeActivity.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-        context.startActivity(intent);
+    public void navigateToForgotPassword() {
+        mNavigateToForgotPassword.setValue(true);
     }
 
-    public void onForgotPasswordTextClick(Context context) {
-        Log.i(TAG, "Forgot password clicked");
-
-        Intent intent = new Intent(context, ForgotPasswordActivity.class);
-        context.startActivity(intent);
+    public void navigateToSignUp() {
+        mNavigateToSignUp.setValue(true);
     }
 
-    public void onSignUpTextClick(Context context) {
-        Log.i(TAG, "Sign Up clicked");
-
-        Intent intent = new Intent(context, SignUpActivity.class);
-        context.startActivity(intent);
+    public void navigateToHome() {
+        mNavigateToHome.setValue(true);
     }
 
-    public void onGoogleLoginClick() {
-        Intent intent = new Intent(context, GoogleSignInActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-        context.startActivity(intent);
+    public void navigateToGoogleSignIn() {
+        mNavigateToGoogleSignIn.setValue(true);
     }
 
-    public void onGithubLoginClick() {
-        Intent intent = new Intent(context, GithubAuthActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-        context.startActivity(intent);
+    public void navigateToGithubAuth() {
+        mNavigateToGithubAuth.setValue(true);
     }
 
     public void onFacebookLoginClick() {

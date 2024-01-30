@@ -1,27 +1,28 @@
 package com.example.home;
 
-import android.content.Context;
-import android.content.Intent;
 import android.util.Log;
-import android.widget.Toast;
 
 import androidx.databinding.BaseObservable;
 import androidx.databinding.Bindable;
 import androidx.databinding.library.baseAdapters.BR;
+import androidx.lifecycle.MutableLiveData;
 
 import com.example.user.AuthService;
 import com.example.user.AuthServiceImpl;
 import com.example.user.User;
-import com.example.user.login.LoginActivity;
 
 public class HomeViewModel extends BaseObservable {
 
     private static final String TAG = HomeViewModel.class.getSimpleName();
 
-    private final Context context;
     private final AuthService authService;
-
     private User user = new User();
+
+    private MutableLiveData<Boolean> mNavigateToLogin = new MutableLiveData<>();
+
+    public MutableLiveData<Boolean> getNavigateToLogin() {
+        return mNavigateToLogin;
+    }
 
     @Bindable
     public String getEmail() {
@@ -33,8 +34,19 @@ public class HomeViewModel extends BaseObservable {
         notifyPropertyChanged(BR.email);
     }
 
-    public HomeViewModel(Context context) {
-        this.context = context;
+    @Bindable
+    private String toastMessage = null;
+
+    public String getToastMessage() {
+        return toastMessage;
+    }
+
+    private void setToastMessage(String toastMessage) {
+        this.toastMessage = toastMessage;
+        notifyPropertyChanged(com.example.BR.toastMessage);
+    }
+
+    public HomeViewModel() {
         authService = new AuthServiceImpl();
 
         authService.getCurrentUser()
@@ -50,17 +62,13 @@ public class HomeViewModel extends BaseObservable {
                 });
     }
 
-    public void onBackBtnClick(Context context) {
-        Log.i(TAG, "Back to login");
-
-        Toast.makeText(context, "Sign out", Toast.LENGTH_SHORT).show();
-        signOut();
-
-        Intent intent = new Intent(context, LoginActivity.class);
-        context.startActivity(intent);
+    public void signOut() {
+        setToastMessage("Sign out");
+        authService.signOut();
+        navigateToLogin();
     }
 
-    private void signOut() {
-        authService.signOut(context);
+    private void navigateToLogin() {
+        mNavigateToLogin.setValue(true);
     }
 }

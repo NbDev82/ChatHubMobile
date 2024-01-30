@@ -21,7 +21,7 @@
             android:name=".user.forgotpassword.ForgotPasswordActivity"
             android:exported="false" />
         <activity
-            android:name=".user.login.GoogleSignInActivity"
+            android:name=".user.login.google.GoogleSignInActivity"
             android:exported="false" />
         <activity
             android:name=".home.HomeActivity"

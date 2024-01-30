@@ -1,4 +1,4 @@
-package com.example.user.login;
+package com.example.user.login.google;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -11,6 +11,7 @@ import com.example.R;
 import com.example.home.HomeActivity;
 import com.example.user.AuthService;
 import com.example.user.AuthServiceImpl;
+import com.example.user.login.LoginActivity;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
@@ -56,7 +57,8 @@ public class GoogleSignInActivity extends LoginActivity {
                 GoogleSignInAccount account = task.getResult(ApiException.class);
                 String idToken = account.getIdToken();
                 authService.signInOrSignUpWithGoogle(idToken, aVoid -> {
-                    updateUI();
+                    loadingDialog.dismiss();
+                    navigateToHome();
                 }, e -> {
                     Toast.makeText(GoogleSignInActivity.this,
                             String.valueOf(task.getException()), Toast.LENGTH_SHORT).show();
@@ -69,7 +71,7 @@ public class GoogleSignInActivity extends LoginActivity {
         }
     }
 
-    private void updateUI() {
+    private void navigateToHome() {
         Intent intent = new Intent(GoogleSignInActivity.this, HomeActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(intent);

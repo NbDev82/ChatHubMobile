@@ -10,14 +10,9 @@ import com.example.R;
 
 public class LoadingDialog {
 
-    private Activity activity;
     private AlertDialog dialog;
 
     public LoadingDialog(Activity activity) {
-        this.activity = activity;
-    }
-
-    public void show() {
         AlertDialog.Builder builder = new AlertDialog.Builder(activity);
 
         LayoutInflater inflater = activity.getLayoutInflater();
@@ -26,6 +21,9 @@ public class LoadingDialog {
 
         dialog = builder.create();
         dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+    }
+
+    public void show() {
         dialog.show();
     }
 

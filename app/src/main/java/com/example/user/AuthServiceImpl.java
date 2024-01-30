@@ -215,7 +215,7 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public void signOut(Context context) {
+    public void signOut() {
         mAuth.signOut();
     }
 
