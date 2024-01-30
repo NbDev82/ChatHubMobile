@@ -3,11 +3,8 @@ package com.example.user;
 import android.content.Context;
 import android.util.Log;
 
-import com.example.user.login.GoogleSignInActivity;
 import com.example.user.login.SignInRequest;
 import com.example.user.signup.SignUpRequest;
-import com.google.android.gms.auth.api.signin.GoogleSignIn;
-import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.FirebaseAuth;
@@ -166,5 +163,12 @@ public class AuthServiceImpl implements AuthService {
     @Override
     public void signOut(Context context) {
         mAuth.signOut();
+    }
+
+    @Override
+    public void sendPasswordResetEmail(String email, Consumer<Void> onSuccess, Consumer<Exception> onFailure) {
+        mAuth.sendPasswordResetEmail(email)
+                .addOnSuccessListener(onSuccess::accept)
+                .addOnFailureListener(onFailure::accept);
     }
 }

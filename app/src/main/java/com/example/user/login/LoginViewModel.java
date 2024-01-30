@@ -12,6 +12,7 @@ import com.example.BR;
 import com.example.home.HomeActivity;
 import com.example.user.AuthService;
 import com.example.user.AuthServiceImpl;
+import com.example.user.forgotpassword.ForgotPasswordActivity;
 import com.example.user.signup.SignUpActivity;
 
 public class LoginViewModel extends BaseObservable {
@@ -92,6 +93,13 @@ public class LoginViewModel extends BaseObservable {
         context.startActivity(intent);
     }
 
+    public void onForgotPasswordTextClick(Context context) {
+        Log.i(TAG, "Forgot password clicked");
+
+        Intent intent = new Intent(context, ForgotPasswordActivity.class);
+        context.startActivity(intent);
+    }
+
     public void onSignUpTextClick(Context context) {
         Log.i(TAG, "Sign Up clicked");
 
@@ -103,5 +111,13 @@ public class LoginViewModel extends BaseObservable {
         Intent intent = new Intent(context, GoogleSignInActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         context.startActivity(intent);
+    }
+
+    public void onGithubLoginClick() {
+        setToastMessage("Without implementation");
+    }
+
+    public void onFacebookLoginClick() {
+        setToastMessage("Without implementation");
     }
 }

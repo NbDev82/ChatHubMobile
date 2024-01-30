@@ -18,4 +18,5 @@ public interface AuthService {
     Task<User> getUserByUid(String uid);
     Task<Boolean> checkUserExitsByEmail(String email);
     void signOut(Context context);
+    void sendPasswordResetEmail(String email, Consumer<Void> onSuccess, Consumer<Exception> onFailure);
 }
