@@ -1,14 +1,12 @@
 package com.example.user.login;
 
-import android.app.ProgressDialog;
-import android.app.assist.AssistContent;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 
+import com.example.customcontrol.LoadingDialog;
 import com.example.R;
 import com.example.home.HomeActivity;
 import com.example.user.AuthService;
@@ -25,15 +23,14 @@ public class GoogleSignInActivity extends LoginActivity {
     private static final int RC_SIGN_IN = 101;
     private GoogleSignInClient mGoogleSignInClient;
     private AuthService authService;
-    private ProgressDialog progressDialog;
+    private LoadingDialog loadingDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        progressDialog = new ProgressDialog(this);
-        progressDialog.setMessage("Google Sign In...");
-        progressDialog.show();
+        loadingDialog = new LoadingDialog(GoogleSignInActivity.this);
+        loadingDialog.show();
 
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken(getString(R.string.default_web_client_id))
