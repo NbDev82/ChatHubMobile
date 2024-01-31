@@ -1,113 +1,84 @@
 package com.example.user.signup;
 
-import android.content.Context;
-import android.content.Intent;
 import android.util.Log;
 import android.util.Patterns;
 
-import androidx.databinding.BaseObservable;
-import androidx.databinding.Bindable;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.ViewModel;
 
-import com.example.BR;
-import com.example.home.HomeActivity;
 import com.example.user.AuthService;
 import com.example.user.AuthServiceImpl;
-import com.example.user.login.LoginActivity;
 
-public class SignUpViewModel extends BaseObservable {
+public class SignUpViewModel extends ViewModel {
 
     private static final String TAG = SignUpActivity.class.getSimpleName();
 
-    private final Context context;
-    private AuthService authService;
+    private final AuthService mAuthService;
+    private final MutableLiveData<String> mEmail = new MutableLiveData<>();
+    private final MutableLiveData<String> mPassword = new MutableLiveData<>();
+    private final MutableLiveData<String> mConfirmPassword = new MutableLiveData<>();
+    private final MutableLiveData<String> mToastMessage = new MutableLiveData<>();
+    private final MutableLiveData<Boolean> mNavigateToLogin = new MutableLiveData<>();
+    private final MutableLiveData<Boolean> mNavigateToHome = new MutableLiveData<>();
 
-    private SignUpRequest signUpRequest;
-
-    @Bindable
-    public String getEmail() {
-        return signUpRequest.getEmail();
+    public MutableLiveData<String> getEmail() {
+        return mEmail;
     }
 
-    public void setEmail(String email) {
-        signUpRequest.setEmail(email);
-        notifyPropertyChanged(BR.email);
+    public MutableLiveData<String> getPassword() {
+        return mPassword;
     }
 
-    @Bindable
-    public String getPassword() {
-        return signUpRequest.getPassword();
+    public MutableLiveData<String> getConfirmPassword() {
+        return mConfirmPassword;
     }
 
-    public void setPassword(String password) {
-        signUpRequest.setPassword(password);
-        notifyPropertyChanged(BR.password);
+    public MutableLiveData<String> getToastMessage() {
+        return mToastMessage;
     }
 
-    @Bindable
-    public String getConfirmPassword() {
-        return signUpRequest.getConfirmPassword();
+    public LiveData<Boolean> getNavigateToLogin() {
+        return mNavigateToLogin;
     }
 
-    public void setConfirmPassword(String confirmPassword) {
-        signUpRequest.setConfirmPassword(confirmPassword);
-        notifyPropertyChanged(BR.confirmPassword);
+    public LiveData<Boolean> getNavigateToHome() {
+        return mNavigateToHome;
     }
 
-    @Bindable
-    private String toastMessage;
-
-    public String getToastMessage() {
-        return toastMessage;
+    public SignUpViewModel(AuthService authService) {
+        mAuthService = authService;
     }
 
-    private void setToastMessage(String toastMessage) {
-        this.toastMessage = toastMessage;
-        notifyPropertyChanged(BR.toastMessage);
+    public void navigateToLogin() {
+        mNavigateToLogin.setValue(true);
     }
 
-    public SignUpViewModel(Context context) {
-        this.context = context;
-        authService = new AuthServiceImpl();
-
-        signUpRequest = new SignUpRequest();
-    }
-
-    public void onBackBtnClick(Context context) {
-        Log.i(TAG, "Back to login");
-
-        Intent intent = new Intent(context, LoginActivity.class);
-        context.startActivity(intent);
-    }
-
-    public void onSignUpBtnClick() {
-        performAuth();
-    }
-
-    private void performAuth() {
-        String email = getEmail();
-        String password = getPassword();
-        String confirmPassword = getConfirmPassword();
+    public void performAuth() {
+        String email = mEmail.getValue() != null ? mEmail.getValue() : "";
+        String password = mPassword.getValue() != null ? mPassword.getValue() : "";
+        String confirmPassword = mConfirmPassword.getValue() != null
+                ? mConfirmPassword.getValue() : "";
 
         if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-            setToastMessage("Enter context email.");
+            mToastMessage.setValue("Enter context email.");
         } else if (password.isEmpty() || password.length() < 6) {
-            setToastMessage("Enter proper password.");
+            mToastMessage.setValue("Enter proper password.");
         } else if (!password.equals(confirmPassword)) {
-            setToastMessage("Password not match both fields.");
+            mToastMessage.setValue("Password not match both fields.");
         } else {
-            authService.signUp(signUpRequest, aVoid -> {
-                sendUserToNextActivity();
-                setToastMessage("Registration successful");
+            SignUpRequest signUpRequest = new SignUpRequest(email, password, confirmPassword);
+            mAuthService.signUp(signUpRequest, aVoid -> {
+                navigateToHome();
+                mToastMessage.setValue("Registration successful");
             }, e -> {
-                setToastMessage("Please wait while sign up...");
-                setToastMessage(String.valueOf(e));
+                mToastMessage.setValue(String.valueOf(e));
+                Log.e(TAG, "Error: " + e);
             });
         }
     }
 
-    private void sendUserToNextActivity() {
-        Intent intent = new Intent(context, HomeActivity.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-        context.startActivity(intent);
+    private void navigateToHome() {
+        mNavigateToHome.setValue(true);
     }
 }

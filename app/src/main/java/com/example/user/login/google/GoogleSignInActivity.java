@@ -5,9 +5,10 @@ import android.os.Bundle;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
+import androidx.lifecycle.ViewModelProvider;
 
-import com.example.customcontrol.LoadingDialog;
 import com.example.R;
+import com.example.customcontrol.LoadingDialog;
 import com.example.home.HomeActivity;
 import com.example.user.AuthService;
 import com.example.user.AuthServiceImpl;
@@ -16,58 +17,55 @@ import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
-import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.Task;
 
 public class GoogleSignInActivity extends LoginActivity {
 
-    private static final int RC_SIGN_IN = 101;
-    private GoogleSignInClient mGoogleSignInClient;
-    private AuthService authService;
-    private LoadingDialog loadingDialog;
+    private GoogleSignInViewModel mViewModel;
+    private LoadingDialog mLoadingDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        loadingDialog = new LoadingDialog(GoogleSignInActivity.this);
-        loadingDialog.show();
-
+        AuthService authService = new AuthServiceImpl();
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken(getString(R.string.default_web_client_id))
                 .requestEmail()
                 .build();
+        GoogleSignInClient googleSignInClient = GoogleSignIn.getClient(this, gso);
+        GoogleSignInViewModelFactory factory =
+                new GoogleSignInViewModelFactory(authService, googleSignInClient);
+        mViewModel = new ViewModelProvider(this, factory).get(GoogleSignInViewModel.class);
 
-        authService = new AuthServiceImpl();
+        mLoadingDialog = new LoadingDialog(GoogleSignInActivity.this);
 
-        mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
-        mGoogleSignInClient.signOut();
+        mViewModel.isLoading().observe(this, isLoading -> {
+            if (isLoading) {
+                mLoadingDialog.show();
+            } else {
+                mLoadingDialog.dismiss();
+            }
+        });
 
-        Intent signInIntent = mGoogleSignInClient.getSignInIntent();
-        startActivityForResult(signInIntent, RC_SIGN_IN);
+        mViewModel.isSignInSuccess().observe(this, isSignInSuccess -> {
+            if (isSignInSuccess) {
+                navigateToHome();
+            } else {
+                showErrorToast();
+            }
+        });
+
+        mViewModel.signIn(this);
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if (requestCode == RC_SIGN_IN) {
+        if (requestCode == GoogleSignInViewModel.RC_SIGN_IN) {
             Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
-            try {
-                GoogleSignInAccount account = task.getResult(ApiException.class);
-                String idToken = account.getIdToken();
-                authService.signInOrSignUpWithGoogle(idToken, aVoid -> {
-                    loadingDialog.dismiss();
-                    navigateToHome();
-                }, e -> {
-                    Toast.makeText(GoogleSignInActivity.this,
-                            String.valueOf(task.getException()), Toast.LENGTH_SHORT).show();
-                    finish();
-                });
-            } catch (ApiException e) {
-                Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT).show();
-                finish();
-            }
+            mViewModel.handleSignInResult(task);
         }
     }
 
@@ -75,5 +73,9 @@ public class GoogleSignInActivity extends LoginActivity {
         Intent intent = new Intent(GoogleSignInActivity.this, HomeActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(intent);
+    }
+
+    private void showErrorToast() {
+        Toast.makeText(this, "Failed to sign in with Google", Toast.LENGTH_SHORT).show();
     }
 }

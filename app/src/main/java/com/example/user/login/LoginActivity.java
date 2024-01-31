@@ -2,15 +2,17 @@ package com.example.user.login;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.example.R;
 import com.example.databinding.ActivityLoginBinding;
 import com.example.home.HomeActivity;
+import com.example.user.AuthService;
+import com.example.user.AuthServiceImpl;
 import com.example.user.forgotpassword.ForgotPasswordActivity;
 import com.example.user.login.github.GithubAuthActivity;
 import com.example.user.login.google.GoogleSignInActivity;
@@ -18,24 +20,26 @@ import com.example.user.signup.SignUpActivity;
 
 public class LoginActivity extends AppCompatActivity {
 
-    private LoginViewModel viewModel;
+    private LoginViewModel mViewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        ActivityLoginBinding activityLoginBinding
-                = DataBindingUtil.setContentView(
-                this, R.layout.activity_login);
-        viewModel = new LoginViewModel();
-        activityLoginBinding.setViewModel(viewModel);
-        activityLoginBinding.executePendingBindings();
+        ActivityLoginBinding binding = DataBindingUtil
+                .setContentView(this, R.layout.activity_login);
+
+        AuthService authService = new AuthServiceImpl();
+        LoginViewModelFactory factory = new LoginViewModelFactory(authService);
+        mViewModel = new ViewModelProvider(this, factory).get(LoginViewModel.class);
+        binding.setViewModel(mViewModel);
+        binding.setLifecycleOwner(this);
 
         setObservers();
     }
 
     private void setObservers() {
-        viewModel.getNavigateToForgotPassword().observe(this, new Observer<Boolean>() {
+        mViewModel.getNavigateToForgotPassword().observe(this, new Observer<Boolean>() {
             @Override
             public void onChanged(Boolean aBoolean) {
                 if (aBoolean) {
@@ -45,7 +49,7 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
 
-        viewModel.getNavigateToSignUp().observe(this, new Observer<Boolean>() {
+        mViewModel.getNavigateToSignUp().observe(this, new Observer<Boolean>() {
             @Override
             public void onChanged(Boolean aBoolean) {
                 if (aBoolean) {
@@ -55,7 +59,7 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
 
-        viewModel.getNavigateToHome().observe(this, new Observer<Boolean>() {
+        mViewModel.getNavigateToHome().observe(this, new Observer<Boolean>() {
             @Override
             public void onChanged(Boolean aBoolean) {
                 if (aBoolean) {
@@ -66,7 +70,7 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
 
-        viewModel.getNavigateToGoogleSignIn().observe(this, new Observer<Boolean>() {
+        mViewModel.getNavigateToGoogleSignIn().observe(this, new Observer<Boolean>() {
             @Override
             public void onChanged(Boolean aBoolean) {
                 if (aBoolean) {
@@ -77,7 +81,7 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
 
-        viewModel.getNavigateToGithubAuth().observe(this, new Observer<Boolean>() {
+        mViewModel.getNavigateToGithubAuth().observe(this, new Observer<Boolean>() {
             @Override
             public void onChanged(Boolean aBoolean) {
                 if (aBoolean) {

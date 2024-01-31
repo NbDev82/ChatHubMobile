@@ -3,27 +3,38 @@ package com.example.user.login;
 import android.util.Log;
 import android.util.Patterns;
 
-import androidx.databinding.BaseObservable;
-import androidx.databinding.Bindable;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.ViewModel;
 
-import com.example.BR;
 import com.example.user.AuthService;
 import com.example.user.AuthServiceImpl;
 
-public class LoginViewModel extends BaseObservable {
+public class LoginViewModel extends ViewModel {
 
     private static final String TAG = LoginViewModel.class.getSimpleName();
 
-    protected final AuthService authService;
-    private SignInRequest signInRequest;
+    protected final AuthService mAuthService;
+    private final MutableLiveData<String> mEmail = new MutableLiveData<>();
+    private final MutableLiveData<String> mPassword = new MutableLiveData<>();
+    protected final MutableLiveData<String> mToastMessage = new MutableLiveData<>();
+    private final MutableLiveData<Boolean> mNavigateToForgotPassword = new MutableLiveData<>();
+    private final MutableLiveData<Boolean> mNavigateToSignUp = new MutableLiveData<>();
+    private final MutableLiveData<Boolean> mNavigateToHome = new MutableLiveData<>();
+    private final MutableLiveData<Boolean> mNavigateToGoogleSignIn = new MutableLiveData<>();
+    private final MutableLiveData<Boolean> mNavigateToGithubAuth = new MutableLiveData<>();
 
-    private MutableLiveData<Boolean> mNavigateToForgotPassword = new MutableLiveData<>();
-    private MutableLiveData<Boolean> mNavigateToSignUp = new MutableLiveData<>();
-    private MutableLiveData<Boolean> mNavigateToHome = new MutableLiveData<>();
-    private MutableLiveData<Boolean> mNavigateToGoogleSignIn = new MutableLiveData<>();
-    private MutableLiveData<Boolean> mNavigateToGithubAuth = new MutableLiveData<>();
+    public MutableLiveData<String> getEmail() {
+        return mEmail;
+    }
+
+    public MutableLiveData<String> getPassword() {
+        return mPassword;
+    }
+
+    public MutableLiveData<String> getToastMessage() {
+        return mToastMessage;
+    }
 
     public LiveData<Boolean> getNavigateToForgotPassword() {
         return mNavigateToForgotPassword;
@@ -45,60 +56,28 @@ public class LoginViewModel extends BaseObservable {
         return mNavigateToGithubAuth;
     }
 
-    @Bindable
-    public String getEmail() {
-        return signInRequest.getEmail();
-    }
-
-    public void setEmail(String email) {
-        signInRequest.setEmail(email);
-        notifyPropertyChanged(BR.email);
-    }
-
-    @Bindable
-    public String getPassword() {
-        return signInRequest.getPassword();
-    }
-
-    public void setPassword(String password) {
-        signInRequest.setPassword(password);
-        notifyPropertyChanged(BR.password);
-    }
-
-    @Bindable
-    private String toastMessage = null;
-
-    public String getToastMessage() {
-        return toastMessage;
-    }
-
-    private void setToastMessage(String toastMessage) {
-        this.toastMessage = toastMessage;
-        notifyPropertyChanged(BR.toastMessage);
-    }
-
-    public LoginViewModel() {
-        authService = new AuthServiceImpl();
-        signInRequest = new SignInRequest();
+    public LoginViewModel(AuthService authService) {
+        mAuthService = authService;
     }
 
     public void onLoginBtnClick() {
         Log.i(TAG, "Login button clicked");
 
-        String email = getEmail();
-        String password = getPassword();
+        String email = mEmail.getValue() != null ? mEmail.getValue() : "";
+        String password = mPassword.getValue() != null ? mPassword.getValue() : "";
 
         if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-            setToastMessage("Enter context email.");
+            mToastMessage.setValue("Enter context email.");
         } else if (password.isEmpty() || password.length() < 6) {
-            setToastMessage("Enter proper password.");
+            mToastMessage.setValue("Enter proper password.");
         } else {
-            authService.signIn(signInRequest, aVoid -> {
+            SignInRequest signInRequest = new SignInRequest(email, password);
+            mAuthService.signIn(signInRequest, aVoid -> {
                 navigateToHome();
-                setToastMessage("Login successful");
+                mToastMessage.setValue("Login successful");
             }, e -> {
-                setToastMessage("Please wait while login...");
-                setToastMessage(String.valueOf(e));
+                mToastMessage.setValue("Please wait while login...");
+                mToastMessage.setValue(String.valueOf(e));
             });
         }
     }
@@ -124,6 +103,6 @@ public class LoginViewModel extends BaseObservable {
     }
 
     public void onFacebookLoginClick() {
-        setToastMessage("Without implementation");
+        mToastMessage.setValue("Without implementation");
     }
 }

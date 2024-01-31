@@ -41,7 +41,7 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@={viewModel.email}"
+                android:text="@{viewModel.email}"
                 android:layout_toEndOf="@id/emailTitleTxt" />
         </RelativeLayout>
 
@@ -62,7 +62,7 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@={viewModel.password}"
+                android:text="@{viewModel.password}"
                 android:layout_toEndOf="@id/passwordTitleTxt" />
         </RelativeLayout>
 
@@ -144,8 +144,7 @@
                 android:onClick="@{()-> viewModel.navigateToGoogleSignIn()}"
                 android:text="Google"
                 android:textSize="@dimen/_12ssp"
-                android:textStyle="bold"
-                bind:toastMessage="@{viewModel.toastMessage}" />
+                android:textStyle="bold" />
 
             <Button
                 android:layout_width="wrap_content"
@@ -156,8 +155,7 @@
                 android:onClick="@{()-> viewModel.navigateToGithubAuth()}"
                 android:text="Github"
                 android:textSize="@dimen/_12ssp"
-                android:textStyle="bold"
-                bind:toastMessage="@{viewModel.toastMessage}" />
+                android:textStyle="bold" />
 
             <Button
                 android:layout_width="wrap_content"
@@ -168,8 +166,7 @@
                 android:onClick="@{()-> viewModel.onFacebookLoginClick()}"
                 android:text="Facebook"
                 android:textSize="@dimen/_12ssp"
-                android:textStyle="bold"
-                bind:toastMessage="@{viewModel.toastMessage}" />
+                android:textStyle="bold" />
         </LinearLayout>
 
     </LinearLayout>

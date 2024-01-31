@@ -2,52 +2,35 @@ package com.example.user.forgotpassword;
 
 import android.util.Log;
 
-import androidx.databinding.BaseObservable;
-import androidx.databinding.Bindable;
+import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.ViewModel;
 
-import com.example.BR;
 import com.example.user.AuthService;
-import com.example.user.AuthServiceImpl;
 
-public class ForgotPasswordViewModel extends BaseObservable {
+public class ForgotPasswordViewModel extends ViewModel {
 
     private static final String TAG = ForgotPasswordViewModel.class.getSimpleName();
 
-    private final AuthService authService;
+    private final AuthService mAuthService;
+    private final MutableLiveData<String> mEmail = new MutableLiveData<>();
+    private final MutableLiveData<String> mToastMessage = new MutableLiveData<>();
+    private final MutableLiveData<Boolean> mNavigateToLogin = new MutableLiveData<>();
 
-    private String email;
+    public MutableLiveData<String> getEmail() {
+        return mEmail;
+    }
 
-    private MutableLiveData<Boolean> mNavigateToLogin = new MutableLiveData<>();
+    public MutableLiveData<String> getToastMessage() {
+        return mToastMessage;
+    }
 
-    public MutableLiveData<Boolean> getNavigateToLogin() {
+    public LiveData<Boolean> getNavigateToLogin() {
         return mNavigateToLogin;
     }
 
-    @Bindable
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-        notifyPropertyChanged(BR.email);
-    }
-
-    @Bindable
-    private String toastMessage = null;
-
-    public String getToastMessage() {
-        return toastMessage;
-    }
-
-    private void setToastMessage(String toastMessage) {
-        this.toastMessage = toastMessage;
-        notifyPropertyChanged(BR.toastMessage);
-    }
-
-    public ForgotPasswordViewModel() {
-        authService = new AuthServiceImpl();
+    public ForgotPasswordViewModel(AuthService authService) {
+        mAuthService = authService;
     }
 
     public void navigateToLogin() {
@@ -55,11 +38,18 @@ public class ForgotPasswordViewModel extends BaseObservable {
     }
 
     public void onSendResetPasswordClick() {
-        authService.sendPasswordResetEmail(email, aVoid -> {
-            setToastMessage("Password reset link sent to your Email");
+        String email = mEmail.getValue();
+        if (email == null || email.isEmpty()) {
+            mToastMessage.setValue("Enter your email");
+            return;
+        }
+        mEmail.setValue( email.trim() );
+        mAuthService.sendPasswordResetEmail(email, aVoid -> {
+            mToastMessage.setValue("Password reset link sent to your Email");
             navigateToLogin();
         }, e -> {
             Log.e(TAG, "Error: " + e);
+            mToastMessage.setValue("Error: " + e);
         });
     }
 }

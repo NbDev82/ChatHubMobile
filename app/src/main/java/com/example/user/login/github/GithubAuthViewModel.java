@@ -3,24 +3,30 @@ package com.example.user.login.github;
 import android.app.Activity;
 import android.util.Patterns;
 
-import androidx.databinding.BaseObservable;
-import androidx.databinding.Bindable;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.ViewModel;
 
-import com.example.BR;
 import com.example.user.AuthService;
-import com.example.user.AuthServiceImpl;
 
-public class GithubAuthViewModel extends BaseObservable {
+import java.lang.ref.WeakReference;
 
-    private final Activity activity;
-    private final AuthService authService;
+public class GithubAuthViewModel extends ViewModel {
 
-    private String email;
+    private WeakReference<Activity> mActivityRef;
+    private AuthService mAuthService;
+    private final MutableLiveData<String> mEmail = new MutableLiveData<>();
+    private final MutableLiveData<String> mToastMessage = new MutableLiveData<>();
+    private final MutableLiveData<Boolean> mNavigateToLogin = new MutableLiveData<>();
+    private final MutableLiveData<Boolean> mNavigateToHome = new MutableLiveData<>();
 
-    private MutableLiveData<Boolean> mNavigateToLogin = new MutableLiveData<>();
-    private MutableLiveData<Boolean> mNavigateToHome = new MutableLiveData<>();
+    public MutableLiveData<String> getEmail() {
+        return mEmail;
+    }
+
+    public MutableLiveData<String> getToastMessage() {
+        return mToastMessage;
+    }
 
     public LiveData<Boolean> getNavigateToLogin() {
         return mNavigateToLogin;
@@ -30,31 +36,9 @@ public class GithubAuthViewModel extends BaseObservable {
         return mNavigateToHome;
     }
 
-    @Bindable
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-        notifyPropertyChanged(BR.email);
-    }
-
-    @Bindable
-    private String toastMessage = null;
-
-    public String getToastMessage() {
-        return toastMessage;
-    }
-
-    private void setToastMessage(String toastMessage) {
-        this.toastMessage = toastMessage;
-        notifyPropertyChanged(BR.toastMessage);
-    }
-
-    public GithubAuthViewModel(Activity activity) {
-        this.activity = activity;
-        authService = new AuthServiceImpl();
+    public GithubAuthViewModel(Activity activity, AuthService authService) {
+        mActivityRef = new WeakReference<>(activity);
+        mAuthService = authService;
     }
 
     public void navigateToLogin() {
@@ -62,18 +46,29 @@ public class GithubAuthViewModel extends BaseObservable {
     }
 
     public void onGithubLoginBtnClick() {
+        String email = mEmail.getValue() != null ? mEmail.getValue() : "";
         if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-            setToastMessage("Enter a proper Email");
-        } else {
-            authService.signInOrSignUpWithGithub(activity, email, authResult -> {
+            mToastMessage.setValue("Enter a proper Email");
+            return;
+        }
+        Activity activity = mActivityRef.get();
+        if (activity != null) {
+            mAuthService.signInOrSignUpWithGithub(activity, email, authResult -> {
                 navigateToHome();
             }, e -> {
-                setToastMessage(e.getMessage());
+                mToastMessage.setValue(e.getMessage());
             });
         }
     }
 
     public void navigateToHome() {
         mNavigateToHome.setValue(true);
+    }
+
+    @Override
+    protected void onCleared() {
+        super.onCleared();
+
+        mActivityRef.clear();
     }
 }
