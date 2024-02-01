@@ -1,0 +1,263 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:bind="http://schemas.android.com/tools"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+        <variable
+            name="viewModel"
+            type="com.example.user.profile.UserProfileViewModel" />
+    </data>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:background="@color/white"
+        bind:toastMessage="@{viewModel.toastMessage}">
+
+        <androidx.appcompat.widget.Toolbar
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_40sdp"
+            android:background="@drawable/gradient_color_primary">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_back_arrow"
+                app:tint="@color/white"
+                android:onClickListener="@{() -> viewModel.navigateToHome()}"
+                android:contentDescription="Back to home"/>
+
+            <TextView
+                android:id="@+id/toolbar_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="Personal profile"
+                android:textColor="@color/white"
+                android:textStyle="bold"
+                android:textSize="@dimen/primary_title_size" />
+        </androidx.appcompat.widget.Toolbar>
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
+                android:orientation="vertical">
+
+                <FrameLayout
+                    android:id="@+id/layoutImage"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_20sdp">
+
+                    <com.makeramen.roundedimageview.RoundedImageView
+                        android:id="@+id/imageProfile"
+                        android:layout_width="@dimen/_100sdp"
+                        android:layout_height="@dimen/_100sdp"
+                        android:background="@drawable/background_image"
+                        android:scaleType="centerCrop"
+                        app:riv_oval="true" />
+
+                    <TextView
+                        android:id="@+id/textAddImage"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:text="Add image"
+                        android:textColor="@color/secondary_text"
+                        android:textSize="@dimen/_10ssp"
+                        tools:ignore="InvalidId" />
+
+                </FrameLayout>
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_20sdp"
+                    android:layout_marginStart="@dimen/_10sdp"
+                    android:layout_marginEnd="@dimen/_10sdp"
+                    android:background="@drawable/ripple_effect"
+                    android:clickable="true">
+
+                    <ImageView
+                        android:id="@+id/nameIcon"
+                        android:layout_width="@dimen/_32sdp"
+                        android:layout_height="@dimen/_32sdp"
+                        android:layout_margin="@dimen/default_icon_margin"
+                        android:src="@drawable/ic_user" />
+
+                    <TextView
+                        android:id="@+id/nameTitleTxv"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/_16sdp"
+                        android:layout_centerVertical="true"
+                        android:layout_toEndOf="@id/nameIcon"
+                        android:text="Full name"
+                        android:textColor="@color/secondary_text"
+                        android:textSize="@dimen/primary_sub_title_size"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/_20sdp"
+                        android:layout_marginEnd="@dimen/_5sdp"
+                        android:layout_centerVertical="true"
+                        android:layout_toEndOf="@id/nameTitleTxv"
+                        android:layout_toStartOf="@id/editNameIcon"
+                        android:text="@{viewModel.fullName}"
+                        android:gravity="end"
+                        android:textColor="@color/primary_text"
+                        android:textSize="@dimen/primary_text_size"
+                        android:maxLines="1"
+                        android:ellipsize="end"
+                        tools:text="Văn An"/>
+
+                    <ImageView
+                        android:id="@+id/editNameIcon"
+                        android:layout_width="@dimen/_12sdp"
+                        android:layout_height="@dimen/_12sdp"
+                        android:layout_centerVertical="true"
+                        android:layout_alignParentEnd="true"
+                        android:src="@drawable/ic_right_chevron" />
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="0.5dp"
+                        android:layout_marginStart="@dimen/_16sdp"
+                        android:layout_toEndOf="@id/nameIcon"
+                        android:layout_alignParentBottom="true"
+                        android:background="@color/gray" />
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_5sdp"
+                    android:layout_marginStart="@dimen/_10sdp"
+                    android:layout_marginEnd="@dimen/_10sdp"
+                    android:background="@drawable/ripple_effect"
+                    android:clickable="true">
+
+                    <ImageView
+                        android:id="@+id/birthdayIcon"
+                        android:layout_width="@dimen/_32sdp"
+                        android:layout_height="@dimen/_32sdp"
+                        android:layout_margin="@dimen/default_icon_margin"
+                        android:src="@drawable/ic_calendar" />
+
+                    <TextView
+                        android:id="@+id/birthdayTitleTxv"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/_16sdp"
+                        android:layout_centerVertical="true"
+                        android:layout_toEndOf="@id/birthdayIcon"
+                        android:text="Birthday"
+                        android:textColor="@color/secondary_text"
+                        android:textSize="@dimen/primary_sub_title_size"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/_20sdp"
+                        android:layout_marginEnd="@dimen/_5sdp"
+                        android:layout_centerVertical="true"
+                        android:layout_toEndOf="@id/birthdayTitleTxv"
+                        android:layout_toStartOf="@id/editBirthdayIcon"
+                        android:gravity="end"
+                        android:text="@{viewModel.birthdayStr}"
+                        android:textColor="@color/primary_text"
+                        android:textSize="@dimen/primary_text_size"
+                        android:maxLines="1"
+                        android:ellipsize="end"
+                        tools:text="01/01/1990"/>
+
+                    <ImageView
+                        android:id="@+id/editBirthdayIcon"
+                        android:layout_width="@dimen/_12sdp"
+                        android:layout_height="@dimen/_12sdp"
+                        android:layout_centerVertical="true"
+                        android:layout_alignParentEnd="true"
+                        android:src="@drawable/ic_right_chevron" />
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="0.5dp"
+                        android:layout_marginStart="@dimen/_16sdp"
+                        android:layout_toEndOf="@id/birthdayIcon"
+                        android:layout_alignParentBottom="true"
+                        android:background="@color/gray" />
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_5sdp"
+                    android:layout_marginStart="@dimen/_10sdp"
+                    android:layout_marginEnd="@dimen/_10sdp"
+                    android:background="@drawable/ripple_effect"
+                    android:clickable="true">
+
+                    <ImageView
+                        android:id="@+id/genderIcon"
+                        android:layout_width="@dimen/_32sdp"
+                        android:layout_height="@dimen/_32sdp"
+                        android:layout_margin="@dimen/default_icon_margin"
+                        android:src="@drawable/ic_gender" />
+
+                    <TextView
+                        android:id="@+id/genderTitleTxv"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/_16sdp"
+                        android:layout_centerVertical="true"
+                        android:layout_toEndOf="@id/genderIcon"
+                        android:text="Gender"
+                        android:textColor="@color/secondary_text"
+                        android:textSize="@dimen/primary_sub_title_size"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/_20sdp"
+                        android:layout_marginEnd="@dimen/_5sdp"
+                        android:layout_centerVertical="true"
+                        android:layout_toEndOf="@id/genderTitleTxv"
+                        android:layout_toStartOf="@id/editGenderIcon"
+                        android:gravity="end"
+                        android:text="@{viewModel.gender.getDisplay()}"
+                        android:textColor="@color/primary_text"
+                        android:textSize="@dimen/primary_text_size"
+                        android:maxLines="1"
+                        android:ellipsize="end"
+                        tools:text="Male" />
+
+                    <ImageView
+                        android:id="@+id/editGenderIcon"
+                        android:layout_width="@dimen/_12sdp"
+                        android:layout_height="@dimen/_12sdp"
+                        android:layout_centerVertical="true"
+                        android:layout_alignParentEnd="true"
+                        android:src="@drawable/ic_right_chevron" />
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="0.5dp"
+                        android:layout_marginStart="@dimen/_16sdp"
+                        android:layout_toEndOf="@id/genderIcon"
+                        android:layout_alignParentBottom="true"
+                        android:background="@color/gray" />
+                </RelativeLayout>
+
+            </LinearLayout>
+        </ScrollView>
+    </LinearLayout>
+</layout>

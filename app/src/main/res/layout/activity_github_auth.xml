@@ -47,7 +47,7 @@
             android:onClick="@{() -> viewModel.navigateToLogin()}"
             android:text="How about other methods?"
             android:textAlignment="center"
-            android:textColor="@color/blue"
+            android:textColor="@color/link_blue"
             android:textStyle="bold"
             app:layout_constraintStart_toStartOf="@+id/editText"
             app:layout_constraintTop_toBottomOf="@+id/editText" />
@@ -56,7 +56,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/_60sdp"
-            android:background="#4CAF50"
             android:onClick="@{()-> viewModel.onGithubLoginBtnClick()}"
             android:text="@string/btn_login"
             android:textSize="@dimen/_20ssp"

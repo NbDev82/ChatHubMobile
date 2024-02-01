@@ -95,7 +95,7 @@
             android:layout_marginLeft="@dimen/_10sdp"
             android:text="Forgot password?"
             android:onClick="@{() -> viewModel.navigateToForgotPassword()}"
-            android:textColor="@color/blue"
+            android:textColor="@color/link_blue"
             android:textAlignment="center"
             android:textStyle="bold" />
 
@@ -106,7 +106,7 @@
             android:layout_marginLeft="@dimen/_10sdp"
             android:text="Create a new account?"
             android:onClick="@{() -> viewModel.navigateToSignUp()}"
-            android:textColor="@color/blue"
+            android:textColor="@color/link_blue"
             android:textAlignment="center"
             android:textStyle="bold" />
 
@@ -116,7 +116,6 @@
             android:layout_marginStart="@dimen/_20sdp"
             android:layout_marginTop="@dimen/_60sdp"
             android:layout_marginEnd="@dimen/_20sdp"
-            android:background="#4CAF50"
             android:onClick="@{()-> viewModel.onLoginBtnClick()}"
             android:text="@string/btn_login"
             android:textSize="@dimen/_20ssp"
@@ -140,7 +139,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:padding="0dp"
-                android:background="#4CAF50"
                 android:onClick="@{()-> viewModel.navigateToGoogleSignIn()}"
                 android:text="Google"
                 android:textSize="@dimen/_12ssp"
@@ -151,7 +149,6 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/_10sdp"
                 android:padding="0dp"
-                android:background="#4CAF50"
                 android:onClick="@{()-> viewModel.navigateToGithubAuth()}"
                 android:text="Github"
                 android:textSize="@dimen/_12ssp"
@@ -162,7 +159,6 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/_10sdp"
                 android:padding="0dp"
-                android:background="#4CAF50"
                 android:onClick="@{()-> viewModel.onFacebookLoginClick()}"
                 android:text="Facebook"
                 android:textSize="@dimen/_12ssp"

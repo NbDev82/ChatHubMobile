@@ -1,21 +1,24 @@
 package com.example.user;
 
+import java.sql.Timestamp;
+
 public class User {
-
-    public enum EGender {
-        MALE, FEMALE, OTHER
-    }
-
     private String fullName;
     private String email;
+    private String phoneNumber;
     private EGender gender;
+    private Timestamp birthday;
+    private String imageUrl;
     private boolean isOnline;
     private boolean isDeleted;
 
     public User() {
         fullName = "";
         email = "";
+        phoneNumber = "";
         gender = EGender.MALE;
+        birthday = new Timestamp(System.currentTimeMillis());
+        imageUrl = "";
         isOnline = false;
         isDeleted = false;
     }
@@ -24,15 +27,6 @@ public class User {
         this();
         fullName = "Van A";
         this.email = email;
-    }
-
-    public User(String fullName, String email, EGender gender,
-                boolean isOnline, boolean isDeleted) {
-        this.fullName = fullName;
-        this.email = email;
-        this.gender = gender;
-        this.isOnline = isOnline;
-        this.isDeleted = isDeleted;
     }
 
     public String getFullName() {
@@ -51,12 +45,36 @@ public class User {
         this.email = email;
     }
 
+    public String getPhoneNumber() {
+        return phoneNumber;
+    }
+
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
+    }
+
     public EGender getGender() {
         return gender;
     }
 
     public void setGender(EGender gender) {
         this.gender = gender;
+    }
+
+    public Timestamp getBirthday() {
+        return birthday;
+    }
+
+    public void setBirthday(Timestamp birthday) {
+        this.birthday = birthday;
+    }
+
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
     }
 
     public boolean isOnline() {

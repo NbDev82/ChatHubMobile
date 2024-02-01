@@ -46,6 +46,7 @@ public class LoginActivity extends AppCompatActivity {
             public void onChanged(Boolean aBoolean) {
                 if (aBoolean) {
                     Intent intent = new Intent(LoginActivity.this, ForgotPasswordActivity.class);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
                     startActivity(intent);
                 }
             }
@@ -56,6 +57,7 @@ public class LoginActivity extends AppCompatActivity {
             public void onChanged(Boolean aBoolean) {
                 if (aBoolean) {
                     Intent intent = new Intent(LoginActivity.this, SignUpActivity.class);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
                     startActivity(intent);
                 }
             }

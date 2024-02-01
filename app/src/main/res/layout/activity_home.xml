@@ -52,6 +52,15 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/_60sdp"
             android:layout_gravity="center"
+            android:text="My profile"
+            android:onClick="@{() -> viewModel.navigateToUserProfile()}"
+            bind:toastMessage="@{viewModel.toastMessage}"/>
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_10sdp"
+            android:layout_gravity="center"
             android:text="Sign out"
             android:onClick="@{() -> viewModel.signOut()}"
             bind:toastMessage="@{viewModel.toastMessage}"/>
