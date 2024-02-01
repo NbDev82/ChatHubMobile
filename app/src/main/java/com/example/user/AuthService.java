@@ -1,7 +1,6 @@
 package com.example.user;
 
 import android.app.Activity;
-import android.content.Context;
 
 import com.example.user.login.SignInRequest;
 import com.example.user.signup.SignUpRequest;
@@ -23,4 +22,5 @@ public interface AuthService {
     Task<Boolean> checkUserExitsByEmail(String email);
     void signOut();
     void sendPasswordResetEmail(String email, Consumer<Void> onSuccess, Consumer<Exception> onFailure);
+    boolean isLoggedIn();
 }

@@ -5,7 +5,6 @@ import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.example.user.AuthService;
-import com.example.user.login.github.GithubAuthViewModel;
 
 public class LoginViewModelFactory implements ViewModelProvider.Factory {
 

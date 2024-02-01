@@ -7,8 +7,9 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
+import com.example.infrastructure.PreferenceManager;
+import com.example.infrastructure.Utils;
 import com.example.user.AuthService;
-import com.example.user.AuthServiceImpl;
 
 public class LoginViewModel extends ViewModel {
 
@@ -73,8 +74,8 @@ public class LoginViewModel extends ViewModel {
         } else {
             SignInRequest signInRequest = new SignInRequest(email, password);
             mAuthService.signIn(signInRequest, aVoid -> {
-                navigateToHome();
                 mToastMessage.setValue("Login successful");
+                navigateToHome();
             }, e -> {
                 mToastMessage.setValue("Please wait while login...");
                 mToastMessage.setValue(String.valueOf(e));
@@ -88,6 +89,12 @@ public class LoginViewModel extends ViewModel {
 
     public void navigateToSignUp() {
         mNavigateToSignUp.setValue(true);
+    }
+
+    public void navigateIfAuthenticated() {
+        if (mAuthService.isLoggedIn()) {
+            mNavigateToHome.setValue(true);
+        }
     }
 
     public void navigateToHome() {

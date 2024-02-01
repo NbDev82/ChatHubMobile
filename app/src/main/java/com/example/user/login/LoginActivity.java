@@ -36,6 +36,8 @@ public class LoginActivity extends AppCompatActivity {
         binding.setLifecycleOwner(this);
 
         setObservers();
+
+        mViewModel.navigateIfAuthenticated();
     }
 
     private void setObservers() {

@@ -1,7 +1,6 @@
 package com.example.user;
 
 import android.app.Activity;
-import android.content.Context;
 import android.util.Log;
 
 import com.example.user.login.SignInRequest;
@@ -224,5 +223,10 @@ public class AuthServiceImpl implements AuthService {
         mAuth.sendPasswordResetEmail(email)
                 .addOnSuccessListener(onSuccess::accept)
                 .addOnFailureListener(onFailure::accept);
+    }
+
+    @Override
+    public boolean isLoggedIn() {
+        return mAuth.getCurrentUser() != null;
     }
 }
