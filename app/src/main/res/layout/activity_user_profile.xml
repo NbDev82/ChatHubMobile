@@ -5,6 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
+        <import type="android.view.View"/>
         <variable
             name="viewModel"
             type="com.example.user.profile.UserProfileViewModel" />
@@ -41,9 +42,19 @@
                 android:textSize="@dimen/primary_title_size" />
         </androidx.appcompat.widget.Toolbar>
 
+        <com.facebook.shimmer.ShimmerFrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="@{viewModel.isLoading ? View.VISIBLE : View.GONE}">
+
+            <include layout="@layout/profile_items_placeholder"/>
+
+        </com.facebook.shimmer.ShimmerFrameLayout>
+
         <ScrollView
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:visibility="@{viewModel.isLoading ? View.GONE : View.VISIBLE}">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -257,8 +268,131 @@
                         android:background="@color/gray" />
                 </RelativeLayout>
 
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_5sdp"
+                    android:layout_marginStart="@dimen/_10sdp"
+                    android:layout_marginEnd="@dimen/_10sdp"
+                    android:background="@drawable/ripple_effect"
+                    android:clickable="true">
 
+                    <ImageView
+                        android:id="@+id/emailIcon"
+                        android:layout_width="@dimen/_32sdp"
+                        android:layout_height="@dimen/_32sdp"
+                        android:layout_marginStart="@dimen/default_icon_margin"
+                        android:layout_marginTop="@dimen/default_icon_margin"
+                        android:layout_marginEnd="@dimen/default_icon_margin"
+                        android:layout_marginBottom="@dimen/default_icon_margin"
+                        android:src="@drawable/ic_mail" />
 
+                    <TextView
+                        android:id="@+id/emailTitleTxv"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/_16sdp"
+                        android:layout_centerVertical="true"
+                        android:layout_toEndOf="@id/emailIcon"
+                        android:text="Email"
+                        android:textColor="@color/secondary_text"
+                        android:textSize="@dimen/primary_sub_title_size"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/_20sdp"
+                        android:layout_marginEnd="@dimen/_5sdp"
+                        android:layout_centerVertical="true"
+                        android:layout_toEndOf="@id/emailTitleTxv"
+                        android:layout_toStartOf="@id/editEmailIcon"
+                        android:gravity="end"
+                        android:text="@{viewModel.email}"
+                        android:textColor="@color/primary_text"
+                        android:textSize="@dimen/primary_text_size"
+                        android:maxLines="1"
+                        android:ellipsize="end"
+                        tools:text="example@gmail.com" />
+
+                    <ImageView
+                        android:id="@+id/editEmailIcon"
+                        android:layout_width="@dimen/_12sdp"
+                        android:layout_height="@dimen/_12sdp"
+                        android:layout_centerVertical="true"
+                        android:layout_alignParentEnd="true"
+                        android:src="@drawable/ic_right_chevron" />
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="0.5dp"
+                        android:layout_marginStart="@dimen/_16sdp"
+                        android:layout_toEndOf="@id/emailIcon"
+                        android:layout_alignParentBottom="true"
+                        android:background="@color/gray" />
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_5sdp"
+                    android:layout_marginStart="@dimen/_10sdp"
+                    android:layout_marginEnd="@dimen/_10sdp"
+                    android:background="@drawable/ripple_effect"
+                    android:clickable="true">
+
+                    <ImageView
+                        android:id="@+id/phoneIcon"
+                        android:layout_width="@dimen/_32sdp"
+                        android:layout_height="@dimen/_32sdp"
+                        android:layout_marginStart="@dimen/default_icon_margin"
+                        android:layout_marginTop="@dimen/default_icon_margin"
+                        android:layout_marginEnd="@dimen/default_icon_margin"
+                        android:layout_marginBottom="@dimen/default_icon_margin"
+                        android:src="@drawable/ic_telephone" />
+
+                    <TextView
+                        android:id="@+id/phoneTitleTxv"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/_16sdp"
+                        android:layout_centerVertical="true"
+                        android:layout_toEndOf="@id/phoneIcon"
+                        android:text="Phone"
+                        android:textColor="@color/secondary_text"
+                        android:textSize="@dimen/primary_sub_title_size"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/_20sdp"
+                        android:layout_marginEnd="@dimen/_5sdp"
+                        android:layout_centerVertical="true"
+                        android:layout_toEndOf="@id/phoneTitleTxv"
+                        android:layout_toStartOf="@id/editPhoneIcon"
+                        android:gravity="end"
+                        android:text="@{viewModel.phoneNumber.isEmpty() ? `None` : viewModel.phoneNumber}"
+                        android:textColor="@color/primary_text"
+                        android:textSize="@dimen/primary_text_size"
+                        android:maxLines="1"
+                        android:ellipsize="end"
+                        tools:text="(+84) 9812831238" />
+
+                    <ImageView
+                        android:id="@+id/editPhoneIcon"
+                        android:layout_width="@dimen/_12sdp"
+                        android:layout_height="@dimen/_12sdp"
+                        android:layout_centerVertical="true"
+                        android:layout_alignParentEnd="true"
+                        android:src="@drawable/ic_right_chevron" />
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="0.5dp"
+                        android:layout_marginStart="@dimen/_16sdp"
+                        android:layout_toEndOf="@id/phoneIcon"
+                        android:layout_alignParentBottom="true"
+                        android:background="@color/gray" />
+                </RelativeLayout>
 
             </LinearLayout>
         </ScrollView>

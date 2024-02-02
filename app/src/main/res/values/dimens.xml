@@ -5,4 +5,7 @@
     <dimen name="primary_title_size">@dimen/_18ssp</dimen>
     <dimen name="primary_sub_title_size">@dimen/_14ssp</dimen>
     <dimen name="primary_text_size">@dimen/_12ssp</dimen>
+
+    <dimen name="sub_title_width">@dimen/_70sdp</dimen>
+    <dimen name="sub_title_height">@dimen/_16sdp</dimen>
 </resources>
