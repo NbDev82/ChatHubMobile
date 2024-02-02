@@ -3,9 +3,12 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
 
-    <color name="primary_light_blue">#2ba3ff</color>
+    <color name="primary_light_blue">#0086fe</color>
     <color name="link_blue">#1aa0de</color>
     <color name="gray">#C0C0C0</color>
+
+    <color name="primary_bg">#ffffff</color>
+    <color name="secondary_bg">#f5f5f7</color>
 
     <color name="primary_text">#1c1c1c</color>
     <color name="secondary_text">#757575</color>

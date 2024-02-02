@@ -10,6 +10,7 @@ import androidx.lifecycle.ViewModelProvider;
 import com.example.R;
 import com.example.customcontrol.LoadingDialog;
 import com.example.home.HomeActivity;
+import com.example.infrastructure.Utils;
 import com.example.user.AuthService;
 import com.example.user.AuthServiceImpl;
 import com.example.user.login.LoginActivity;
@@ -27,6 +28,7 @@ public class GoogleSignInActivity extends LoginActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Utils.setStatusBarGradiant(this);
 
         AuthService authService = new AuthServiceImpl();
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)

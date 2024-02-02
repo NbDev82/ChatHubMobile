@@ -14,7 +14,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        android:background="@color/white"
+        android:background="@color/primary_bg"
         bind:toastMessage="@{viewModel.toastMessage}">
 
         <androidx.appcompat.widget.Toolbar
@@ -256,6 +256,9 @@
                         android:layout_alignParentBottom="true"
                         android:background="@color/gray" />
                 </RelativeLayout>
+
+
+
 
             </LinearLayout>
         </ScrollView>

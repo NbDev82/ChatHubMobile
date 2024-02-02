@@ -12,6 +12,7 @@ import androidx.lifecycle.ViewModelProvider;
 import com.example.R;
 import com.example.databinding.ActivitySignUpBinding;
 import com.example.home.HomeActivity;
+import com.example.infrastructure.Utils;
 import com.example.user.AuthService;
 import com.example.user.AuthServiceImpl;
 import com.example.user.login.LoginActivity;
@@ -20,6 +21,7 @@ public class SignUpActivity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Utils.setStatusBarGradiant(this);
 
         ActivitySignUpBinding binding = DataBindingUtil
                 .setContentView(this, R.layout.activity_sign_up);

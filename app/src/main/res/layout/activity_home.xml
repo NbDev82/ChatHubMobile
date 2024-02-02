@@ -13,8 +13,8 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_gravity="center"
-        android:layout_margin="8dp"
-        android:background="#168BC34A"
+        android:padding="@dimen/_8sdp"
+        android:background="@color/primary_bg"
         android:orientation="vertical">
 
             <TextView

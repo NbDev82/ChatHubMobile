@@ -190,7 +190,7 @@ public class AuthServiceImpl implements AuthService {
                 .continueWith(task -> {
                     if (task.isSuccessful()) {
                         DocumentSnapshot document = task.getResult();
-                        if (document.exists()) {
+                        if (document != null && document.exists()) {
                             return document.toObject(User.class);
                         }
                     }

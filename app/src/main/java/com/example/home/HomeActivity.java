@@ -10,6 +10,7 @@ import android.os.Bundle;
 
 import com.example.R;
 import com.example.databinding.ActivityHomeBinding;
+import com.example.infrastructure.Utils;
 import com.example.user.AuthService;
 import com.example.user.AuthServiceImpl;
 import com.example.user.login.LoginActivity;
@@ -23,6 +24,7 @@ public class HomeActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
+        Utils.setStatusBarGradiant(this);
 
         ActivityHomeBinding binding = DataBindingUtil
                 .setContentView(this, R.layout.activity_home);

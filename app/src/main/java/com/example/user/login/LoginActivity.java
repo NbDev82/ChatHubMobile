@@ -11,6 +11,7 @@ import androidx.lifecycle.ViewModelProvider;
 import com.example.R;
 import com.example.databinding.ActivityLoginBinding;
 import com.example.home.HomeActivity;
+import com.example.infrastructure.Utils;
 import com.example.user.AuthService;
 import com.example.user.AuthServiceImpl;
 import com.example.user.forgotpassword.ForgotPasswordActivity;
@@ -25,6 +26,7 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Utils.setStatusBarGradiant(this);
 
         ActivityLoginBinding binding = DataBindingUtil
                 .setContentView(this, R.layout.activity_login);

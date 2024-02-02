@@ -10,6 +10,7 @@ import android.os.Bundle;
 
 import com.example.R;
 import com.example.databinding.ActivityForgotPasswordBinding;
+import com.example.infrastructure.Utils;
 import com.example.user.AuthService;
 import com.example.user.AuthServiceImpl;
 import com.example.user.login.LoginActivity;
@@ -19,6 +20,7 @@ public class ForgotPasswordActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Utils.setStatusBarGradiant(this);
 
         ActivityForgotPasswordBinding binding =
                 DataBindingUtil.setContentView(this, R.layout.activity_forgot_password);

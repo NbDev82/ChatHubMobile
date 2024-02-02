@@ -1,13 +1,13 @@
 package com.example.user;
 
-import java.sql.Timestamp;
+import java.util.Date;
 
 public class User {
     private String fullName;
     private String email;
     private String phoneNumber;
     private EGender gender;
-    private Timestamp birthday;
+    private Date birthday;
     private String imageUrl;
     private boolean isOnline;
     private boolean isDeleted;
@@ -17,7 +17,7 @@ public class User {
         email = "";
         phoneNumber = "";
         gender = EGender.MALE;
-        birthday = new Timestamp(System.currentTimeMillis());
+        birthday = new Date(1990, 1, 1);
         imageUrl = "";
         isOnline = false;
         isDeleted = false;
@@ -61,11 +61,11 @@ public class User {
         this.gender = gender;
     }
 
-    public Timestamp getBirthday() {
+    public Date getBirthday() {
         return birthday;
     }
 
-    public void setBirthday(Timestamp birthday) {
+    public void setBirthday(Date birthday) {
         this.birthday = birthday;
     }
 
