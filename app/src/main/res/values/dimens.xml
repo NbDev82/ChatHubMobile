@@ -3,9 +3,15 @@
     <dimen name="default_icon_margin">@dimen/_10sdp</dimen>
 
     <dimen name="primary_title_size">@dimen/_18ssp</dimen>
-    <dimen name="primary_sub_title_size">@dimen/_14ssp</dimen>
-    <dimen name="primary_text_size">@dimen/_12ssp</dimen>
+    <dimen name="primary_sub_title_size">@dimen/_12ssp</dimen>
+    <dimen name="primary_text_size">@dimen/_10ssp</dimen>
 
     <dimen name="sub_title_width">@dimen/_70sdp</dimen>
     <dimen name="sub_title_height">@dimen/_16sdp</dimen>
+
+    <!-- activity_user_profile.xml-->
+    <dimen name="profile_item_height">@dimen/_50sdp</dimen>
+    <dimen name="profile_icon_size">@dimen/_25sdp</dimen>
+    <dimen name="profile_item_padding_horizontal">@dimen/_20sdp</dimen>
+    <dimen name="profile_item_distance">@dimen/_5sdp</dimen>
 </resources>

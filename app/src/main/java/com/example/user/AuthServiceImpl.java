@@ -3,8 +3,11 @@ package com.example.user;
 import android.app.Activity;
 import android.util.Log;
 
+import androidx.annotation.NonNull;
+
 import com.example.user.login.SignInRequest;
 import com.example.user.signup.SignUpRequest;
+import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
@@ -228,5 +231,18 @@ public class AuthServiceImpl implements AuthService {
     @Override
     public boolean isLoggedIn() {
         return mAuth.getCurrentUser() != null;
+    }
+
+    @Override
+    public Task<Void> updateBasicUserByEmail(User user) {
+        CollectionReference usersRef = db.collection(EUserField.FULL_NAME.getName());
+        DocumentReference userRef = usersRef.document(user.getEmail());
+
+        Map<String, Object> updates = new HashMap<>();
+        updates.put(EUserField.FULL_NAME.getName(), user.getFullName());
+        updates.put(EUserField.GENDER.getName(), user.getGender());
+        updates.put(EUserField.BIRTHDAY.getName(), user.getBirthday());
+
+        return userRef.update(updates);
     }
 }

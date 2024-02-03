@@ -17,7 +17,7 @@ public class User {
         email = "";
         phoneNumber = "";
         gender = EGender.MALE;
-        birthday = new Date(1990, 1, 1);
+        birthday = new Date(90, 1, 1);
         imageUrl = "";
         isOnline = false;
         isDeleted = false;

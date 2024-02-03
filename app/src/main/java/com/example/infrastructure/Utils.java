@@ -36,7 +36,15 @@ public class Utils {
         }
     }
 
+    public static boolean compareDateWithDateStr(Date date, String dateStr) {
+        String tempDateStr = dateToString(date);
+        return dateStr.equals(tempDateStr);
+    }
+
     public static String dateToString(Date date) {
+        if (date == null) {
+            return "";
+        }
         DateFormat df = new SimpleDateFormat(DATE_PATTERN);
         return df.format(date);
     }

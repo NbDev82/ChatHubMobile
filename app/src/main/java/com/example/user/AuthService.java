@@ -23,4 +23,5 @@ public interface AuthService {
     void signOut();
     void sendPasswordResetEmail(String email, Consumer<Void> onSuccess, Consumer<Exception> onFailure);
     boolean isLoggedIn();
+    Task<Void> updateBasicUserByEmail(User user);
 }

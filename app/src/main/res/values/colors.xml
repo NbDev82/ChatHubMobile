@@ -14,5 +14,5 @@
     <color name="secondary_text">#757575</color>
     <color name="input_bg">#ececec</color>
     <color name="icon_bg">#20ffffff</color>
-    <color name="error">#800020</color>
+    <color name="error">#dc1f17</color>
 </resources>

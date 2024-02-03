@@ -7,10 +7,14 @@ import android.widget.DatePicker;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
+import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.example.R;
+import com.example.customcontrol.customalertdialog.AlertDialogFragment;
+import com.example.customcontrol.customalertdialog.AlertDialogModel;
+import com.example.customcontrol.customalertdialog.AlertDialogViewModel;
 import com.example.databinding.ActivityUserProfileBinding;
 import com.example.home.HomeActivity;
 import com.example.infrastructure.Utils;
@@ -18,11 +22,11 @@ import com.example.user.AuthService;
 import com.example.user.AuthServiceImpl;
 
 import java.util.Calendar;
-import java.util.Date;
 
 public class UserProfileActivity extends AppCompatActivity {
 
-    private UserProfileViewModel viewModel;
+    private UserProfileViewModel mProfileViewModel;
+    private AlertDialogViewModel mAlertDialogViewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,16 +38,18 @@ public class UserProfileActivity extends AppCompatActivity {
 
         AuthService authService = new AuthServiceImpl();
         UserProfileViewModelFactory factory = new UserProfileViewModelFactory(authService);
-        viewModel = new ViewModelProvider(this, factory).get(UserProfileViewModel.class);
+        mProfileViewModel = new ViewModelProvider(this, factory).get(UserProfileViewModel.class);
 
-        binding.setViewModel(viewModel);
+        binding.setViewModel(mProfileViewModel);
         binding.setLifecycleOwner(this);
 
         setObservers();
+
+        mAlertDialogViewModel = new ViewModelProvider(this).get(AlertDialogViewModel.class);
     }
 
     private void setObservers() {
-        viewModel.getNavigateToHome().observe(this, new Observer<Boolean>() {
+        mProfileViewModel.getNavigateToHome().observe(this, new Observer<Boolean>() {
             @Override
             public void onChanged(Boolean aBoolean) {
                 if (aBoolean) {
@@ -52,6 +58,10 @@ public class UserProfileActivity extends AppCompatActivity {
                 }
             }
         });
+
+        mProfileViewModel.getOpenDatePickerDialog().observe(this, this::openDatePickerDialog);
+
+        mProfileViewModel.getOpenCustomAlertDialog().observe(this, this::openCustomAlertDialog);
     }
 
     private void openDatePickerDialog(Calendar currentDate) {
@@ -64,10 +74,26 @@ public class UserProfileActivity extends AppCompatActivity {
             public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
                 Calendar selectedDate = Calendar.getInstance();
                 selectedDate.set(year, month, dayOfMonth);
-                viewModel.setBirthday(selectedDate.getTime());
+                mProfileViewModel.setBirthday(selectedDate.getTime());
             }
         }, year, month, dayOfMonth);
 
         datePickerDialog.show();
+    }
+
+    private void openCustomAlertDialog(AlertDialogModel alertDialogModel) {
+        mAlertDialogViewModel.setTitle("Update user!");
+        mAlertDialogViewModel.setMessage("Update user!");
+        mAlertDialogViewModel.setPositiveButton("Yes", aVoid -> {
+            mProfileViewModel.getToastMessage().postValue("Yes");
+        });
+        mAlertDialogViewModel.setNegativeButton("No", aVoid -> {
+            mProfileViewModel.getToastMessage().postValue("No");
+        });
+        mAlertDialogViewModel.setAlertDialogModel(alertDialogModel);
+        AlertDialogFragment dialogFragment = new AlertDialogFragment(mAlertDialogViewModel);
+
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        dialogFragment.show(fragmentManager, "AlertDialogFragment");
     }
 }

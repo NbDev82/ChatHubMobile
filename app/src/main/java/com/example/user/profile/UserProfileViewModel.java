@@ -6,11 +6,13 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
+import com.example.customcontrol.customalertdialog.AlertDialogModel;
 import com.example.infrastructure.Utils;
 import com.example.user.AuthService;
 import com.example.user.EGender;
 import com.example.user.User;
 
+import java.util.Calendar;
 import java.util.Date;
 import android.os.Handler;
 
@@ -20,30 +22,29 @@ public class UserProfileViewModel extends ViewModel {
 
     private final AuthService mAuthService;
     private final MutableLiveData<String> mFullName = new MutableLiveData<>();
-    private final MutableLiveData<String> mEmail = new MutableLiveData<>();
-    private final MutableLiveData<String> mPhoneNumber = new MutableLiveData<>();
     private final MutableLiveData<EGender> mGender = new MutableLiveData<>();
     private final MutableLiveData<String> mBirthdayStr = new MutableLiveData<>();
     private final MutableLiveData<String> mToastMessage = new MutableLiveData<>();
     private final MutableLiveData<Boolean> mNavigateToHome = new MutableLiveData<>();
-    private final MutableLiveData<Boolean> mIsLoading = new MutableLiveData<>();
-    private User mUser;
+    private final MutableLiveData<Boolean> mIsUserInitializing = new MutableLiveData<>();
+    private final MutableLiveData<Boolean> mIsDataChanged = new MutableLiveData<>();
+    private final MutableLiveData<Boolean> mIsUserUpdating = new MutableLiveData<>();
+    private final MutableLiveData<Calendar> mOpenDatePickerDialog = new MutableLiveData<>();
+    private final MutableLiveData<AlertDialogModel> mOpenCustomAlertDialog = new MutableLiveData<>();
+    private User mOriginalUser;
     private Handler mHandler = new Handler();
 
     public LiveData<String> getFullName() {
         return mFullName;
     }
 
-    public LiveData<String> getEmail() {
-        return mEmail;
-    }
-
-    public LiveData<String> getPhoneNumber() {
-        return mPhoneNumber;
-    }
-
     public LiveData<EGender> getGender() {
         return mGender;
+    }
+
+    public void setGender(EGender gender) {
+        mGender.postValue(gender);
+        mOriginalUser.setGender(gender);
     }
 
     public LiveData<String> getBirthdayStr() {
@@ -52,11 +53,11 @@ public class UserProfileViewModel extends ViewModel {
 
     public void setBirthday(Date birthday) {
         String birthdayStr = Utils.dateToString(birthday);
-        mBirthdayStr.setValue(birthdayStr);
-        mUser.setBirthday(birthday);
+        mBirthdayStr.postValue(birthdayStr);
+        mOriginalUser.setBirthday(birthday);
     }
 
-    public LiveData<String> getToastMessage() {
+    public MutableLiveData<String> getToastMessage() {
         return mToastMessage;
     }
 
@@ -64,33 +65,48 @@ public class UserProfileViewModel extends ViewModel {
         return mNavigateToHome;
     }
 
-    public MutableLiveData<Boolean> getIsLoading() {
-        return mIsLoading;
+    public MutableLiveData<Boolean> getIsUserInitializing() {
+        return mIsUserInitializing;
+    }
+
+    public MutableLiveData<Boolean> getIsDataChanged() {
+        return mIsDataChanged;
+    }
+
+    public MutableLiveData<Boolean> getIsUserUpdating() {
+        return mIsUserUpdating;
+    }
+
+    public MutableLiveData<Calendar> getOpenDatePickerDialog() {
+        return mOpenDatePickerDialog;
+    }
+
+    public LiveData<AlertDialogModel> getOpenCustomAlertDialog() {
+        return mOpenCustomAlertDialog;
     }
 
     public UserProfileViewModel(AuthService authService) {
         mAuthService = authService;
 
-        mIsLoading.postValue(true);
+        mIsDataChanged.setValue(false);
+        mIsUserInitializing.postValue(true);
         authService.getCurrentUser()
                 .addOnSuccessListener(user -> {
                     if (user != null) {
-                        updateUserInfo(user);
+                        setUser(user);
 
-                        mHandler.postDelayed(() -> mIsLoading.setValue(false), 1000);
+                        mHandler.postDelayed(() -> mIsUserInitializing.setValue(false), 1000);
                     }
                 })
                 .addOnFailureListener(e -> {
                     Log.e(TAG, "Error: " + e);
-                    mIsLoading.postValue(true);
+                    mIsUserInitializing.postValue(true);
                 });
     }
 
-    private void updateUserInfo(User user) {
-        mUser = user;
+    private void setUser(User user) {
+        mOriginalUser = user;
         mFullName.setValue(user.getFullName());
-        mEmail.setValue(user.getEmail());
-        mPhoneNumber.setValue(user.getPhoneNumber());
         mGender.setValue(user.getGender());
         Date birthday = user.getBirthday();
         mBirthdayStr.setValue(Utils.dateToString(birthday));
@@ -98,6 +114,49 @@ public class UserProfileViewModel extends ViewModel {
 
     public void navigateToHome() {
         mNavigateToHome.postValue(true);
+    }
+
+    public void openDatePickerDialog() {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime( mOriginalUser.getBirthday() );
+        mOpenDatePickerDialog.postValue(calendar);
+    }
+
+    private void checkChangeStatus() {
+        if (!mOriginalUser.getFullName().equals( mFullName.getValue() ) ||
+                !mOriginalUser.getGender().equals( mGender.getValue() ) ||
+                !Utils.compareDateWithDateStr(mOriginalUser.getBirthday(), mBirthdayStr.getValue())
+        ) {
+            mIsDataChanged.postValue(true);
+        } else {
+            mIsDataChanged.postValue(false);
+        }
+    }
+
+    public void openUpdateDialog() {
+        AlertDialogModel model = new AlertDialogModel.Builder()
+                .setTitle("")
+                .setMessage("")
+                .setPositiveButton("Yes", aVoid -> {
+                    updateUser();
+                })
+                .setNegativeButton("No", aVoid -> {
+                    refreshAllFields();
+                })
+                .build();
+        mOpenCustomAlertDialog.postValue(model);
+    }
+
+    public void updateUser() {
+        mOriginalUser.setFullName( mFullName.getValue() );
+        mOriginalUser.setGender( mGender.getValue() );
+        Date birthday = Utils.stringToDate( mBirthdayStr.getValue() );
+        mOriginalUser.setBirthday(birthday);
+
+        mAuthService.updateBasicUserByEmail(mOriginalUser);
+    }
+
+    private void refreshAllFields() {
     }
 
     @Override
