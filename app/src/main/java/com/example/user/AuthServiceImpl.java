@@ -3,11 +3,8 @@ package com.example.user;
 import android.app.Activity;
 import android.util.Log;
 
-import androidx.annotation.NonNull;
-
 import com.example.user.login.SignInRequest;
 import com.example.user.signup.SignUpRequest;
-import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
@@ -203,7 +200,7 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public Task<Boolean> checkUserExitsByEmail(String email) {
-        CollectionReference usersRef = db.collection(EUserField.FULL_NAME.getName());
+        CollectionReference usersRef = db.collection(EUserField.COLLECTION_NAME.getName());
 
         Query query = usersRef.whereEqualTo(EUserField.EMAIL.getName(), email);
         return query.get()
@@ -234,11 +231,12 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public Task<Void> updateBasicUserByEmail(User user) {
-        CollectionReference usersRef = db.collection(EUserField.FULL_NAME.getName());
-        DocumentReference userRef = usersRef.document(user.getEmail());
+    public Task<Void> updateBasicUser(String uid, User user) {
+        CollectionReference usersRef = db.collection(EUserField.COLLECTION_NAME.getName());
+        DocumentReference userRef = usersRef.document(uid);
 
         Map<String, Object> updates = new HashMap<>();
+        updates.put(EUserField.IMAGE_URL.getName(), user.getImageUrl());
         updates.put(EUserField.FULL_NAME.getName(), user.getFullName());
         updates.put(EUserField.GENDER.getName(), user.getGender());
         updates.put(EUserField.BIRTHDAY.getName(), user.getBirthday());

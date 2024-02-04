@@ -67,7 +67,8 @@
                     android:id="@+id/layoutImage"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/_20sdp">
+                    android:layout_marginTop="@dimen/_20sdp"
+                    android:onClick="@{() -> viewModel.openImagePicker()}">
 
                     <com.makeramen.roundedimageview.RoundedImageView
                         android:id="@+id/imageProfile"
@@ -75,6 +76,7 @@
                         android:layout_height="@dimen/_100sdp"
                         android:background="@drawable/background_image"
                         android:scaleType="centerCrop"
+                        app:imageBitmap="@{viewModel.imageBitmap}"
                         app:riv_oval="true" />
 
                     <TextView
@@ -83,6 +85,7 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
                         android:text="Add image"
+                        android:visibility="@{viewModel.imageBitmap == null ? View.VISIBLE : View.GONE}"
                         android:textColor="@color/secondary_text"
                         android:textSize="@dimen/_10ssp"
                         tools:ignore="InvalidId" />
@@ -280,7 +283,7 @@
                     android:text="Update your changes."
                     android:textColor="@color/error"
                     android:layout_gravity="center_vertical"
-                    android:visibility="@{viewModel.isDataChanged ? View.VISIBLE : View.GONE}" />
+                    android:visibility="@{viewModel.isDataChanged ? View.VISIBLE : View.INVISIBLE}" />
 
                 <FrameLayout
                     android:layout_width="match_parent"
@@ -299,7 +302,8 @@
                         android:textSize="@dimen/primary_text_size"
                         android:textStyle="bold"
                         android:onClick="@{()-> viewModel.openUpdateDialog()}"
-                        android:enabled="@{!viewModel.isUserUpdating || !viewModel.isDataChanged}"
+                        android:enabled="@{viewModel.isDataChanged}"
+                        android:visibility="@{viewModel.isUserUpdating ? View.INVISIBLE : View.VISIBLE}"
                         app:cornerRadius="@dimen/_8sdp" />
 
 

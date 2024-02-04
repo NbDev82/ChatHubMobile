@@ -3,16 +3,17 @@ package com.example.user.profile;
 import android.app.DatePickerDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Bundle;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.widget.Button;
+import android.provider.MediaStore;
+import android.util.Log;
 import android.widget.DatePicker;
-import android.widget.TextView;
 
-import androidx.appcompat.app.AlertDialog;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.content.res.AppCompatResources;
 import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
@@ -30,9 +31,13 @@ import com.example.user.AuthServiceImpl;
 import com.example.user.EGender;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
+import java.io.FileNotFoundException;
+import java.io.InputStream;
 import java.util.Calendar;
 
 public class UserProfileActivity extends AppCompatActivity {
+
+    private static final String TAG = UserProfileActivity.class.getSimpleName();
 
     private UserProfileViewModel mProfileViewModel;
     private int mSelectedItem = 0;
@@ -66,6 +71,15 @@ public class UserProfileActivity extends AppCompatActivity {
             }
         });
 
+        mProfileViewModel.getOpenImagePicker().observe(this, new Observer<Boolean>() {
+            @Override
+            public void onChanged(Boolean aBoolean) {
+                if (aBoolean) {
+                    openImagePicker();
+                }
+            }
+        });
+
         mProfileViewModel.getOpenCustomInputDialog().observe(this, this::openCustomInputDialog);
 
         mProfileViewModel.getOpenDatePickerDialog().observe(this, this::openDatePickerDialog);
@@ -74,6 +88,31 @@ public class UserProfileActivity extends AppCompatActivity {
 
         mProfileViewModel.getOpenSingleChoiceGender().observe(this, this::openSingleChoiceGender);
     }
+
+    private void openImagePicker() {
+        Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+        pickImage.launch(intent);
+    }
+
+    private final ActivityResultLauncher pickImage = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            result -> {
+                if (result.getResultCode() == RESULT_OK) {
+                    if (result.getData() != null) {
+                        Uri imgUri = result.getData().getData();
+                        InputStream inputStream = null;
+                        try {
+                            inputStream = getContentResolver().openInputStream(imgUri);
+                        } catch (FileNotFoundException e) {
+                            Log.e(TAG, "Error: " + e);
+                        }
+                        Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
+                        mProfileViewModel.setImageBitmap(bitmap);
+                    }
+                }
+            }
+    );
 
     private void openCustomInputDialog(InputDialogModel inputDialogModel) {
         InputDialogFragment dialog = new InputDialogFragment(inputDialogModel);
