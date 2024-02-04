@@ -16,4 +16,6 @@
     <dimen name="profile_item_distance">@dimen/_5sdp</dimen>
 
     <dimen name="card_corner_radius">@dimen/_10sdp</dimen>
+
+    <dimen name="toolbar_height">@dimen/_40sdp</dimen>
 </resources>

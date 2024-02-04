@@ -20,13 +20,13 @@
 
         <androidx.appcompat.widget.Toolbar
             android:layout_width="match_parent"
-            android:layout_height="@dimen/_40sdp"
+            android:layout_height="@dimen/toolbar_height"
             android:background="@drawable/gradient_color_primary">
 
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@drawable/ic_back_arrow"
+                android:src="@drawable/ic_nav_arrow_left"
                 app:tint="@color/white"
                 android:onClickListener="@{() -> viewModel.navigateToHome()}"
                 android:contentDescription="Back to home"/>
