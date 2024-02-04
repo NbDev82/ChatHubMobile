@@ -4,20 +4,21 @@ import android.app.DatePickerDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.Button;
 import android.widget.DatePicker;
+import android.widget.TextView;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.content.res.AppCompatResources;
 import androidx.databinding.DataBindingUtil;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.example.R;
-import com.example.customcontrol.customalertdialog.AlertDialogFragment;
 import com.example.customcontrol.customalertdialog.AlertDialogModel;
-import com.example.customcontrol.customalertdialog.AlertDialogViewModel;
 import com.example.databinding.ActivityUserProfileBinding;
 import com.example.home.HomeActivity;
 import com.example.infrastructure.Utils;
@@ -87,15 +88,37 @@ public class UserProfileActivity extends AppCompatActivity {
     }
 
     private void openCustomAlertDialog(AlertDialogModel alertDialogModel) {
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        AlertDialogViewModel alertDialogViewModel = new ViewModelProvider(this).get(AlertDialogViewModel.class);
-        alertDialogViewModel.setAlertDialogModel(alertDialogModel);
-        AlertDialogFragment dialogFragment = new AlertDialogFragment(alertDialogViewModel);
+        View view = LayoutInflater.from(UserProfileActivity.this).inflate(R.layout.layout_alert_dialog, null);
+        AlertDialog alertDialog = new MaterialAlertDialogBuilder(UserProfileActivity.this)
+                .setCancelable(false)
+                .setView(view)
+                .create();
 
-        FragmentTransaction transaction = fragmentManager.beginTransaction();
-        transaction.add(dialogFragment, "AlertDialogFragment");
-        transaction.commit();
-        transaction.addToBackStack(null);
+        TextView titleTxv = view.findViewById(R.id.titleTxv);
+        TextView messageTxv = view.findViewById(R.id.messageTxv);
+        Button positiveBtn = view.findViewById(R.id.positiveBtn);
+        Button negativeBtn = view.findViewById(R.id.negativeBtn);
+
+        titleTxv.setText( alertDialogModel.getTitle() );
+        messageTxv.setText( alertDialogModel.getMessage() );
+        positiveBtn.setText( alertDialogModel.getPositiveBtnTitle() );
+        positiveBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                alertDialogModel.getPositiveButtonClickListener().accept(null);
+                alertDialog.dismiss();
+            }
+        });
+        negativeBtn.setText( alertDialogModel.getNegativeBtnTitle() );
+        negativeBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                alertDialogModel.getNegativeButtonClickListener().accept(null);
+                alertDialog.dismiss();
+            }
+        });
+
+        alertDialog.show();
     }
 
     private void openSingleChoiceGender(int selectedItem) {

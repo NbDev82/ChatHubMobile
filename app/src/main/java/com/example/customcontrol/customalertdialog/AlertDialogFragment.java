@@ -1,6 +1,5 @@
 package com.example.customcontrol.customalertdialog;
 
-import android.content.DialogInterface;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
@@ -15,12 +14,11 @@ import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.example.R;
-import com.example.databinding.FragmentAlertDialogBinding;
-import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+
+import java.util.zip.Inflater;
 
 public class AlertDialogFragment extends AppCompatDialogFragment {
 
-    private FragmentAlertDialogBinding mBinding;
     private AlertDialogViewModel mViewModel;
 
     public AlertDialogFragment(AlertDialogViewModel viewModel) {
@@ -44,10 +42,10 @@ public class AlertDialogFragment extends AppCompatDialogFragment {
             mViewModel = new ViewModelProvider(requireActivity()).get(AlertDialogViewModel.class);
         }
 
-        mBinding = DataBindingUtil
-                .inflate(LayoutInflater.from(getContext()), R.layout.fragment_alert_dialog, null, false);
-        mBinding.setViewModel(mViewModel);
-        mBinding.setLifecycleOwner(this);
+//        mBinding = DataBindingUtil
+//                .inflate(LayoutInflater.from(getContext()), R.layout.layout_alert_dialog, null, false);
+//        mBinding.setViewModel(mViewModel);
+//        mBinding.setLifecycleOwner(this);
 
         mViewModel.getPositiveButtonClicked().observe(getViewLifecycleOwner(), clicked -> {
             if (clicked) {
@@ -61,25 +59,8 @@ public class AlertDialogFragment extends AppCompatDialogFragment {
             }
         });
 
-//        MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(requireContext())
-//                .setTitle("test")
-//                .setMessage("Test")
-//                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-//                    @Override
-//                    public void onClick(DialogInterface dialog, int which) {
-//                        dismiss();
-//                    }
-//                })
-//                .setNegativeButton("No", new DialogInterface.OnClickListener() {
-//                    @Override
-//                    public void onClick(DialogInterface dialog, int which) {
-//                        dismiss();
-//                    }
-//                });
-//
-//        builder.create().show();
-
-        return mBinding.getRoot();
+//        return View.inflate(LayoutInflater.from(getContext()), R.layout.layout_alert_dialog, null, false);;
+        return null;
     }
 
     @Override
