@@ -95,7 +95,8 @@
                     android:layout_marginTop="@dimen/_20sdp"
                     android:paddingHorizontal="@dimen/profile_item_padding_horizontal"
                     android:background="@drawable/ripple_effect"
-                    android:clickable="true">
+                    android:clickable="true"
+                    android:onClick="@{() -> viewModel.openCustomInputDialog()}">
 
                     <ImageView
                         android:id="@+id/nameIcon"

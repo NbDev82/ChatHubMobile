@@ -1,30 +1,32 @@
 package com.example.customcontrol.customalertdialog;
 
-import android.app.AlertDialog;
 import android.app.Dialog;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.Window;
 import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatDialogFragment;
 
 import com.example.R;
+import com.google.android.material.button.MaterialButton;
 
 public class AlertDialogFragment extends AppCompatDialogFragment {
 
     public static final String TAG = AlertDialogFragment.class.getSimpleName();
 
-    private AlertDialogModel model;
+    private final AlertDialogModel model;
     private TextView titleTxv;
     private TextView messageTxv;
-    private Button positiveBtn;
-    private Button negativeBtn;
+    private MaterialButton positiveBtn;
+    private MaterialButton negativeBtn;
 
     public AlertDialogFragment(AlertDialogModel model) {
         super();
@@ -35,13 +37,15 @@ public class AlertDialogFragment extends AppCompatDialogFragment {
     @Override
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
         LayoutInflater inflater = requireActivity().getLayoutInflater();
-        View view = inflater.inflate(R.layout.layout_alert_dialog, null);
+        View view = inflater.inflate(R.layout.custom_alert_dialog, null);
 
-        AlertDialog dialog = new AlertDialog.Builder(getActivity())
+        AlertDialog dialog = new AlertDialog.Builder(requireActivity())
                 .setView(view)
                 .create();
+        dialog.setCanceledOnTouchOutside(false);
 
-        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        Window window = dialog.getWindow();
+        window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
 
         titleTxv = view.findViewById(R.id.titleTxv);
         messageTxv = view.findViewById(R.id.messageTxv);

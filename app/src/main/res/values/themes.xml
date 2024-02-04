@@ -8,4 +8,9 @@
     </style>
 
     <style name="Theme.ChatHub" parent="Base.Theme.ChatHub" />
+
+    <style name="CustomMaterialCardViewDialog" parent="Widget.MaterialComponents.CardView">
+        <item name="cardCornerRadius">@dimen/card_corner_radius</item>
+        <item name="cardBackgroundColor">@color/primary_bg</item>
+    </style>
 </resources>

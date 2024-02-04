@@ -14,4 +14,6 @@
     <dimen name="profile_icon_size">@dimen/_25sdp</dimen>
     <dimen name="profile_item_padding_horizontal">@dimen/_20sdp</dimen>
     <dimen name="profile_item_distance">@dimen/_5sdp</dimen>
+
+    <dimen name="card_corner_radius">@dimen/_10sdp</dimen>
 </resources>

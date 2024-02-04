@@ -1,5 +1,6 @@
 package com.example.user.profile;
 
+import android.os.Handler;
 import android.util.Log;
 
 import androidx.lifecycle.LiveData;
@@ -7,6 +8,7 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import com.example.customcontrol.customalertdialog.AlertDialogModel;
+import com.example.customcontrol.inputdialogfragment.InputDialogModel;
 import com.example.infrastructure.Utils;
 import com.example.user.AuthService;
 import com.example.user.EGender;
@@ -14,7 +16,6 @@ import com.example.user.User;
 
 import java.util.Calendar;
 import java.util.Date;
-import android.os.Handler;
 
 public class UserProfileViewModel extends ViewModel {
 
@@ -29,6 +30,7 @@ public class UserProfileViewModel extends ViewModel {
     private final MutableLiveData<Boolean> mIsUserInitializing = new MutableLiveData<>();
     private final MutableLiveData<Boolean> mIsDataChanged = new MutableLiveData<>();
     private final MutableLiveData<Boolean> mIsUserUpdating = new MutableLiveData<>();
+    private final MutableLiveData<InputDialogModel> mOpenInputDialog = new MutableLiveData<>();
     private final MutableLiveData<Calendar> mOpenDatePickerDialog = new MutableLiveData<>();
     private final MutableLiveData<AlertDialogModel> mOpenCustomAlertDialog = new MutableLiveData<>();
     private final MutableLiveData<Integer> mOpenSingleChoiceGender = new MutableLiveData<>();
@@ -78,6 +80,10 @@ public class UserProfileViewModel extends ViewModel {
         return mIsUserUpdating;
     }
 
+    public LiveData<InputDialogModel> getOpenCustomInputDialog() {
+        return mOpenInputDialog;
+    }
+
     public MutableLiveData<Calendar> getOpenDatePickerDialog() {
         return mOpenDatePickerDialog;
     }
@@ -119,6 +125,19 @@ public class UserProfileViewModel extends ViewModel {
 
     public void navigateToHome() {
         mNavigateToHome.postValue(true);
+    }
+
+    public void openCustomInputDialog() {
+        InputDialogModel model = new InputDialogModel.Builder()
+                .setTitle("Full name")
+                .setCurrentContent( mFullName.getValue() )
+                .setSubmitButtonClickListener(newName -> {
+                    if (!newName.isEmpty()) {
+                        mFullName.postValue(newName);
+                    }
+                })
+                .build();
+        mOpenInputDialog.postValue(model);
     }
 
     public void openDatePickerDialog() {

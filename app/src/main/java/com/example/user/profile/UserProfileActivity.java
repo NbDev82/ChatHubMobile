@@ -20,6 +20,8 @@ import androidx.lifecycle.ViewModelProvider;
 import com.example.R;
 import com.example.customcontrol.customalertdialog.AlertDialogFragment;
 import com.example.customcontrol.customalertdialog.AlertDialogModel;
+import com.example.customcontrol.inputdialogfragment.InputDialogFragment;
+import com.example.customcontrol.inputdialogfragment.InputDialogModel;
 import com.example.databinding.ActivityUserProfileBinding;
 import com.example.home.HomeActivity;
 import com.example.infrastructure.Utils;
@@ -64,11 +66,18 @@ public class UserProfileActivity extends AppCompatActivity {
             }
         });
 
+        mProfileViewModel.getOpenCustomInputDialog().observe(this, this::openCustomInputDialog);
+
         mProfileViewModel.getOpenDatePickerDialog().observe(this, this::openDatePickerDialog);
 
         mProfileViewModel.getOpenCustomAlertDialog().observe(this, this::openCustomAlertDialog);
 
         mProfileViewModel.getOpenSingleChoiceGender().observe(this, this::openSingleChoiceGender);
+    }
+
+    private void openCustomInputDialog(InputDialogModel inputDialogModel) {
+        InputDialogFragment dialog = new InputDialogFragment(inputDialogModel);
+        dialog.show(getSupportFragmentManager(), InputDialogFragment.TAG);
     }
 
     private void openDatePickerDialog(Calendar currentDate) {
