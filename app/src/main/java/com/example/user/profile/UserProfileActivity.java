@@ -18,6 +18,7 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.example.R;
+import com.example.customcontrol.customalertdialog.AlertDialogFragment;
 import com.example.customcontrol.customalertdialog.AlertDialogModel;
 import com.example.databinding.ActivityUserProfileBinding;
 import com.example.home.HomeActivity;
@@ -88,37 +89,8 @@ public class UserProfileActivity extends AppCompatActivity {
     }
 
     private void openCustomAlertDialog(AlertDialogModel alertDialogModel) {
-        View view = LayoutInflater.from(UserProfileActivity.this).inflate(R.layout.layout_alert_dialog, null);
-        AlertDialog alertDialog = new MaterialAlertDialogBuilder(UserProfileActivity.this)
-                .setCancelable(false)
-                .setView(view)
-                .create();
-
-        TextView titleTxv = view.findViewById(R.id.titleTxv);
-        TextView messageTxv = view.findViewById(R.id.messageTxv);
-        Button positiveBtn = view.findViewById(R.id.positiveBtn);
-        Button negativeBtn = view.findViewById(R.id.negativeBtn);
-
-        titleTxv.setText( alertDialogModel.getTitle() );
-        messageTxv.setText( alertDialogModel.getMessage() );
-        positiveBtn.setText( alertDialogModel.getPositiveBtnTitle() );
-        positiveBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                alertDialogModel.getPositiveButtonClickListener().accept(null);
-                alertDialog.dismiss();
-            }
-        });
-        negativeBtn.setText( alertDialogModel.getNegativeBtnTitle() );
-        negativeBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                alertDialogModel.getNegativeButtonClickListener().accept(null);
-                alertDialog.dismiss();
-            }
-        });
-
-        alertDialog.show();
+        AlertDialogFragment dialog = new AlertDialogFragment(alertDialogModel);
+        dialog.show(getSupportFragmentManager(), AlertDialogFragment.TAG);
     }
 
     private void openSingleChoiceGender(int selectedItem) {

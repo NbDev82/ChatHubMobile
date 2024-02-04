@@ -1,70 +1,72 @@
 package com.example.customcontrol.customalertdialog;
 
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatDialogFragment;
-import androidx.databinding.DataBindingUtil;
-import androidx.lifecycle.ViewModelProvider;
 
 import com.example.R;
 
-import java.util.zip.Inflater;
-
 public class AlertDialogFragment extends AppCompatDialogFragment {
 
-    private AlertDialogViewModel mViewModel;
+    public static final String TAG = AlertDialogFragment.class.getSimpleName();
 
-    public AlertDialogFragment(AlertDialogViewModel viewModel) {
-        mViewModel = viewModel;
+    private AlertDialogModel model;
+    private TextView titleTxv;
+    private TextView messageTxv;
+    private Button positiveBtn;
+    private Button negativeBtn;
+
+    public AlertDialogFragment(AlertDialogModel model) {
+        super();
+        this.model = model;
     }
 
+    @NonNull
     @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
+        LayoutInflater inflater = requireActivity().getLayoutInflater();
+        View view = inflater.inflate(R.layout.layout_alert_dialog, null);
 
-        requireActivity()
-                .getWindow()
-                .setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-        setCancelable(false);
-    }
+        AlertDialog dialog = new AlertDialog.Builder(getActivity())
+                .setView(view)
+                .create();
 
-    @Nullable
-    @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        if (mViewModel == null) {
-            mViewModel = new ViewModelProvider(requireActivity()).get(AlertDialogViewModel.class);
-        }
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
 
-//        mBinding = DataBindingUtil
-//                .inflate(LayoutInflater.from(getContext()), R.layout.layout_alert_dialog, null, false);
-//        mBinding.setViewModel(mViewModel);
-//        mBinding.setLifecycleOwner(this);
+        titleTxv = view.findViewById(R.id.titleTxv);
+        messageTxv = view.findViewById(R.id.messageTxv);
+        positiveBtn = view.findViewById(R.id.positiveBtn);
+        negativeBtn = view.findViewById(R.id.negativeBtn);
 
-        mViewModel.getPositiveButtonClicked().observe(getViewLifecycleOwner(), clicked -> {
-            if (clicked) {
-                dismiss();
+        titleTxv.setText( model.getTitle() );
+        messageTxv.setText( model.getMessage() );
+        positiveBtn.setText( model.getPositiveBtnTitle() );
+        positiveBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                model.getPositiveButtonClickListener().accept(null);
+                dialog.dismiss();
+            }
+        });
+        negativeBtn.setText( model.getNegativeBtnTitle() );
+        negativeBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                model.getNegativeButtonClickListener().accept(null);
+                dialog.dismiss();
             }
         });
 
-        mViewModel.getNegativeButtonClicked().observe(getViewLifecycleOwner(), clicked -> {
-            if (clicked) {
-                dismiss();
-            }
-        });
-
-//        return View.inflate(LayoutInflater.from(getContext()), R.layout.layout_alert_dialog, null, false);;
-        return null;
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
+        return dialog;
     }
 }
