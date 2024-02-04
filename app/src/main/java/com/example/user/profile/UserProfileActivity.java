@@ -1,13 +1,16 @@
 package com.example.user.profile;
 
 import android.app.DatePickerDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.DatePicker;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.content.res.AppCompatResources;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
@@ -20,13 +23,15 @@ import com.example.home.HomeActivity;
 import com.example.infrastructure.Utils;
 import com.example.user.AuthService;
 import com.example.user.AuthServiceImpl;
+import com.example.user.EGender;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 import java.util.Calendar;
 
 public class UserProfileActivity extends AppCompatActivity {
 
     private UserProfileViewModel mProfileViewModel;
-    private AlertDialogViewModel mAlertDialogViewModel;
+    private int mSelectedItem = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,8 +49,6 @@ public class UserProfileActivity extends AppCompatActivity {
         binding.setLifecycleOwner(this);
 
         setObservers();
-
-        mAlertDialogViewModel = new ViewModelProvider(this).get(AlertDialogViewModel.class);
     }
 
     private void setObservers() {
@@ -62,6 +65,8 @@ public class UserProfileActivity extends AppCompatActivity {
         mProfileViewModel.getOpenDatePickerDialog().observe(this, this::openDatePickerDialog);
 
         mProfileViewModel.getOpenCustomAlertDialog().observe(this, this::openCustomAlertDialog);
+
+        mProfileViewModel.getOpenSingleChoiceGender().observe(this, this::openSingleChoiceGender);
     }
 
     private void openDatePickerDialog(Calendar currentDate) {
@@ -82,18 +87,38 @@ public class UserProfileActivity extends AppCompatActivity {
     }
 
     private void openCustomAlertDialog(AlertDialogModel alertDialogModel) {
-        mAlertDialogViewModel.setTitle("Update user!");
-        mAlertDialogViewModel.setMessage("Update user!");
-        mAlertDialogViewModel.setPositiveButton("Yes", aVoid -> {
-            mProfileViewModel.getToastMessage().postValue("Yes");
-        });
-        mAlertDialogViewModel.setNegativeButton("No", aVoid -> {
-            mProfileViewModel.getToastMessage().postValue("No");
-        });
-        mAlertDialogViewModel.setAlertDialogModel(alertDialogModel);
-        AlertDialogFragment dialogFragment = new AlertDialogFragment(mAlertDialogViewModel);
-
         FragmentManager fragmentManager = getSupportFragmentManager();
-        dialogFragment.show(fragmentManager, "AlertDialogFragment");
+        AlertDialogViewModel alertDialogViewModel = new ViewModelProvider(this).get(AlertDialogViewModel.class);
+        alertDialogViewModel.setAlertDialogModel(alertDialogModel);
+        AlertDialogFragment dialogFragment = new AlertDialogFragment(alertDialogViewModel);
+
+        FragmentTransaction transaction = fragmentManager.beginTransaction();
+        transaction.add(dialogFragment, "AlertDialogFragment");
+        transaction.commit();
+        transaction.addToBackStack(null);
+    }
+
+    private void openSingleChoiceGender(int selectedItem) {
+        mSelectedItem = selectedItem;
+        String[] genderStrs = EGender.getAllDisplays();
+
+        MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(this)
+                .setIcon(R.drawable.ic_gender)
+                .setTitle("Gender")
+                .setSingleChoiceItems(genderStrs, selectedItem, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        mSelectedItem = which;
+                    }
+                })
+                .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        EGender curSelected = EGender.values()[mSelectedItem];
+                        mProfileViewModel.setGender(curSelected);
+                        dialog.dismiss();
+                    }
+                });
+        builder.show();
     }
 }

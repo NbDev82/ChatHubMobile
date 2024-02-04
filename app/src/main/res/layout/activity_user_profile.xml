@@ -214,7 +214,8 @@
                     android:layout_marginTop="@dimen/profile_item_distance"
                     android:paddingHorizontal="@dimen/profile_item_padding_horizontal"
                     android:background="@drawable/ripple_effect"
-                    android:clickable="true">
+                    android:clickable="true"
+                    android:onClick="@{() -> viewModel.openSingleChoiceGender()}">
 
                     <ImageView
                         android:id="@+id/genderIcon"
@@ -297,7 +298,7 @@
                         android:textSize="@dimen/primary_text_size"
                         android:textStyle="bold"
                         android:onClick="@{()-> viewModel.openUpdateDialog()}"
-                        android:enabled="@{!viewModel.isUserUpdating}"
+                        android:enabled="@{!viewModel.isUserUpdating || !viewModel.isDataChanged}"
                         app:cornerRadius="@dimen/_8sdp" />
 
 

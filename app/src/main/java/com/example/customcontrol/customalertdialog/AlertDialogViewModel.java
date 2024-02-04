@@ -21,26 +21,8 @@ public class AlertDialogViewModel extends ViewModel {
         return mTitle;
     }
 
-    public void setTitle(String title) {
-        mTitle.postValue(title);
-    }
-
     public LiveData<String> getMessage() {
         return mMessage;
-    }
-
-    public void setMessage(String message) {
-        mMessage.postValue(message);
-    }
-
-    public void setPositiveButton(String title, Consumer<Void> listener) {
-        mPositiveBtnTitle.postValue(title);
-        mPositiveButtonClickListener = listener;
-    }
-
-    public void setNegativeButton(String title, Consumer<Void> listener) {
-        mNegativeBtnTitle.postValue(title);
-        mNegativeButtonClickListener = listener;
     }
 
     public LiveData<String> getPositiveBtnTitle() {
@@ -74,6 +56,11 @@ public class AlertDialogViewModel extends ViewModel {
     }
 
     public void setAlertDialogModel(AlertDialogModel alertDialogModel) {
-
+        mTitle.postValue( alertDialogModel.getTitle() );
+        mMessage.postValue( alertDialogModel.getMessage() );
+        mPositiveBtnTitle.postValue( alertDialogModel.getPositiveBtnTitle() );
+        mPositiveButtonClickListener = alertDialogModel.getPositiveButtonClickListener();
+        mNegativeBtnTitle.postValue( alertDialogModel.getNegativeBtnTitle() );
+        mNegativeButtonClickListener = alertDialogModel.getNegativeButtonClickListener();
     }
 }

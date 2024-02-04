@@ -12,6 +12,30 @@ public class AlertDialogModel {
 
     private AlertDialogModel() {}
 
+    public String getTitle() {
+        return title;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public String getPositiveBtnTitle() {
+        return positiveBtnTitle;
+    }
+
+    public String getNegativeBtnTitle() {
+        return negativeBtnTitle;
+    }
+
+    public Consumer<Void> getPositiveButtonClickListener() {
+        return positiveButtonClickListener;
+    }
+
+    public Consumer<Void> getNegativeButtonClickListener() {
+        return negativeButtonClickListener;
+    }
+
     public static class Builder {
         private String title;
         private String message;

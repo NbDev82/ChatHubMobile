@@ -31,6 +31,7 @@ public class UserProfileViewModel extends ViewModel {
     private final MutableLiveData<Boolean> mIsUserUpdating = new MutableLiveData<>();
     private final MutableLiveData<Calendar> mOpenDatePickerDialog = new MutableLiveData<>();
     private final MutableLiveData<AlertDialogModel> mOpenCustomAlertDialog = new MutableLiveData<>();
+    private final MutableLiveData<Integer> mOpenSingleChoiceGender = new MutableLiveData<>();
     private User mOriginalUser;
     private Handler mHandler = new Handler();
 
@@ -85,6 +86,10 @@ public class UserProfileViewModel extends ViewModel {
         return mOpenCustomAlertDialog;
     }
 
+    public LiveData<Integer> getOpenSingleChoiceGender() {
+        return mOpenSingleChoiceGender;
+    }
+
     public UserProfileViewModel(AuthService authService) {
         mAuthService = authService;
 
@@ -135,12 +140,14 @@ public class UserProfileViewModel extends ViewModel {
 
     public void openUpdateDialog() {
         AlertDialogModel model = new AlertDialogModel.Builder()
-                .setTitle("")
-                .setMessage("")
+                .setTitle("Update!")
+                .setMessage("When you click \"OK\", your information will be updated.")
                 .setPositiveButton("Yes", aVoid -> {
+                    mToastMessage.postValue("Yes");
                     updateUser();
                 })
                 .setNegativeButton("No", aVoid -> {
+                    mToastMessage.postValue("No");
                     refreshAllFields();
                 })
                 .build();
@@ -157,6 +164,12 @@ public class UserProfileViewModel extends ViewModel {
     }
 
     private void refreshAllFields() {
+    }
+
+    public void openSingleChoiceGender() {
+        EGender curGenderSelected = mGender.getValue();
+        int curIndexSelected = EGender.getCurrentIndex(curGenderSelected);
+        mOpenSingleChoiceGender.postValue(curIndexSelected);
     }
 
     @Override
