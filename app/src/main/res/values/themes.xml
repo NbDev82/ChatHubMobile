@@ -13,4 +13,15 @@
         <item name="cardCornerRadius">@dimen/card_corner_radius</item>
         <item name="cardBackgroundColor">@color/primary_bg</item>
     </style>
+
+    <style name="CustomTextInputLayoutPrimary" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+        <!-- Change border color -->
+        <item name="boxStrokeWidth">1dp</item>
+
+        <!-- Change corner radius -->
+        <item name="boxCornerRadiusTopStart">@dimen/input_layout_corner_radius</item>
+        <item name="boxCornerRadiusTopEnd">@dimen/input_layout_corner_radius</item>
+        <item name="boxCornerRadiusBottomStart">@dimen/input_layout_corner_radius</item>
+        <item name="boxCornerRadiusBottomEnd">@dimen/input_layout_corner_radius</item>
+    </style>
 </resources>

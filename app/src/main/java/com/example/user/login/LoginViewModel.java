@@ -1,5 +1,6 @@
 package com.example.user.login;
 
+import android.text.TextUtils;
 import android.util.Log;
 import android.util.Patterns;
 
@@ -7,8 +8,6 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-import com.example.infrastructure.PreferenceManager;
-import com.example.infrastructure.Utils;
 import com.example.user.AuthService;
 
 public class LoginViewModel extends ViewModel {
@@ -24,6 +23,7 @@ public class LoginViewModel extends ViewModel {
     private final MutableLiveData<Boolean> mNavigateToHome = new MutableLiveData<>();
     private final MutableLiveData<Boolean> mNavigateToGoogleSignIn = new MutableLiveData<>();
     private final MutableLiveData<Boolean> mNavigateToGithubAuth = new MutableLiveData<>();
+    private final MutableLiveData<Boolean> mIsLogging = new MutableLiveData<>();
 
     public MutableLiveData<String> getEmail() {
         return mEmail;
@@ -57,59 +57,93 @@ public class LoginViewModel extends ViewModel {
         return mNavigateToGithubAuth;
     }
 
+    public LiveData<Boolean> getIsLogging() {
+        return mIsLogging;
+    }
+
     public LoginViewModel(AuthService authService) {
         mAuthService = authService;
     }
 
     public void onLoginBtnClick() {
+        mIsLogging.postValue(true);
         Log.i(TAG, "Login button clicked");
 
+        trimAllInputs();
         String email = mEmail.getValue() != null ? mEmail.getValue() : "";
         String password = mPassword.getValue() != null ? mPassword.getValue() : "";
 
-        if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-            mToastMessage.setValue("Enter context email.");
-        } else if (password.isEmpty() || password.length() < 6) {
-            mToastMessage.setValue("Enter proper password.");
-        } else {
-            SignInRequest signInRequest = new SignInRequest(email, password);
-            mAuthService.signIn(signInRequest, aVoid -> {
-                mToastMessage.setValue("Login successful");
-                navigateToHome();
-            }, e -> {
-                mToastMessage.setValue("Please wait while login...");
-                mToastMessage.setValue(String.valueOf(e));
-            });
+        if (!isValidEmail(email)) {
+            mToastMessage.postValue("Enter context email.");
+            mIsLogging.postValue(false);
+            return;
         }
+
+        if (!isValidPassword(password)) {
+            mToastMessage.postValue("Enter proper password.");
+            mIsLogging.postValue(false);
+            return;
+        }
+
+        SignInRequest signInRequest = new SignInRequest(email, password);
+        mAuthService.signIn(signInRequest, aVoid -> {
+            mIsLogging.postValue(false);
+            mToastMessage.postValue("Login successful");
+            navigateToHome();
+        }, e -> {
+            mIsLogging.postValue(false);
+            mToastMessage.postValue("Login unsuccessful");
+            Log.e(TAG, "Error: " + e);
+        });
+    }
+
+    private void trimAllInputs() {
+        String email = mEmail.getValue() != null ? mEmail.getValue() : "";
+        String password = mPassword.getValue() != null ? mPassword.getValue() : "";
+
+        mEmail.postValue(email.trim());
+        mPassword.postValue(password.trim());
+    }
+
+    private boolean isValidEmail(String email) {
+        return !TextUtils.isEmpty(email) && Patterns.EMAIL_ADDRESS.matcher(email).matches();
+    }
+
+    private boolean isValidPassword(String password) {
+        return !TextUtils.isEmpty(password) && password.length() >= 6;
     }
 
     public void navigateToForgotPassword() {
-        mNavigateToForgotPassword.setValue(true);
+        mNavigateToForgotPassword.postValue(true);
     }
 
     public void navigateToSignUp() {
-        mNavigateToSignUp.setValue(true);
+        mNavigateToSignUp.postValue(true);
     }
 
     public void navigateIfAuthenticated() {
         if (mAuthService.isLoggedIn()) {
-            mNavigateToHome.setValue(true);
+            mNavigateToHome.postValue(true);
         }
     }
 
     public void navigateToHome() {
-        mNavigateToHome.setValue(true);
+        mNavigateToHome.postValue(true);
+    }
+
+    public void navigateToFingerprintSignIn() {
+        mToastMessage.postValue("Without implementation");
+    }
+
+    public void navigateToSmsSignIn() {
+        mToastMessage.postValue("Without implementation");
     }
 
     public void navigateToGoogleSignIn() {
-        mNavigateToGoogleSignIn.setValue(true);
+        mNavigateToGoogleSignIn.postValue(true);
     }
 
     public void navigateToGithubAuth() {
-        mNavigateToGithubAuth.setValue(true);
-    }
-
-    public void onFacebookLoginClick() {
-        mToastMessage.setValue("Without implementation");
+        mNavigateToGithubAuth.postValue(true);
     }
 }

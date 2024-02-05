@@ -1,169 +1,235 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     xmlns:bind="http://schemas.android.com/tools">
 
     <data>
+        <import type="android.view.View"/>
         <variable
             name="viewModel"
             type="com.example.user.login.LoginViewModel" />
     </data>
 
-    <LinearLayout
+    <RelativeLayout
+        android:id="@+id/mainRL"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_gravity="center"
-        android:padding="@dimen/_8sdp"
         android:background="@color/primary_bg"
-        android:orientation="vertical">
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/title_login"
-            android:textAlignment="center"
-            android:textSize="@dimen/_36sdp"
-            android:textStyle="bold" />
+        bind:toastMessage="@{viewModel.toastMessage}">
 
         <RelativeLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/_10sdp"
-            android:layout_marginLeft="@dimen/_10sdp">
-            <TextView
-                android:id="@+id/emailTitleTxt"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Email: "
-                android:textAlignment="center"
-                android:textStyle="bold" />
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@{viewModel.email}"
-                android:layout_toEndOf="@id/emailTitleTxt" />
-        </RelativeLayout>
-
-        <RelativeLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/_10sdp"
-            android:layout_marginLeft="@dimen/_10sdp">
-
-            <TextView
-                android:id="@+id/passwordTitleTxt"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Password: "
-                android:textAlignment="center"
-                android:textStyle="bold" />
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@{viewModel.password}"
-                android:layout_toEndOf="@id/passwordTitleTxt" />
-        </RelativeLayout>
-
-        <EditText
+            android:id="@+id/backgroundRl"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="10dp"
-            android:layout_marginTop="60dp"
-            android:layout_marginEnd="10dp"
-            android:layout_marginBottom="20dp"
-            android:hint="@string/hint_email"
-            android:inputType="textEmailAddress"
-            android:padding="8dp"
-            android:text="@={viewModel.email}" />
-
-        <EditText
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="10dp"
-            android:layout_marginEnd="10dp"
-            android:hint="@string/hint_password"
-            android:inputType="textPassword"
-            android:padding="8dp"
-            android:text="@={viewModel.password}" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/_10sdp"
-            android:layout_marginLeft="@dimen/_10sdp"
-            android:text="Forgot password?"
-            android:onClick="@{() -> viewModel.navigateToForgotPassword()}"
-            android:textColor="@color/link_blue"
-            android:textAlignment="center"
-            android:textStyle="bold" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/_10sdp"
-            android:layout_marginLeft="@dimen/_10sdp"
-            android:text="Create a new account?"
-            android:onClick="@{() -> viewModel.navigateToSignUp()}"
-            android:textColor="@color/link_blue"
-            android:textAlignment="center"
-            android:textStyle="bold" />
-
-        <Button
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/_20sdp"
-            android:layout_marginTop="@dimen/_60sdp"
-            android:layout_marginEnd="@dimen/_20sdp"
-            android:onClick="@{()-> viewModel.onLoginBtnClick()}"
-            android:text="@string/btn_login"
-            android:textSize="@dimen/_20ssp"
-            android:textStyle="bold"
-            bind:toastMessage="@{viewModel.toastMessage}" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/_20sdp"
-            android:text="Other methods" />
+            android:layout_height="@dimen/_300sdp"
+            android:background="@drawable/background_gradient_half_circle"/>
 
         <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/_5sdp"
-            android:layout_marginStart="@dimen/_20sdp"
-            android:layout_marginEnd="@dimen/_20sdp" >
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_alignParentTop="true"
+            android:layout_above="@id/loginCardView"
+            android:layout_centerHorizontal="true"
+            android:gravity="center" >
 
-            <Button
+            <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:padding="0dp"
-                android:onClick="@{()-> viewModel.navigateToGoogleSignIn()}"
-                android:text="Google"
-                android:textSize="@dimen/_12ssp"
-                android:textStyle="bold" />
-
-            <Button
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/_10sdp"
-                android:padding="0dp"
-                android:onClick="@{()-> viewModel.navigateToGithubAuth()}"
-                android:text="Github"
-                android:textSize="@dimen/_12ssp"
-                android:textStyle="bold" />
-
-            <Button
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/_10sdp"
-                android:padding="0dp"
-                android:onClick="@{()-> viewModel.onFacebookLoginClick()}"
-                android:text="Facebook"
-                android:textSize="@dimen/_12ssp"
+                android:text="Chat Hub"
+                android:textColor="@color/primary_title"
+                android:textSize="@dimen/primary_app_title_size"
                 android:textStyle="bold" />
         </LinearLayout>
 
-    </LinearLayout>
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/loginCardView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:layout_marginHorizontal="@dimen/_25sdp"
+            app:cardCornerRadius="@dimen/card_corner_radius"
+            app:cardBackgroundColor="@color/primary_bg"
+            app:cardElevation="@dimen/_6sdp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/_20sdp"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Login"
+                    android:textAlignment="center"
+                    android:textColor="@color/secondary_title"
+                    android:textSize="@dimen/primary_title_size" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_10sdp"
+                    android:text="Please login to continue our app"
+                    android:textAlignment="center"
+                    android:textColor="@color/primary_text"
+                    android:textSize="@dimen/primary_sub_title_size" />
+
+                <com.google.android.material.textfield.TextInputLayout
+                    style="@style/CustomTextInputLayoutPrimary"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_30sdp"
+                    android:hint="Email"
+                    app:startIconContentDescription="Mail Icon"
+                    app:startIconDrawable="@drawable/ic_mail">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="textEmailAddress"
+                        android:maxLines="1"
+                        android:textSize="@dimen/primary_text_size"
+                        android:text="@={viewModel.email}" />
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    style="@style/CustomTextInputLayoutPrimary"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_10sdp"
+                    android:hint="Password"
+                    app:startIconContentDescription="Mail Icon"
+                    app:startIconDrawable="@drawable/ic_lock">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="textPassword"
+                        android:maxLines="1"
+                        android:textSize="@dimen/primary_text_size"
+                        android:text="@={viewModel.password}" />
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="end"
+                    android:layout_marginTop="@dimen/_10sdp"
+                    android:onClick="@{() -> viewModel.navigateToForgotPassword()}"
+                    android:text="Forgot password?"
+                    android:textColor="@color/link_blue" />
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_20sdp">
+
+                    <FrameLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentStart="true"
+                        android:layout_marginEnd="@dimen/_10sdp"
+                        android:layout_toStartOf="@id/fingerIcon"
+                        android:animateLayoutChanges="true">
+
+                        <com.google.android.material.button.MaterialButton
+                            android:layout_width="match_parent"
+                            android:layout_height="@dimen/_40sdp"
+                            android:onClick="@{()-> viewModel.onLoginBtnClick()}"
+                            android:text="Login"
+                            android:textColor="@color/white"
+                            android:textSize="@dimen/primary_text_size"
+                            android:textStyle="bold"
+                            android:visibility="@{viewModel.isLogging ? View.INVISIBLE : View.VISIBLE}"
+                            app:cornerRadius="@dimen/_16sdp" />
+
+                        <ProgressBar
+                            android:layout_width="@dimen/_25sdp"
+                            android:layout_height="@dimen/_25sdp"
+                            android:layout_gravity="center"
+                            android:visibility="@{viewModel.isLogging ? View.VISIBLE : View.INVISIBLE}"
+                            tools:visibility="invisible" />
+                    </FrameLayout>
+
+                    <ImageView
+                        android:id="@+id/fingerIcon"
+                        android:layout_width="@dimen/_30sdp"
+                        android:layout_height="@dimen/_30sdp"
+                        android:layout_alignParentEnd="true"
+                        android:layout_centerVertical="true"
+                        android:background="@drawable/ic_finger"
+                        android:onClick="@{()-> viewModel.navigateToFingerprintSignIn()}" />
+                </RelativeLayout>
+
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="0.5dp"
+                    android:layout_marginTop="@dimen/_40sdp"
+                    android:background="@color/gray" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginTop="@dimen/_10sdp"
+                    android:text="Or login with" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_10sdp"
+                    android:gravity="center"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:layout_width="@dimen/_30sdp"
+                        android:layout_height="@dimen/_30sdp"
+                        android:layout_marginEnd="@dimen/item_gap"
+                        android:background="@drawable/ic_sms"
+                        android:onClick="@{()-> viewModel.navigateToSmsSignIn()}" />
+
+                    <ImageView
+                        android:layout_width="@dimen/_30sdp"
+                        android:layout_height="@dimen/_30sdp"
+                        android:layout_marginEnd="@dimen/item_gap"
+                        android:background="@drawable/ic_google"
+                        android:onClick="@{()-> viewModel.navigateToGoogleSignIn()}" />
+
+                    <ImageView
+                        android:layout_width="@dimen/_30sdp"
+                        android:layout_height="@dimen/_30sdp"
+                        android:background="@drawable/ic_github"
+                        android:onClick="@{()-> viewModel.navigateToGithubAuth()}" />
+                </LinearLayout>
+
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_below="@id/loginCardView"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:gravity="center">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Do you have an account?"
+                android:textColor="@color/primary_text"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/_5sdp"
+                android:onClick="@{() -> viewModel.navigateToSignUp()}"
+                android:text="Sign up"
+                android:textColor="@color/link_blue"/>
+        </LinearLayout>
+
+    </RelativeLayout>
 </layout>
