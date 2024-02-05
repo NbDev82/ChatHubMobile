@@ -19,6 +19,7 @@ public class SignUpViewModel extends BaseViewModel {
     private final MutableLiveData<String> mConfirmPassword = new MutableLiveData<>();
     private final MutableLiveData<Boolean> mNavigateToLogin = new MutableLiveData<>();
     private final MutableLiveData<Boolean> mNavigateToHome = new MutableLiveData<>();
+    private final MutableLiveData<Boolean> mIsSigningUp = new MutableLiveData<>();
 
     public MutableLiveData<String> getEmail() {
         return mEmail;
@@ -40,6 +41,10 @@ public class SignUpViewModel extends BaseViewModel {
         return mNavigateToHome;
     }
 
+    public LiveData<Boolean> getIsSigningUp() {
+        return mIsSigningUp;
+    }
+
     public SignUpViewModel(AuthService authService) {
         mAuthService = authService;
     }
@@ -48,7 +53,8 @@ public class SignUpViewModel extends BaseViewModel {
         mNavigateToLogin.postValue(true);
     }
 
-    public void performAuth() {
+    public void signUp() {
+        mIsSigningUp.postValue(true);
         String email = mEmail.getValue() != null ? mEmail.getValue() : "";
         String password = mPassword.getValue() != null ? mPassword.getValue() : "";
         String confirmPassword = mConfirmPassword.getValue() != null
@@ -56,24 +62,29 @@ public class SignUpViewModel extends BaseViewModel {
 
         if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
             mErrorToastMessage.postValue("Enter context email.");
+            mIsSigningUp.postValue(false);
             return;
         }
 
         if (password.isEmpty() || password.length() < 6) {
             mErrorToastMessage.postValue("Enter proper password.");
+            mIsSigningUp.postValue(false);
             return;
         }
 
         if (!password.equals(confirmPassword)) {
             mErrorToastMessage.postValue("Password not match both fields.");
+            mIsSigningUp.postValue(false);
             return;
         }
         SignUpRequest signUpRequest = new SignUpRequest(email, password, confirmPassword);
         mAuthService.signUp(signUpRequest, aVoid -> {
             mSuccessToastMessage.postValue("Sign up successful");
+            mIsSigningUp.postValue(false);
             navigateToHome();
         }, e -> {
             mErrorToastMessage.postValue("Sign up unsuccessful");
+            mIsSigningUp.postValue(false);
             Log.e(TAG, "Error: " + e);
         });
     }
