@@ -1,5 +1,6 @@
 package com.example.home;
 
+import android.os.Handler;
 import android.util.Log;
 
 import androidx.lifecycle.MutableLiveData;
@@ -52,7 +53,12 @@ public class HomeViewModel extends BaseViewModel {
     public void signOut() {
         mAuthService.signOut();
         mSuccessToastMessage.postValue("Sign out");
-        navigateToLogin();
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                navigateToLogin();
+            }
+        }, 100);
     }
 
     private void navigateToLogin() {

@@ -1,9 +1,12 @@
 package com.example.user.login;
 
+import android.os.Handler;
+import android.os.Message;
 import android.text.TextUtils;
 import android.util.Log;
 import android.util.Patterns;
 
+import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
@@ -85,7 +88,12 @@ public class LoginViewModel extends BaseViewModel {
         mAuthService.signIn(signInRequest, aVoid -> {
             mIsLogging.postValue(false);
             mSuccessToastMessage.postValue("Login successfully");
-            navigateToHome();
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    navigateToHome();
+                }
+            }, 100);
         }, e -> {
             mIsLogging.postValue(false);
             mErrorToastMessage.postValue("Login unsuccessfully");

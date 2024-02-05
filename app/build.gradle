@@ -75,7 +75,4 @@ dependencies {
 
     // Shimmer effect
     implementation 'com.facebook.shimmer:shimmer:0.5.0'
-
-    // Toast
-    implementation 'com.github.marcoscgdev:MaterialToast:1.0.2'
 }
