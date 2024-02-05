@@ -16,7 +16,8 @@
         android:padding="@dimen/_8sdp"
         android:background="@color/primary_bg"
         android:orientation="vertical"
-        bind:toastMessage="@{viewModel.toastMessage}">
+        bind:successToastMessage="@{viewModel.successToastMessage}"
+        bind:errorToastMessage="@{viewModel.errorToastMessage}">
 
         <TextView
             android:layout_width="match_parent"

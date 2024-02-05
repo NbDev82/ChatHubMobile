@@ -6,10 +6,10 @@ import android.util.Log;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.ViewModel;
 
 import com.example.customcontrol.customalertdialog.AlertDialogModel;
 import com.example.customcontrol.inputdialogfragment.InputDialogModel;
+import com.example.infrastructure.BaseViewModel;
 import com.example.infrastructure.Utils;
 import com.example.user.AuthService;
 import com.example.user.EGender;
@@ -18,7 +18,7 @@ import com.example.user.User;
 import java.util.Calendar;
 import java.util.Date;
 
-public class UserProfileViewModel extends ViewModel {
+public class UserProfileViewModel extends BaseViewModel {
 
     private static final String TAG = UserProfileViewModel.class.getSimpleName();
 
@@ -27,7 +27,6 @@ public class UserProfileViewModel extends ViewModel {
     private final MutableLiveData<String> mFullName = new MutableLiveData<>();
     private final MutableLiveData<EGender> mGender = new MutableLiveData<>();
     private final MutableLiveData<String> mBirthdayStr = new MutableLiveData<>();
-    private final MutableLiveData<String> mToastMessage = new MutableLiveData<>();
     private final MutableLiveData<Boolean> mNavigateToHome = new MutableLiveData<>();
     private final MutableLiveData<Boolean> mIsUserInitializing = new MutableLiveData<>();
     private final MutableLiveData<Boolean> mIsDataChanged = new MutableLiveData<>();
@@ -72,10 +71,6 @@ public class UserProfileViewModel extends ViewModel {
         String birthdayStr = Utils.dateToString(birthday);
         mBirthdayStr.postValue(birthdayStr);
         mIsDataChanged.postValue(true);
-    }
-
-    public MutableLiveData<String> getToastMessage() {
-        return mToastMessage;
     }
 
     public LiveData<Boolean> getNavigateToHome() {
@@ -210,13 +205,13 @@ public class UserProfileViewModel extends ViewModel {
         String uid = mAuthService.getCurrentUid();
         mAuthService.updateBasicUser(uid, mOriginalUser)
                 .addOnSuccessListener(aVoid -> {
+                    mSuccessToastMessage.postValue("Update successfully");
                     mIsDataChanged.postValue(false);
                     mIsUserUpdating.postValue(false);
-                    mToastMessage.postValue("Update successfully");
                 })
                 .addOnFailureListener(e -> {
+                    mErrorToastMessage.postValue("Update unsuccessfully");
                     mIsUserUpdating.postValue(false);
-                    mToastMessage.postValue("Update unsuccessfully");
                     Log.e(TAG, "Error" + e);
                 });
     }

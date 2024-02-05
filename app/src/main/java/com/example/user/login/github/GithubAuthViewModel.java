@@ -7,25 +7,21 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
+import com.example.infrastructure.BaseViewModel;
 import com.example.user.AuthService;
 
 import java.lang.ref.WeakReference;
 
-public class GithubAuthViewModel extends ViewModel {
+public class GithubAuthViewModel extends BaseViewModel {
 
     private WeakReference<Activity> mActivityRef;
     private AuthService mAuthService;
     private final MutableLiveData<String> mEmail = new MutableLiveData<>();
-    private final MutableLiveData<String> mToastMessage = new MutableLiveData<>();
     private final MutableLiveData<Boolean> mNavigateToLogin = new MutableLiveData<>();
     private final MutableLiveData<Boolean> mNavigateToHome = new MutableLiveData<>();
 
     public MutableLiveData<String> getEmail() {
         return mEmail;
-    }
-
-    public MutableLiveData<String> getToastMessage() {
-        return mToastMessage;
     }
 
     public LiveData<Boolean> getNavigateToLogin() {
@@ -42,27 +38,28 @@ public class GithubAuthViewModel extends ViewModel {
     }
 
     public void navigateToLogin() {
-        mNavigateToLogin.setValue(true);
+        mNavigateToLogin.postValue(true);
     }
 
     public void onGithubLoginBtnClick() {
         String email = mEmail.getValue() != null ? mEmail.getValue() : "";
         if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-            mToastMessage.setValue("Enter a proper Email");
+            mErrorToastMessage.postValue("Enter a proper Email");
             return;
         }
         Activity activity = mActivityRef.get();
         if (activity != null) {
             mAuthService.signInOrSignUpWithGithub(activity, email, authResult -> {
+                mSuccessToastMessage.postValue("Login successfully");
                 navigateToHome();
             }, e -> {
-                mToastMessage.setValue(e.getMessage());
+                mErrorToastMessage.postValue(e.getMessage());
             });
         }
     }
 
     public void navigateToHome() {
-        mNavigateToHome.setValue(true);
+        mNavigateToHome.postValue(true);
     }
 
     @Override

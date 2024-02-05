@@ -42,7 +42,7 @@ public class GoogleSignInViewModel extends LoginViewModel {
     }
 
     public void signIn(Activity activity) {
-        mIsLoading.setValue(true);
+        mIsLoading.postValue(true);
         mGoogleSignInClient.signOut();
         Intent intent = mGoogleSignInClient.getSignInIntent();
         activity.startActivityForResult(intent, RC_SIGN_IN);
@@ -53,15 +53,15 @@ public class GoogleSignInViewModel extends LoginViewModel {
             GoogleSignInAccount account = completedTask.getResult(ApiException.class);
             String idToken = account.getIdToken();
             mAuthService.signInOrSignUpWithGoogle(idToken, aVoid -> {
-                mIsLoading.setValue(true);
-                mIsSignInSuccess.setValue(true);
+                mIsLoading.postValue(true);
+                mIsSignInSuccess.postValue(true);
             }, e -> {
-                mIsLoading.setValue(false);
-                mIsSignInSuccess.setValue(false);
+                mIsLoading.postValue(false);
+                mIsSignInSuccess.postValue(false);
             });
         } catch (ApiException e) {
-            mIsLoading.setValue(false);
-            mIsSignInSuccess.setValue(false);
+            mIsLoading.postValue(false);
+            mIsSignInSuccess.postValue(false);
         }
     }
 }

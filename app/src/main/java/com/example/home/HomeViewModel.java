@@ -5,27 +5,22 @@ import android.util.Log;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
+import com.example.infrastructure.BaseViewModel;
 import com.example.user.AuthService;
 import com.example.user.AuthServiceImpl;
 import com.example.user.User;
 
-public class HomeViewModel extends ViewModel {
+public class HomeViewModel extends BaseViewModel {
 
     private static final String TAG = HomeViewModel.class.getSimpleName();
 
     private final AuthService mAuthService;
-    private User mUser = new User();
     private final MutableLiveData<String> mEmail = new MutableLiveData<>("");
-    private final MutableLiveData<String> mToastMessage = new MutableLiveData<>();
     private final MutableLiveData<Boolean> mNavigateToUserProfile = new MutableLiveData<>();
     private final MutableLiveData<Boolean> mNavigateToLogin = new MutableLiveData<>();
 
     public MutableLiveData<String> getEmail() {
         return mEmail;
-    }
-
-    public MutableLiveData<String> getToastMessage() {
-        return mToastMessage;
     }
 
     public MutableLiveData<Boolean> getNavigateToUserProfile() {
@@ -41,10 +36,8 @@ public class HomeViewModel extends ViewModel {
 
         mAuthService.getCurrentUser()
                 .addOnSuccessListener(user -> {
-                    this.mUser = user;
-
                     if (user != null) {
-                        mEmail.setValue(user.getEmail());
+                        mEmail.postValue(user.getEmail());
                     }
                 })
                 .addOnFailureListener(e -> {
@@ -53,16 +46,16 @@ public class HomeViewModel extends ViewModel {
     }
 
     public void navigateToUserProfile() {
-        mNavigateToUserProfile.setValue(true);
+        mNavigateToUserProfile.postValue(true);
     }
 
     public void signOut() {
-        mToastMessage.setValue("Sign out");
         mAuthService.signOut();
+        mSuccessToastMessage.postValue("Sign out");
         navigateToLogin();
     }
 
     private void navigateToLogin() {
-        mNavigateToLogin.setValue(true);
+        mNavigateToLogin.postValue(true);
     }
 }

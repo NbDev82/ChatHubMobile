@@ -8,16 +8,16 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
+import com.example.infrastructure.BaseViewModel;
 import com.example.user.AuthService;
 
-public class LoginViewModel extends ViewModel {
+public class LoginViewModel extends BaseViewModel {
 
     private static final String TAG = LoginViewModel.class.getSimpleName();
 
     protected final AuthService mAuthService;
     private final MutableLiveData<String> mEmail = new MutableLiveData<>();
     private final MutableLiveData<String> mPassword = new MutableLiveData<>();
-    protected final MutableLiveData<String> mToastMessage = new MutableLiveData<>();
     private final MutableLiveData<Boolean> mNavigateToForgotPassword = new MutableLiveData<>();
     private final MutableLiveData<Boolean> mNavigateToSignUp = new MutableLiveData<>();
     private final MutableLiveData<Boolean> mNavigateToHome = new MutableLiveData<>();
@@ -31,10 +31,6 @@ public class LoginViewModel extends ViewModel {
 
     public MutableLiveData<String> getPassword() {
         return mPassword;
-    }
-
-    public MutableLiveData<String> getToastMessage() {
-        return mToastMessage;
     }
 
     public LiveData<Boolean> getNavigateToForgotPassword() {
@@ -74,13 +70,13 @@ public class LoginViewModel extends ViewModel {
         String password = mPassword.getValue() != null ? mPassword.getValue() : "";
 
         if (!isValidEmail(email)) {
-            mToastMessage.postValue("Enter context email.");
+            mErrorToastMessage.postValue("Enter context email.");
             mIsLogging.postValue(false);
             return;
         }
 
         if (!isValidPassword(password)) {
-            mToastMessage.postValue("Enter proper password.");
+            mErrorToastMessage.postValue("Enter proper password.");
             mIsLogging.postValue(false);
             return;
         }
@@ -88,11 +84,11 @@ public class LoginViewModel extends ViewModel {
         SignInRequest signInRequest = new SignInRequest(email, password);
         mAuthService.signIn(signInRequest, aVoid -> {
             mIsLogging.postValue(false);
-            mToastMessage.postValue("Login successful");
+            mSuccessToastMessage.postValue("Login successfully");
             navigateToHome();
         }, e -> {
             mIsLogging.postValue(false);
-            mToastMessage.postValue("Login unsuccessful");
+            mErrorToastMessage.postValue("Login unsuccessfully");
             Log.e(TAG, "Error: " + e);
         });
     }
@@ -132,11 +128,11 @@ public class LoginViewModel extends ViewModel {
     }
 
     public void navigateToFingerprintSignIn() {
-        mToastMessage.postValue("Without implementation");
+        mErrorToastMessage.postValue("Without implementation");
     }
 
     public void navigateToSmsSignIn() {
-        mToastMessage.postValue("Without implementation");
+        mErrorToastMessage.postValue("Without implementation");
     }
 
     public void navigateToGoogleSignIn() {

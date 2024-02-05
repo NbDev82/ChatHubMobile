@@ -16,7 +16,8 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/primary_bg"
-        bind:toastMessage="@{viewModel.toastMessage}">
+        bind:successToastMessage="@{viewModel.successToastMessage}"
+        bind:errorToastMessage="@{viewModel.errorToastMessage}">
 
         <RelativeLayout
             android:id="@+id/backgroundRl"
@@ -79,6 +80,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/_30sdp"
+                    app:endIconMode="clear_text"
                     android:hint="Email"
                     app:startIconContentDescription="Mail Icon"
                     app:startIconDrawable="@drawable/ic_mail">
@@ -97,7 +99,8 @@
                     style="@style/CustomTextInputLayoutPrimary"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/_10sdp"
+                    android:layout_marginTop="@dimen/_8sdp"
+                    app:endIconMode="password_toggle"
                     android:hint="Password"
                     app:startIconContentDescription="Mail Icon"
                     app:startIconDrawable="@drawable/ic_lock">
@@ -116,7 +119,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="end"
-                    android:layout_marginTop="@dimen/_10sdp"
+                    android:layout_marginTop="@dimen/_8sdp"
                     android:onClick="@{() -> viewModel.navigateToForgotPassword()}"
                     android:text="Forgot password?"
                     android:textColor="@color/link_blue" />

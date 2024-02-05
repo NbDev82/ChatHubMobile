@@ -5,12 +5,11 @@ import android.util.Patterns;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.ViewModel;
 
+import com.example.infrastructure.BaseViewModel;
 import com.example.user.AuthService;
-import com.example.user.AuthServiceImpl;
 
-public class SignUpViewModel extends ViewModel {
+public class SignUpViewModel extends BaseViewModel {
 
     private static final String TAG = SignUpActivity.class.getSimpleName();
 
@@ -18,7 +17,6 @@ public class SignUpViewModel extends ViewModel {
     private final MutableLiveData<String> mEmail = new MutableLiveData<>();
     private final MutableLiveData<String> mPassword = new MutableLiveData<>();
     private final MutableLiveData<String> mConfirmPassword = new MutableLiveData<>();
-    private final MutableLiveData<String> mToastMessage = new MutableLiveData<>();
     private final MutableLiveData<Boolean> mNavigateToLogin = new MutableLiveData<>();
     private final MutableLiveData<Boolean> mNavigateToHome = new MutableLiveData<>();
 
@@ -34,10 +32,6 @@ public class SignUpViewModel extends ViewModel {
         return mConfirmPassword;
     }
 
-    public MutableLiveData<String> getToastMessage() {
-        return mToastMessage;
-    }
-
     public LiveData<Boolean> getNavigateToLogin() {
         return mNavigateToLogin;
     }
@@ -51,7 +45,7 @@ public class SignUpViewModel extends ViewModel {
     }
 
     public void navigateToLogin() {
-        mNavigateToLogin.setValue(true);
+        mNavigateToLogin.postValue(true);
     }
 
     public void performAuth() {
@@ -61,24 +55,30 @@ public class SignUpViewModel extends ViewModel {
                 ? mConfirmPassword.getValue() : "";
 
         if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-            mToastMessage.setValue("Enter context email.");
-        } else if (password.isEmpty() || password.length() < 6) {
-            mToastMessage.setValue("Enter proper password.");
-        } else if (!password.equals(confirmPassword)) {
-            mToastMessage.setValue("Password not match both fields.");
-        } else {
-            SignUpRequest signUpRequest = new SignUpRequest(email, password, confirmPassword);
-            mAuthService.signUp(signUpRequest, aVoid -> {
-                navigateToHome();
-                mToastMessage.setValue("Registration successful");
-            }, e -> {
-                mToastMessage.setValue(String.valueOf(e));
-                Log.e(TAG, "Error: " + e);
-            });
+            mErrorToastMessage.postValue("Enter context email.");
+            return;
         }
+
+        if (password.isEmpty() || password.length() < 6) {
+            mErrorToastMessage.postValue("Enter proper password.");
+            return;
+        }
+
+        if (!password.equals(confirmPassword)) {
+            mErrorToastMessage.postValue("Password not match both fields.");
+            return;
+        }
+        SignUpRequest signUpRequest = new SignUpRequest(email, password, confirmPassword);
+        mAuthService.signUp(signUpRequest, aVoid -> {
+            mSuccessToastMessage.postValue("Sign up successful");
+            navigateToHome();
+        }, e -> {
+            mErrorToastMessage.postValue("Sign up unsuccessful");
+            Log.e(TAG, "Error: " + e);
+        });
     }
 
     private void navigateToHome() {
-        mNavigateToHome.setValue(true);
+        mNavigateToHome.postValue(true);
     }
 }
