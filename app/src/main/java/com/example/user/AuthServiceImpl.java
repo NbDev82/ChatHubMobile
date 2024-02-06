@@ -95,14 +95,17 @@ public class AuthServiceImpl implements AuthService {
 
                     checkUserExitsByEmail(curUser.getEmail())
                             .addOnSuccessListener(exits -> {
-                                if (!exits) {
-                                    String uid = curUser.getUid();
-                                    User user = new User(curUser.getEmail());
-                                    addUser(uid, user, onSuccess, e -> {
-                                        onFailure.accept(e);
-                                        curUser.delete();
-                                    });
+                                if (exits) {
+                                    onSuccess.accept(null);
+                                    return;
                                 }
+
+                                String uid = curUser.getUid();
+                                User user = new User(curUser.getEmail());
+                                addUser(uid, user, onSuccess, e -> {
+                                    onFailure.accept(e);
+                                    curUser.delete();
+                                });
                             })
                             .addOnFailureListener(e -> {
                                 Log.e(TAG, "Error fetching user data: " + e);

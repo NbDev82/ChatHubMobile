@@ -1,59 +1,53 @@
 package com.example.user.login.google;
 
-import android.app.Activity;
-import android.content.Intent;
+import android.os.Handler;
+import android.util.Log;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.example.user.AuthService;
 import com.example.user.login.LoginViewModel;
-import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
-import com.google.android.gms.auth.api.signin.GoogleSignInClient;
-import com.google.android.gms.common.api.ApiException;
-import com.google.android.gms.tasks.Task;
 
 public class GoogleSignInViewModel extends LoginViewModel {
 
-    public static final int RC_SIGN_IN = 101;
-    private final GoogleSignInClient mGoogleSignInClient;
+    private static final String TAG = GoogleSignInViewModel.class.getSimpleName();
+
     private final MutableLiveData<Boolean> mIsLoading = new MutableLiveData<>();
-    private final MutableLiveData<Boolean> mIsSignInSuccess = new MutableLiveData<>();
+    private final MutableLiveData<Boolean> mNavigateToHome = new MutableLiveData<>();
 
     public LiveData<Boolean> isLoading() {
         return mIsLoading;
     }
 
-    public LiveData<Boolean> isSignInSuccess() {
-        return mIsSignInSuccess;
+    public LiveData<Boolean> getNavigateToHome() {
+        return mNavigateToHome;
     }
 
-    public GoogleSignInViewModel(AuthService authService, GoogleSignInClient googleSignInClient) {
+    public GoogleSignInViewModel(AuthService authService) {
         super(authService);
-        mGoogleSignInClient = googleSignInClient;
-    }
 
-    public void signIn(Activity activity) {
         mIsLoading.postValue(true);
-        mGoogleSignInClient.signOut();
-        Intent intent = mGoogleSignInClient.getSignInIntent();
-        activity.startActivityForResult(intent, RC_SIGN_IN);
     }
 
-    public void handleSignInResult(Task<GoogleSignInAccount> completedTask) {
-        try {
-            GoogleSignInAccount account = completedTask.getResult(ApiException.class);
-            String idToken = account.getIdToken();
-            mAuthService.signInOrSignUpWithGoogle(idToken, aVoid -> {
-                mIsLoading.postValue(true);
-                mIsSignInSuccess.postValue(true);
-            }, e -> {
-                mIsLoading.postValue(false);
-                mIsSignInSuccess.postValue(false);
-            });
-        } catch (ApiException e) {
+    public void signInWithIdToken(String idToken) {
+        mAuthService.signInOrSignUpWithGoogle(idToken, aVoid -> {
+            mSuccessToastMessage.postValue("Google login successfully");
             mIsLoading.postValue(false);
-            mIsSignInSuccess.postValue(false);
-        }
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    navigateToHome();
+                }
+            }, 100);
+        }, e -> {
+            mErrorToastMessage.postValue("Google login unsuccessfully");
+            mIsLoading.postValue(false);
+            Log.e(TAG, "Error: ", e);
+        });
+    }
+
+    public void navigateToHome() {
+        mNavigateToHome.postValue(true);
     }
 }
