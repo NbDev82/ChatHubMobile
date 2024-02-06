@@ -1,5 +1,6 @@
 package com.example.user.signup;
 
+import android.os.Handler;
 import android.util.Log;
 import android.util.Patterns;
 
@@ -60,19 +61,19 @@ public class SignUpViewModel extends BaseViewModel {
                 ? mConfirmPassword.getValue() : "";
 
         if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-            mErrorToastMessage.postValue("Enter context email.");
+            mErrorToastMessage.postValue("Enter context email");
             mIsSigningUp.postValue(false);
             return;
         }
 
         if (password.isEmpty() || password.length() < 6) {
-            mErrorToastMessage.postValue("Enter proper password.");
+            mErrorToastMessage.postValue("Enter proper password");
             mIsSigningUp.postValue(false);
             return;
         }
 
         if (!password.equals(confirmPassword)) {
-            mErrorToastMessage.postValue("Password not match both fields.");
+            mErrorToastMessage.postValue("Password not match both fields");
             mIsSigningUp.postValue(false);
             return;
         }
@@ -80,10 +81,20 @@ public class SignUpViewModel extends BaseViewModel {
         mAuthService.signUp(signUpRequest, aVoid -> {
             mSuccessToastMessage.postValue("Sign up successful");
             mIsSigningUp.postValue(false);
-            navigateToHome();
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    navigateToHome();
+                }
+            }, 500);
         }, e -> {
-            mErrorToastMessage.postValue("Sign up unsuccessful");
-            mIsSigningUp.postValue(false);
+            mErrorToastMessage.postValue(e.getMessage());
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    mIsSigningUp.postValue(false);
+                }
+            }, 500);
             Log.e(TAG, "Error: " + e);
         });
     }

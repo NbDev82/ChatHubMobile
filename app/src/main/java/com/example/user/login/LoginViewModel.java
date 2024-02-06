@@ -91,8 +91,13 @@ public class LoginViewModel extends BaseViewModel {
                 }
             }, 100);
         }, e -> {
-            mIsLogging.postValue(false);
-            mErrorToastMessage.postValue("Login unsuccessfully");
+            mErrorToastMessage.postValue(e.getMessage());
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    mIsLogging.postValue(false);
+                }
+            }, 500);
             Log.e(TAG, "Error: " + e);
         });
     }
