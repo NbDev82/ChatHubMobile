@@ -11,6 +11,7 @@ import android.os.Bundle;
 import com.example.R;
 import com.example.databinding.ActivityHomeBinding;
 import com.example.infrastructure.Utils;
+import com.example.setting.SettingsActivity;
 import com.example.user.AuthService;
 import com.example.user.AuthServiceImpl;
 import com.example.user.login.LoginActivity;
@@ -39,6 +40,17 @@ public class HomeActivity extends AppCompatActivity {
     }
 
     public void setObservers() {
+        viewModel.getNavigateToSettings().observe(this, new Observer<Boolean>() {
+            @Override
+            public void onChanged(Boolean aBoolean) {
+                if (aBoolean) {
+                    Intent intent = new Intent(HomeActivity.this, SettingsActivity.class);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                    startActivity(intent);
+                }
+            }
+        });
+
         viewModel.getNavigateToUserProfile().observe(this, new Observer<Boolean>() {
             @Override
             public void onChanged(Boolean aBoolean) {

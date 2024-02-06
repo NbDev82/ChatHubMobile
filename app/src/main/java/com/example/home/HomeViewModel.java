@@ -17,6 +17,7 @@ public class HomeViewModel extends BaseViewModel {
 
     private final MutableLiveData<String> mEmail = new MutableLiveData<>("");
     private final MutableLiveData<Boolean> mNavigateToUserProfile = new MutableLiveData<>();
+    private final MutableLiveData<Boolean> mNavigateToSettings = new MutableLiveData<>();
     private final MutableLiveData<Boolean> mNavigateToLogin = new MutableLiveData<>();
 
     public MutableLiveData<String> getEmail() {
@@ -25,6 +26,10 @@ public class HomeViewModel extends BaseViewModel {
 
     public MutableLiveData<Boolean> getNavigateToUserProfile() {
         return mNavigateToUserProfile;
+    }
+
+    public MutableLiveData<Boolean> getNavigateToSettings() {
+        return mNavigateToSettings;
     }
 
     public MutableLiveData<Boolean> getNavigateToLogin() {
@@ -43,6 +48,10 @@ public class HomeViewModel extends BaseViewModel {
                 .addOnFailureListener(e -> {
                     Log.e(TAG, "Error: " + e);
                 });
+    }
+
+    public void navigateToSettings() {
+        mNavigateToSettings.postValue(true);
     }
 
     public void navigateToUserProfile() {

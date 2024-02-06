@@ -48,8 +48,8 @@
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
             android:layout_marginHorizontal="@dimen/_25sdp"
-            app:cardCornerRadius="@dimen/card_corner_radius"
             app:cardBackgroundColor="@color/primary_bg"
+            app:cardCornerRadius="@dimen/card_corner_radius"
             app:cardElevation="@dimen/_6sdp">
 
             <LinearLayout
@@ -80,8 +80,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/_30sdp"
-                    app:endIconMode="clear_text"
                     android:hint="Email"
+                    app:endIconMode="clear_text"
                     app:startIconContentDescription="Mail Icon"
                     app:startIconDrawable="@drawable/ic_mail">
 
@@ -90,8 +90,8 @@
                         android:layout_height="wrap_content"
                         android:inputType="textEmailAddress"
                         android:maxLines="1"
-                        android:textSize="@dimen/primary_text_size"
-                        android:text="@={viewModel.email}" />
+                        android:text="@={viewModel.email}"
+                        android:textSize="@dimen/primary_text_size" />
 
                 </com.google.android.material.textfield.TextInputLayout>
 
@@ -100,8 +100,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/_8sdp"
-                    app:endIconMode="password_toggle"
                     android:hint="Password"
+                    app:endIconMode="password_toggle"
                     app:startIconContentDescription="Mail Icon"
                     app:startIconDrawable="@drawable/ic_lock">
 
@@ -110,8 +110,8 @@
                         android:layout_height="wrap_content"
                         android:inputType="textPassword"
                         android:maxLines="1"
-                        android:textSize="@dimen/primary_text_size"
-                        android:text="@={viewModel.password}" />
+                        android:text="@={viewModel.password}"
+                        android:textSize="@dimen/primary_text_size" />
 
                 </com.google.android.material.textfield.TextInputLayout>
 

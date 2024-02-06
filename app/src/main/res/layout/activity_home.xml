@@ -61,6 +61,14 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/_10sdp"
             android:layout_gravity="center"
+            android:text="Settings"
+            android:onClick="@{() -> viewModel.navigateToSettings()}" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_10sdp"
+            android:layout_gravity="center"
             android:text="Sign out"
             android:onClick="@{() -> viewModel.signOut()}" />
     </LinearLayout>

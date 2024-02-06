@@ -16,6 +16,12 @@
     <dimen name="profile_item_padding_horizontal">@dimen/_20sdp</dimen>
     <dimen name="profile_item_distance">@dimen/_5sdp</dimen>
 
+    <!-- activity_settings.xml-->
+    <dimen name="settings_item_height">@dimen/_50sdp</dimen>
+    <dimen name="settings_item_distance">@dimen/_5sdp</dimen>
+    <dimen name="settings_section_distance">@dimen/_5sdp</dimen>
+    <dimen name="settings_sub_title_margin">@dimen/_10sdp</dimen>
+
     <dimen name="card_corner_radius">@dimen/_16sdp</dimen>
     <dimen name="input_layout_corner_radius">@dimen/_10sdp</dimen>
 

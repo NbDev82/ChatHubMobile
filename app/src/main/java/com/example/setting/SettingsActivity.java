@@ -8,6 +8,8 @@ import android.os.Bundle;
 
 import com.example.R;
 import com.example.databinding.ActivitySettingsBinding;
+import com.example.user.AuthService;
+import com.example.user.AuthServiceImpl;
 
 public class SettingsActivity extends AppCompatActivity {
 
@@ -20,7 +22,8 @@ public class SettingsActivity extends AppCompatActivity {
         ActivitySettingsBinding binding = DataBindingUtil
                 .setContentView(this, R.layout.activity_settings);
 
-        SettingsViewModelFactory factory = new SettingsViewModelFactory();
+        AuthService authService = new AuthServiceImpl();
+        SettingsViewModelFactory factory = new SettingsViewModelFactory(authService);
         viewModel = new ViewModelProvider(this, factory).get(SettingsViewModel.class);
         binding.setViewModel(viewModel);
         binding.setLifecycleOwner(this);

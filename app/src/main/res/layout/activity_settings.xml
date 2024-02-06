@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <data>
         <variable
@@ -10,58 +12,445 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:padding="@dimen/_8sdp"
-        android:background="@color/primary_bg">
+        android:orientation="vertical"
+        android:background="@color/primary_bg"
+        tools:successToastMessage="@{viewModel.successToastMessage}"
+        tools:errorToastMessage="@{viewModel.errorToastMessage}">
+
+        <androidx.appcompat.widget.Toolbar
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/toolbar_height"
+            android:background="@drawable/gradient_color_primary">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_nav_arrow_left"
+                app:tint="@color/white"
+                android:onClickListener="@{() -> viewModel.navigateToHome()}"
+                android:contentDescription="Back to home"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="Settings"
+                android:textColor="@color/white"
+                android:textStyle="bold"
+                android:textSize="@dimen/primary_title_size" />
+        </androidx.appcompat.widget.Toolbar>
+
         <ScrollView
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:background="@color/secondary_bg">
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/secondary_bg"
                 android:orientation="vertical">
 
-                <com.google.android.material.appbar.AppBarLayout
+                <LinearLayout
+                    android:id="@+id/accountLL"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"
+                    android:background="@color/white"
+                    android:orientation="vertical">
 
-                    <androidx.appcompat.widget.Toolbar
-                        android:id="@+id/toolbar"
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/primary_sub_title"
+                        android:layout_margin="@dimen/settings_sub_title_margin"
+                        android:text="Account"/>
+
+                    <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
+                        android:background="@color/primary_bg"
+                        android:layout_marginHorizontal="@dimen/profile_item_padding_horizontal">
+
+                        <com.google.android.material.card.MaterialCardView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:onClick="@{() -> viewModel.navigateToUserProfile()}"
+                            app:cardBackgroundColor="@color/primary_bg"
+                            app:cardCornerRadius="@dimen/_10sdp">
+
+                            <RelativeLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="@dimen/settings_item_height"
+                                android:layout_marginVertical="@dimen/_10sdp"
+                                android:layout_marginHorizontal="@dimen/_8sdp">
+
+                                <com.makeramen.roundedimageview.RoundedImageView
+                                    android:id="@+id/imageProfile"
+                                    android:layout_width="@dimen/settings_item_height"
+                                    android:layout_height="@dimen/settings_item_height"
+                                    android:background="@drawable/background_image"
+                                    android:scaleType="centerCrop"
+                                    app:imageBitmap="@{viewModel.profileImg}"
+                                    app:riv_oval="true" />
+
+                                <LinearLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_centerInParent="true"
+                                    android:layout_marginHorizontal="@dimen/_20sdp"
+                                    android:layout_toStartOf="@id/editProfileIcon"
+                                    android:layout_toEndOf="@id/imageProfile"
+                                    android:orientation="vertical">
+
+                                    <TextView
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:text="Personal information"
+                                        android:textSize="@dimen/primary_sub_title_size" />
+
+                                    <TextView
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:ellipsize="end"
+                                        android:maxLines="1"
+                                        android:textStyle="bold"
+                                        android:text="@{viewModel.fullName}"
+                                        android:textSize="@dimen/primary_text_size"
+                                        tools:text="Văn An" />
+                                </LinearLayout>
+
+                                <ImageView
+                                    android:id="@+id/editProfileIcon"
+                                    android:layout_width="@dimen/_12sdp"
+                                    android:layout_height="@dimen/_12sdp"
+                                    android:layout_centerVertical="true"
+                                    android:layout_alignParentEnd="true"
+                                    android:src="@drawable/ic_right_chevron" />
+
+                            </RelativeLayout>
+
+
+                        </com.google.android.material.card.MaterialCardView>
+                    </LinearLayout>
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/settings_item_height"
+                        android:layout_marginTop="@dimen/settings_item_distance"
+                        android:paddingHorizontal="@dimen/profile_item_padding_horizontal"
+                        android:background="@drawable/ripple_effect"
+                        android:clickable="true"
+                        android:onClick="@{() -> viewModel.navigateToChangePhoneNumber()}">
+
+                        <ImageView
+                            android:id="@+id/phoneIcon"
+                            android:layout_width="@dimen/profile_icon_size"
+                            android:layout_height="@dimen/profile_icon_size"
+                            android:layout_centerVertical="true"
+                            android:src="@drawable/ic_phone" />
 
                         <TextView
-                            android:id="@+id/toolbar_title"
+                            android:id="@+id/phoneTitleTxv"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_gravity="center"
-                            android:text="Settings"
-                            android:textSize="16sp" />
-                    </androidx.appcompat.widget.Toolbar>
+                            android:layout_marginStart="@dimen/_16sdp"
+                            android:layout_centerVertical="true"
+                            android:layout_toEndOf="@id/phoneIcon"
+                            android:text="Phone number"
+                            android:textColor="@color/secondary_text"
+                            android:textSize="@dimen/primary_sub_title_size" />
 
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="@dimen/_20sdp"
+                            android:layout_marginEnd="@dimen/_5sdp"
+                            android:layout_centerVertical="true"
+                            android:layout_toEndOf="@id/phoneTitleTxv"
+                            android:layout_toStartOf="@id/editPhoneIcon"
+                            android:text="@{viewModel.phoneNumber}"
+                            android:gravity="end"
+                            android:textColor="@color/primary_text"
+                            android:textSize="@dimen/primary_text_size"
+                            android:maxLines="1"
+                            android:ellipsize="end"
+                            tools:text="09123819238"/>
 
-                </com.google.android.material.appbar.AppBarLayout>
+                        <ImageView
+                            android:id="@+id/editPhoneIcon"
+                            android:layout_width="@dimen/_12sdp"
+                            android:layout_height="@dimen/_12sdp"
+                            android:layout_centerVertical="true"
+                            android:layout_alignParentEnd="true"
+                            android:src="@drawable/ic_right_chevron" />
 
-                <TextView
-                    android:layout_width="wrap_content"
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="0.5dp"
+                            android:layout_marginStart="@dimen/_16sdp"
+                            android:layout_toEndOf="@id/phoneIcon"
+                            android:layout_alignParentBottom="true"
+                            android:background="@color/gray" />
+                    </RelativeLayout>
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/settings_item_height"
+                        android:layout_marginTop="@dimen/profile_item_distance"
+                        android:paddingHorizontal="@dimen/profile_item_padding_horizontal"
+                        android:background="@drawable/ripple_effect"
+                        android:clickable="true"
+                        android:onClick="@{() -> viewModel.navigateToChangeEmail()}">
+
+                        <ImageView
+                            android:id="@+id/emailIcon"
+                            android:layout_width="@dimen/profile_icon_size"
+                            android:layout_height="@dimen/profile_icon_size"
+                            android:layout_centerVertical="true"
+                            android:src="@drawable/ic_mail" />
+
+                        <TextView
+                            android:id="@+id/emailTitleTxv"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="@dimen/_16sdp"
+                            android:layout_centerVertical="true"
+                            android:layout_toEndOf="@id/emailIcon"
+                            android:text="Email"
+                            android:textColor="@color/secondary_text"
+                            android:textSize="@dimen/primary_sub_title_size" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="@dimen/_20sdp"
+                            android:layout_marginEnd="@dimen/_5sdp"
+                            android:layout_centerVertical="true"
+                            android:layout_toEndOf="@id/emailTitleTxv"
+                            android:layout_toStartOf="@id/editNameIcon"
+                            android:text="@{viewModel.email}"
+                            android:gravity="end"
+                            android:textColor="@color/primary_text"
+                            android:textSize="@dimen/primary_text_size"
+                            android:maxLines="1"
+                            android:ellipsize="end"
+                            tools:text="info.abc@gmail.com"/>
+
+                        <ImageView
+                            android:id="@+id/editNameIcon"
+                            android:layout_width="@dimen/_12sdp"
+                            android:layout_height="@dimen/_12sdp"
+                            android:layout_centerVertical="true"
+                            android:layout_alignParentEnd="true"
+                            android:src="@drawable/ic_right_chevron" />
+
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="0.5dp"
+                            android:layout_marginStart="@dimen/_16sdp"
+                            android:layout_toEndOf="@id/emailIcon"
+                            android:layout_alignParentBottom="true"
+                            android:background="@color/gray" />
+                    </RelativeLayout>
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/settings_item_height"
+                        android:layout_marginTop="@dimen/profile_item_distance"
+                        android:paddingHorizontal="@dimen/profile_item_padding_horizontal"
+                        android:background="@drawable/ripple_effect"
+                        android:clickable="true"
+                        android:onClick="@{() -> viewModel.navigateToAccountLinking()}">
+
+                        <ImageView
+                            android:id="@+id/linkingIcon"
+                            android:layout_width="@dimen/profile_icon_size"
+                            android:layout_height="@dimen/profile_icon_size"
+                            android:layout_centerVertical="true"
+                            android:src="@drawable/ic_link" />
+
+                        <TextView
+                            android:id="@+id/linkingTitleTxv"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="@dimen/_16sdp"
+                            android:layout_centerVertical="true"
+                            android:layout_toEndOf="@id/linkingIcon"
+                            android:text="Linking"
+                            android:textColor="@color/secondary_text"
+                            android:textSize="@dimen/primary_sub_title_size" />
+
+                        <ImageView
+                            android:layout_width="@dimen/_12sdp"
+                            android:layout_height="@dimen/_12sdp"
+                            android:layout_centerVertical="true"
+                            android:layout_alignParentEnd="true"
+                            android:src="@drawable/ic_right_chevron" />
+
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="0.5dp"
+                            android:layout_marginStart="@dimen/_16sdp"
+                            android:layout_toEndOf="@id/linkingIcon"
+                            android:layout_alignParentBottom="true"
+                            android:background="@color/gray" />
+                    </RelativeLayout>
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/settings_item_height"
+                        android:layout_marginTop="@dimen/profile_item_distance"
+                        android:paddingHorizontal="@dimen/profile_item_padding_horizontal"
+                        android:background="@drawable/ripple_effect"
+                        android:clickable="true"
+                        android:onClick="@{() -> viewModel.navigateToMyQrCode()}">
+
+                        <ImageView
+                            android:id="@+id/qrCodeIcon"
+                            android:layout_width="@dimen/profile_icon_size"
+                            android:layout_height="@dimen/profile_icon_size"
+                            android:layout_centerVertical="true"
+                            android:src="@drawable/ic_qr_code" />
+
+                        <TextView
+                            android:id="@+id/qrCodeTitleTxv"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="@dimen/_16sdp"
+                            android:layout_centerVertical="true"
+                            android:layout_toEndOf="@id/qrCodeIcon"
+                            android:text="My QR code"
+                            android:textColor="@color/secondary_text"
+                            android:textSize="@dimen/primary_sub_title_size" />
+
+                        <ImageView
+                            android:layout_width="@dimen/_12sdp"
+                            android:layout_height="@dimen/_12sdp"
+                            android:layout_centerVertical="true"
+                            android:layout_alignParentEnd="true"
+                            android:src="@drawable/ic_right_chevron" />
+                    </RelativeLayout>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/securityLL"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Setting options"/>
-                <TextView
-                    android:layout_width="wrap_content"
+                    android:layout_marginTop="@dimen/settings_section_distance"
+                    android:background="@color/white"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/primary_sub_title"
+                        android:layout_margin="@dimen/settings_sub_title_margin"
+                        android:text="Security"/>
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/settings_item_height"
+                        android:paddingHorizontal="@dimen/profile_item_padding_horizontal"
+                        android:background="@drawable/ripple_effect"
+                        android:clickable="true"
+                        android:onClick="@{() -> viewModel.navigateToLockMyApp()}">
+
+                        <ImageView
+                            android:id="@+id/lockIcon"
+                            android:layout_width="@dimen/profile_icon_size"
+                            android:layout_height="@dimen/profile_icon_size"
+                            android:layout_centerVertical="true"
+                            android:src="@drawable/ic_mobile_fingerprint" />
+
+                        <TextView
+                            android:id="@+id/lockTitleTxv"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="@dimen/_16sdp"
+                            android:layout_centerVertical="true"
+                            android:layout_toEndOf="@id/lockIcon"
+                            android:text="Lock my app"
+                            android:textColor="@color/secondary_text"
+                            android:textSize="@dimen/primary_sub_title_size" />
+
+                        <ImageView
+                            android:layout_width="@dimen/_12sdp"
+                            android:layout_height="@dimen/_12sdp"
+                            android:layout_centerVertical="true"
+                            android:layout_alignParentEnd="true"
+                            android:src="@drawable/ic_right_chevron" />
+                    </RelativeLayout>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/loginLL"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="500dp"
-                    android:text="Setting options"/>
-                <TextView
-                    android:layout_width="wrap_content"
+                    android:layout_marginTop="@dimen/settings_section_distance"
+                    android:background="@color/white"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/primary_sub_title"
+                        android:layout_margin="@dimen/settings_sub_title_margin"
+                        android:text="Login"/>
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/settings_item_height"
+                        android:paddingHorizontal="@dimen/profile_item_padding_horizontal"
+                        android:background="@drawable/ripple_effect"
+                        android:clickable="true"
+                        android:onClick="@{() -> viewModel.navigateToChangePassword()}">
+
+                        <ImageView
+                            android:id="@+id/passwordIcon"
+                            android:layout_width="@dimen/profile_icon_size"
+                            android:layout_height="@dimen/profile_icon_size"
+                            android:layout_centerVertical="true"
+                            android:src="@drawable/ic_lock" />
+
+                        <TextView
+                            android:id="@+id/passwordTitleTxv"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="@dimen/_16sdp"
+                            android:layout_centerVertical="true"
+                            android:layout_toEndOf="@id/passwordIcon"
+                            android:text="Password"
+                            android:textColor="@color/secondary_text"
+                            android:textSize="@dimen/primary_sub_title_size" />
+
+                        <ImageView
+                            android:layout_width="@dimen/_12sdp"
+                            android:layout_height="@dimen/_12sdp"
+                            android:layout_centerVertical="true"
+                            android:layout_alignParentEnd="true"
+                            android:src="@drawable/ic_right_chevron" />
+                    </RelativeLayout>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/deleteAccountLL"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="500dp"
-                    android:text="Setting options"/>
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="500dp"
-                    android:text="Setting options"/>
+                    android:background="@color/white"
+                    android:layout_marginTop="@dimen/settings_section_distance">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textStyle="bold"
+                        android:textColor="@color/error"
+                        android:layout_margin="@dimen/settings_sub_title_margin"
+                        android:text="Delete account"/>
+
+                </LinearLayout>
             </LinearLayout>
         </ScrollView>
     </LinearLayout>
