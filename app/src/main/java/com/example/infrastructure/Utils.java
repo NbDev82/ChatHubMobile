@@ -68,7 +68,7 @@ public class Utils {
         int previewHeight = bitmap.getHeight() * previewWith / bitmap.getWidth();
         Bitmap prevewBitmap = Bitmap.createScaledBitmap(bitmap, previewWith, previewHeight, false);
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-        prevewBitmap.compress(Bitmap.CompressFormat.JPEG, 50, byteArrayOutputStream);
+        prevewBitmap.compress(Bitmap.CompressFormat.PNG, 50, byteArrayOutputStream);
         byte[] bytes = byteArrayOutputStream.toByteArray();
         return Base64.encodeToString(bytes, Base64.DEFAULT);
     }
