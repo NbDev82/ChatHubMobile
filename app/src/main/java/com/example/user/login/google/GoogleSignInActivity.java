@@ -1,41 +1,35 @@
 package com.example.user.login.google;
 
-import static android.content.ContentValues.TAG;
-
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
+import android.os.Handler;
+import android.view.View;
 
 import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.IntentSenderRequest;
 import androidx.activity.result.contract.ActivityResultContracts;
-import androidx.annotation.NonNull;
+import androidx.core.content.res.ResourcesCompat;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.example.CustomToast;
 import com.example.R;
+import com.example.customcontrol.CustomBindingAdapters;
 import com.example.customcontrol.LoadingDialog;
 import com.example.home.HomeActivity;
 import com.example.infrastructure.Utils;
 import com.example.user.AuthService;
 import com.example.user.AuthServiceImpl;
 import com.example.user.login.LoginActivity;
-import com.google.android.gms.auth.api.identity.BeginSignInRequest;
-import com.google.android.gms.auth.api.identity.BeginSignInResult;
-import com.google.android.gms.auth.api.identity.Identity;
-import com.google.android.gms.auth.api.identity.SignInClient;
-import com.google.android.gms.auth.api.identity.SignInCredential;
-import com.google.android.gms.common.api.ApiException;
-import com.google.android.gms.common.api.CommonStatusCodes;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.tasks.Task;
 
 public class GoogleSignInActivity extends LoginActivity {
 
     private GoogleSignInViewModel mViewModel;
     private LoadingDialog mLoadingDialog;
-    private SignInClient oneTapClient;
-    private BeginSignInRequest mSignInRequest;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,7 +43,6 @@ public class GoogleSignInActivity extends LoginActivity {
         mLoadingDialog = new LoadingDialog(GoogleSignInActivity.this);
         setObservers();
 
-        initGoogleSignIn();
         displayOneTapSignInUI();
     }
 
@@ -64,66 +57,39 @@ public class GoogleSignInActivity extends LoginActivity {
 
         mViewModel.getNavigateToHome().observe(this, navigate -> {
             if (navigate) {
-                navigateToHome();
+                CustomToast.showToastMessage(this, "Login successfully", icon -> {
+                    icon.setBackground(ResourcesCompat.getDrawable(getResources(),
+                            R.drawable.ic_circle_check_solid,
+                            getTheme()));
+                });
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        navigateToHome();
+                    }
+                }, 100);
             }
         });
     }
 
-    private void initGoogleSignIn() {
-        oneTapClient = Identity.getSignInClient(this);
-        mSignInRequest = BeginSignInRequest.builder()
-                .setGoogleIdTokenRequestOptions(BeginSignInRequest.GoogleIdTokenRequestOptions.builder()
-                        .setSupported(true)
-                        .setServerClientId(getString(R.string.default_web_client_id))
-                        .setFilterByAuthorizedAccounts(true)
-                        .build())
-                .build();
-    }
-
     private void displayOneTapSignInUI() {
-        oneTapClient.beginSignIn(mSignInRequest)
-                .addOnSuccessListener(this, new OnSuccessListener<BeginSignInResult>() {
-                    @Override
-                    public void onSuccess(BeginSignInResult result) {
-                        IntentSenderRequest oneTapRequest = new IntentSenderRequest.Builder(result.getPendingIntent().getIntentSender())
-                                .build();
-                        loginWithGoogle.launch(oneTapRequest);
-                    }
-                })
-                .addOnFailureListener(this, new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Log.d(TAG, e.getLocalizedMessage());
-                    }
-                });
+        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestIdToken(getString(R.string.default_web_client_id))
+                .requestEmail()
+                .build();
+        GoogleSignInClient googleSignInClient = GoogleSignIn.getClient(GoogleSignInActivity.this, gso);
+        googleSignInClient.signOut();
+        Intent intent = googleSignInClient.getSignInIntent();
+        loginWithGoogle.launch(intent);
     }
 
-    private ActivityResultLauncher<IntentSenderRequest> loginWithGoogle = registerForActivityResult(
-            new ActivityResultContracts.StartIntentSenderForResult(),
+    private ActivityResultLauncher<Intent> loginWithGoogle = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
             result -> {
                 if (result.getResultCode() == Activity.RESULT_OK) {
                     Intent data = result.getData();
-                    try {
-                        SignInCredential credential = oneTapClient.getSignInCredentialFromIntent(data);
-                        String idToken = credential.getGoogleIdToken();
-                        if (idToken !=  null) {
-                            Log.d(TAG, "Got ID token.");
-                            mViewModel.signInWithIdToken(idToken);
-                        }
-                    } catch (ApiException e) {
-                        switch (e.getStatusCode()) {
-                            case CommonStatusCodes.CANCELED:
-                                Log.e(TAG, "One-tap dialog was closed.");
-                                break;
-                            case CommonStatusCodes.NETWORK_ERROR:
-                                Log.e(TAG, "One-tap encountered a network error.");
-                                break;
-                            default:
-                                Log.e(TAG, "Couldn't get credential from result."
-                                        + e.getLocalizedMessage());
-                                break;
-                        }
-                    }
+                    Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
+                    mViewModel.handleSignInResult(task);
                 }
             }
     );

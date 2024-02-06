@@ -1,15 +1,12 @@
 package com.example.user.login;
 
 import android.os.Handler;
-import android.os.Message;
 import android.text.TextUtils;
 import android.util.Log;
 import android.util.Patterns;
 
-import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.ViewModel;
 
 import com.example.infrastructure.BaseViewModel;
 import com.example.user.AuthService;
@@ -55,7 +52,7 @@ public class LoginViewModel extends BaseViewModel {
         return mNavigateToGithubAuth;
     }
 
-    public LiveData<Boolean> getIsLogging() {
+    public MutableLiveData<Boolean> getIsLogging() {
         return mIsLogging;
     }
 
@@ -72,7 +69,7 @@ public class LoginViewModel extends BaseViewModel {
         String password = mPassword.getValue() != null ? mPassword.getValue() : "";
 
         if (!isValidEmail(email)) {
-            mErrorToastMessage.postValue("Enter context email.");
+            mErrorToastMessage.postValue("Enter your email.");
             mIsLogging.postValue(false);
             return;
         }

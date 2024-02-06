@@ -8,6 +8,9 @@ import androidx.lifecycle.MutableLiveData;
 
 import com.example.user.AuthService;
 import com.example.user.login.LoginViewModel;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.common.api.ApiException;
+import com.google.android.gms.tasks.Task;
 
 public class GoogleSignInViewModel extends LoginViewModel {
 
@@ -30,18 +33,21 @@ public class GoogleSignInViewModel extends LoginViewModel {
         mIsLoading.postValue(true);
     }
 
-    public void signInWithIdToken(String idToken) {
-        mAuthService.signInOrSignUpWithGoogle(idToken, aVoid -> {
-            mSuccessToastMessage.postValue("Google login successfully");
+    public void handleSignInResult(Task<GoogleSignInAccount> completedTask) {
+        try {
+            GoogleSignInAccount account = completedTask.getResult(ApiException.class);
+            String idToken = account.getIdToken();
+            signInWithIdToken(idToken);
+        } catch (ApiException e) {
             mIsLoading.postValue(false);
-            new Handler().postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    navigateToHome();
-                }
-            }, 100);
+        }
+    }
+
+    private void signInWithIdToken(String idToken) {
+        mAuthService.signInOrSignUpWithGoogle(idToken, aVoid -> {
+            mIsLoading.postValue(false);
+            navigateToHome();
         }, e -> {
-            mErrorToastMessage.postValue("Google login unsuccessfully");
             mIsLoading.postValue(false);
             Log.e(TAG, "Error: ", e);
         });
