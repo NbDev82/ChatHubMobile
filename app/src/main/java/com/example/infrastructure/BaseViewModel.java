@@ -4,14 +4,13 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import com.example.user.AuthService;
-import com.example.user.AuthServiceImpl;
 
-public class BaseViewModel extends ViewModel {
+public abstract class BaseViewModel extends ViewModel {
 
     protected final MutableLiveData<String> mSuccessToastMessage = new MutableLiveData<>();
     protected final MutableLiveData<String> mErrorToastMessage = new MutableLiveData<>();
 
-    private AuthService authService;
+    protected AuthService mAuthService;
 
     public MutableLiveData<String> getSuccessToastMessage() {
         return mSuccessToastMessage;
@@ -22,16 +21,10 @@ public class BaseViewModel extends ViewModel {
     }
 
     public BaseViewModel() {
-        authService = new AuthServiceImpl();
     }
 
-    public void onPause() {
-        String uid = authService.getCurrentUid();
-        authService.updateOnlineStatus(uid, false);
-    }
-
-    public void onResume() {
-        String uid = authService.getCurrentUid();
-        authService.updateOnlineStatus(uid, true);
+    public void setOnlineStatus(boolean status) {
+        String uid = mAuthService.getCurrentUid();
+        mAuthService.updateOnlineStatus(uid, status);
     }
 }

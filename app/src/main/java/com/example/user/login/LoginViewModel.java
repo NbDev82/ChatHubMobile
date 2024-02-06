@@ -18,7 +18,6 @@ public class LoginViewModel extends BaseViewModel {
 
     private static final String TAG = LoginViewModel.class.getSimpleName();
 
-    protected final AuthService mAuthService;
     private final MutableLiveData<String> mEmail = new MutableLiveData<>();
     private final MutableLiveData<String> mPassword = new MutableLiveData<>();
     private final MutableLiveData<Boolean> mNavigateToForgotPassword = new MutableLiveData<>();

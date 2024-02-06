@@ -22,7 +22,6 @@ public class UserProfileViewModel extends BaseViewModel {
 
     private static final String TAG = UserProfileViewModel.class.getSimpleName();
 
-    private final AuthService mAuthService;
     private final MutableLiveData<Bitmap> mImageBitmap = new MutableLiveData<>();
     private final MutableLiveData<String> mFullName = new MutableLiveData<>();
     private final MutableLiveData<EGender> mGender = new MutableLiveData<>();

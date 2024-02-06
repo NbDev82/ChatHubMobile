@@ -13,7 +13,6 @@ public class SignUpViewModel extends BaseViewModel {
 
     private static final String TAG = SignUpActivity.class.getSimpleName();
 
-    private final AuthService mAuthService;
     private final MutableLiveData<String> mEmail = new MutableLiveData<>();
     private final MutableLiveData<String> mPassword = new MutableLiveData<>();
     private final MutableLiveData<String> mConfirmPassword = new MutableLiveData<>();

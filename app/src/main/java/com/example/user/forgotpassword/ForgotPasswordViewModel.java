@@ -12,7 +12,6 @@ public class ForgotPasswordViewModel extends BaseViewModel {
 
     private static final String TAG = ForgotPasswordViewModel.class.getSimpleName();
 
-    private final AuthService mAuthService;
     private final MutableLiveData<String> mEmail = new MutableLiveData<>();
     private final MutableLiveData<Boolean> mNavigateToLogin = new MutableLiveData<>();
 

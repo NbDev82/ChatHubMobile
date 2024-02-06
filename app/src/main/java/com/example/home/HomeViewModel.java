@@ -15,7 +15,6 @@ public class HomeViewModel extends BaseViewModel {
 
     private static final String TAG = HomeViewModel.class.getSimpleName();
 
-    private final AuthService mAuthService;
     private final MutableLiveData<String> mEmail = new MutableLiveData<>("");
     private final MutableLiveData<Boolean> mNavigateToUserProfile = new MutableLiveData<>();
     private final MutableLiveData<Boolean> mNavigateToLogin = new MutableLiveData<>();

@@ -4,6 +4,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.Nullable;
 import androidx.lifecycle.ViewModelProvider;
 
@@ -70,6 +72,14 @@ public class GoogleSignInActivity extends LoginActivity {
             mViewModel.handleSignInResult(task);
         }
     }
+
+    private final ActivityResultLauncher signWithGoogle = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            result -> {
+                if (result.getResultCode() == RESULT_OK) {
+                }
+            }
+    );
 
     private void navigateToHome() {
         Intent intent = new Intent(GoogleSignInActivity.this, HomeActivity.class);

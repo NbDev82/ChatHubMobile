@@ -15,7 +15,6 @@ import java.lang.ref.WeakReference;
 public class GithubAuthViewModel extends BaseViewModel {
 
     private WeakReference<Activity> mActivityRef;
-    private AuthService mAuthService;
     private final MutableLiveData<String> mEmail = new MutableLiveData<>();
     private final MutableLiveData<Boolean> mNavigateToLogin = new MutableLiveData<>();
     private final MutableLiveData<Boolean> mNavigateToHome = new MutableLiveData<>();
