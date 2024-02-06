@@ -4,16 +4,14 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
-import android.view.View;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.core.content.res.ResourcesCompat;
 import androidx.lifecycle.ViewModelProvider;
 
-import com.example.CustomToast;
+import com.example.customcontrol.CustomToast;
 import com.example.R;
-import com.example.customcontrol.CustomBindingAdapters;
 import com.example.customcontrol.LoadingDialog;
 import com.example.home.HomeActivity;
 import com.example.infrastructure.Utils;

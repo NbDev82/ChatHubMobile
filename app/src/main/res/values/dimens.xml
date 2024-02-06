@@ -18,7 +18,6 @@
 
     <!-- activity_settings.xml-->
     <dimen name="settings_item_height">@dimen/_50sdp</dimen>
-    <dimen name="settings_item_distance">@dimen/_5sdp</dimen>
     <dimen name="settings_section_distance">@dimen/_5sdp</dimen>
     <dimen name="settings_sub_title_margin">@dimen/_10sdp</dimen>
 

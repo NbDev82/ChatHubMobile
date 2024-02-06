@@ -127,7 +127,7 @@
                         android:layout_centerVertical="true"
                         android:layout_toEndOf="@id/nameTitleTxv"
                         android:layout_toStartOf="@id/editNameIcon"
-                        android:text="@{viewModel.fullName}"
+                        android:text="@{viewModel.fullName.isEmpty() ? `(None)` : viewModel.fullName}"
                         android:gravity="end"
                         android:textColor="@color/primary_text"
                         android:textSize="@dimen/primary_text_size"
