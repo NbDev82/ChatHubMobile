@@ -1,100 +1,73 @@
 package com.example.user.login;
 
-import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.example.R;
 import com.example.databinding.ActivityLoginBinding;
-import com.example.home.HomeActivity;
 import com.example.infrastructure.Utils;
+import com.example.navigation.NavigationManager;
+import com.example.navigation.NavigationManagerImpl;
 import com.example.user.AuthService;
 import com.example.user.AuthServiceImpl;
-import com.example.user.forgotpassword.ForgotPasswordActivity;
-import com.example.user.login.github.GithubAuthActivity;
-import com.example.user.login.google.GoogleSignInActivity;
-import com.example.user.signup.SignUpActivity;
 
 public class LoginActivity extends AppCompatActivity {
 
-    private LoginViewModel mViewModel;
+    private NavigationManager navigationManager;
+    private LoginViewModel viewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Utils.setStatusBarGradiant(this);
 
+        navigationManager = new NavigationManagerImpl(this);
+
         ActivityLoginBinding binding = DataBindingUtil
                 .setContentView(this, R.layout.activity_login);
 
         AuthService authService = new AuthServiceImpl();
         LoginViewModelFactory factory = new LoginViewModelFactory(authService);
-        mViewModel = new ViewModelProvider(this, factory).get(LoginViewModel.class);
-        binding.setViewModel(mViewModel);
+        viewModel = new ViewModelProvider(this, factory).get(LoginViewModel.class);
+        binding.setViewModel(viewModel);
         binding.setLifecycleOwner(this);
 
-        setObservers();
+        setupObservers();
 
-        mViewModel.navigateIfAuthenticated();
+        viewModel.navigateIfAuthenticated();
     }
 
-    private void setObservers() {
-        mViewModel.getNavigateToForgotPassword().observe(this, new Observer<Boolean>() {
-            @Override
-            public void onChanged(Boolean aBoolean) {
-                if (aBoolean) {
-                    Intent intent = new Intent(LoginActivity.this, ForgotPasswordActivity.class);
-                    intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-                    startActivity(intent);
-                }
+    private void setupObservers() {
+        viewModel.getNavigateToForgotPassword().observe(this, navigate -> {
+            if (navigate) {
+                navigationManager.navigateToForgotPassword();
             }
         });
 
-        mViewModel.getNavigateToSignUp().observe(this, new Observer<Boolean>() {
-            @Override
-            public void onChanged(Boolean aBoolean) {
-                if (aBoolean) {
-                    Intent intent = new Intent(LoginActivity.this, SignUpActivity.class);
-                    intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-                    startActivity(intent);
-                }
+        viewModel.getNavigateToSignUp().observe(this, navigate -> {
+            if (navigate) {
+                navigationManager.navigateToSignUp();
             }
         });
 
-        mViewModel.getNavigateToHome().observe(this, new Observer<Boolean>() {
-            @Override
-            public void onChanged(Boolean aBoolean) {
-                if (aBoolean) {
-                    Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
-                    intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-                    startActivity(intent);
-                }
+        viewModel.getNavigateToHome().observe(this, navigate -> {
+            if (navigate) {
+                navigationManager.navigateToHome();
             }
         });
 
-        mViewModel.getNavigateToGoogleSignIn().observe(this, new Observer<Boolean>() {
-            @Override
-            public void onChanged(Boolean aBoolean) {
-                if (aBoolean) {
-                    Intent intent = new Intent(LoginActivity.this, GoogleSignInActivity.class);
-                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-                    startActivity(intent);
-                }
+        viewModel.getNavigateToGoogleSignIn().observe(this, navigate -> {
+            if (navigate) {
+                navigationManager.navigateToGoogleSignIn();
             }
         });
 
-        mViewModel.getNavigateToGithubAuth().observe(this, new Observer<Boolean>() {
-            @Override
-            public void onChanged(Boolean aBoolean) {
-                if (aBoolean) {
-                    Intent intent = new Intent(LoginActivity.this, GithubAuthActivity.class);
-                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-                    startActivity(intent);
-                }
+        viewModel.getNavigateToGithubAuth().observe(this, navigate -> {
+            if (navigate) {
+                navigationManager.navigateToGithubAuth();
             }
         });
     }

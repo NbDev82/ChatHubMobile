@@ -22,159 +22,160 @@ public class UserProfileViewModel extends BaseViewModel {
 
     private static final String TAG = UserProfileViewModel.class.getSimpleName();
 
-    private final MutableLiveData<Bitmap> mImageBitmap = new MutableLiveData<>();
-    private final MutableLiveData<String> mFullName = new MutableLiveData<>();
-    private final MutableLiveData<EGender> mGender = new MutableLiveData<>();
-    private final MutableLiveData<String> mBirthdayStr = new MutableLiveData<>();
-    private final MutableLiveData<Boolean> mNavigateToHome = new MutableLiveData<>();
-    private final MutableLiveData<Boolean> mIsUserInitializing = new MutableLiveData<>();
-    private final MutableLiveData<Boolean> mIsDataChanged = new MutableLiveData<>();
-    private final MutableLiveData<Boolean> mIsUserUpdating = new MutableLiveData<>();
-    private final MutableLiveData<Boolean> mOpenImagePicker = new MutableLiveData<>();
-    private final MutableLiveData<InputDialogModel> mOpenInputDialog = new MutableLiveData<>();
-    private final MutableLiveData<Calendar> mOpenDatePickerDialog = new MutableLiveData<>();
-    private final MutableLiveData<AlertDialogModel> mOpenCustomAlertDialog = new MutableLiveData<>();
-    private final MutableLiveData<Integer> mOpenSingleChoiceGender = new MutableLiveData<>();
-    private User mOriginalUser;
-    private String mEncodedImage;
-    private Handler mHandler = new Handler();
+    private final MutableLiveData<Bitmap> imageBitmap = new MutableLiveData<>();
+    private final MutableLiveData<String> fullName = new MutableLiveData<>();
+    private final MutableLiveData<EGender> gender = new MutableLiveData<>();
+    private final MutableLiveData<String> birthdayStr = new MutableLiveData<>();
+    private final MutableLiveData<Boolean> navigateToHome = new MutableLiveData<>();
+    private final MutableLiveData<Boolean> isUserInitializing = new MutableLiveData<>();
+    private final MutableLiveData<Boolean> isDataChanged = new MutableLiveData<>();
+    private final MutableLiveData<Boolean> isUserUpdating = new MutableLiveData<>();
+    private final MutableLiveData<Boolean> openImagePicker = new MutableLiveData<>();
+    private final MutableLiveData<InputDialogModel> openInputDialog = new MutableLiveData<>();
+    private final MutableLiveData<Calendar> openDatePickerDialog = new MutableLiveData<>();
+    private final MutableLiveData<AlertDialogModel> openCustomAlertDialog = new MutableLiveData<>();
+    private final MutableLiveData<Integer> openSingleChoiceGender = new MutableLiveData<>();
+    private User originalUser;
+    private String encodedImage;
 
     public LiveData<Bitmap> getImageBitmap() {
-        return mImageBitmap;
+        return imageBitmap;
     }
 
     public void setImageBitmap(Bitmap bitmap) {
-        mImageBitmap.postValue(bitmap);
-        mEncodedImage = Utils.encodeImage(bitmap);
-        mIsDataChanged.postValue(true);
+        imageBitmap.postValue(bitmap);
+        encodedImage = Utils.encodeImage(bitmap);
+        isDataChanged.postValue(true);
     }
 
     public LiveData<String> getFullName() {
-        return mFullName;
+        return fullName;
     }
 
     public LiveData<EGender> getGender() {
-        return mGender;
+        return gender;
     }
 
     public void setGender(EGender gender) {
-        mGender.postValue(gender);
-        mIsDataChanged.postValue(true);
+        this.gender.postValue(gender);
+        isDataChanged.postValue(true);
     }
 
     public LiveData<String> getBirthdayStr() {
-        return mBirthdayStr;
+        return birthdayStr;
     }
 
     public void setBirthday(Date birthday) {
         String birthdayStr = Utils.dateToString(birthday);
-        mBirthdayStr.postValue(birthdayStr);
-        mIsDataChanged.postValue(true);
+        this.birthdayStr.postValue(birthdayStr);
+        isDataChanged.postValue(true);
     }
 
     public LiveData<Boolean> getNavigateToHome() {
-        return mNavigateToHome;
+        return navigateToHome;
     }
 
     public MutableLiveData<Boolean> getIsUserInitializing() {
-        return mIsUserInitializing;
+        return isUserInitializing;
     }
 
     public MutableLiveData<Boolean> getIsDataChanged() {
-        return mIsDataChanged;
+        return isDataChanged;
     }
 
     public MutableLiveData<Boolean> getIsUserUpdating() {
-        return mIsUserUpdating;
+        return isUserUpdating;
     }
 
     public LiveData<Boolean> getOpenImagePicker() {
-        return mOpenImagePicker;
+        return openImagePicker;
     }
 
     public LiveData<InputDialogModel> getOpenCustomInputDialog() {
-        return mOpenInputDialog;
+        return openInputDialog;
     }
 
     public MutableLiveData<Calendar> getOpenDatePickerDialog() {
-        return mOpenDatePickerDialog;
+        return openDatePickerDialog;
     }
 
     public LiveData<AlertDialogModel> getOpenCustomAlertDialog() {
-        return mOpenCustomAlertDialog;
+        return openCustomAlertDialog;
     }
 
     public LiveData<Integer> getOpenSingleChoiceGender() {
-        return mOpenSingleChoiceGender;
+        return openSingleChoiceGender;
     }
 
     public UserProfileViewModel(AuthService authService) {
-        mAuthService = authService;
+        this.authService = authService;
 
-        mIsDataChanged.postValue(false);
-        mIsUserInitializing.postValue(true);
+        isDataChanged.postValue(false);
+        isUserInitializing.postValue(true);
         authService.getCurrentUser()
                 .addOnSuccessListener(user -> {
                     if (user != null) {
                         setUser(user);
 
-                        mHandler.postDelayed(() -> mIsUserInitializing.postValue(false), 500);
+                        new Handler().postDelayed(() -> {
+                            isUserInitializing.postValue(false);
+                        }, 500);
                     }
                 })
                 .addOnFailureListener(e -> {
                     Log.e(TAG, "Error: " + e);
-                    mIsUserInitializing.postValue(true);
+                    isUserInitializing.postValue(true);
                 });
     }
 
     private void setUser(User user) {
-        mEncodedImage = user.getImageUrl();
-        Bitmap imageBitmap = Utils.decodeImage(mEncodedImage);
-        mImageBitmap.postValue(imageBitmap);
-        mOriginalUser = user;
-        mFullName.postValue(user.getFullName());
-        mGender.postValue(user.getGender());
+        encodedImage = user.getImageUrl();
+        Bitmap imageBitmap = Utils.decodeImage(encodedImage);
+        this.imageBitmap.postValue(imageBitmap);
+        originalUser = user;
+        fullName.postValue(user.getFullName());
+        gender.postValue(user.getGender());
         Date birthday = user.getBirthday();
-        mBirthdayStr.postValue(Utils.dateToString(birthday));
+        birthdayStr.postValue(Utils.dateToString(birthday));
     }
 
     public void navigateToHome() {
-        mNavigateToHome.postValue(true);
+        navigateToHome.postValue(true);
     }
 
     public void openImagePicker() {
-        mOpenImagePicker.postValue(true);
+        openImagePicker.postValue(true);
     }
 
     public void openCustomInputDialog() {
         InputDialogModel model = new InputDialogModel.Builder()
                 .setTitle("Full name")
-                .setCurrentContent( mFullName.getValue() )
+                .setCurrentContent( fullName.getValue() )
                 .setSubmitButtonClickListener(newName -> {
                     if (!newName.isEmpty()) {
-                        mFullName.postValue(newName);
-                        mIsDataChanged.postValue(true);
+                        fullName.postValue(newName);
+                        isDataChanged.postValue(true);
                     }
                 })
                 .build();
-        mOpenInputDialog.postValue(model);
+        openInputDialog.postValue(model);
     }
 
     public void openDatePickerDialog() {
         Calendar calendar = Calendar.getInstance();
-        calendar.setTime( mOriginalUser.getBirthday() );
-        mOpenDatePickerDialog.postValue(calendar);
+        calendar.setTime( originalUser.getBirthday() );
+        openDatePickerDialog.postValue(calendar);
     }
 
     private void checkChangeStatus() {
-        if (!mOriginalUser.getImageUrl().equals(mEncodedImage) ||
-                !mOriginalUser.getFullName().equals( mFullName.getValue() ) ||
-                !mOriginalUser.getGender().equals( mGender.getValue() ) ||
-                !Utils.compareDateWithDateStr(mOriginalUser.getBirthday(), mBirthdayStr.getValue())
+        if (!originalUser.getImageUrl().equals(encodedImage) ||
+                !originalUser.getFullName().equals( fullName.getValue() ) ||
+                !originalUser.getGender().equals( gender.getValue() ) ||
+                !Utils.compareDateWithDateStr(originalUser.getBirthday(), birthdayStr.getValue())
         ) {
-            mIsDataChanged.postValue(true);
+            isDataChanged.postValue(true);
         } else {
-            mIsDataChanged.postValue(false);
+            isDataChanged.postValue(false);
         }
     }
 
@@ -189,46 +190,44 @@ public class UserProfileViewModel extends BaseViewModel {
                     resetAllFields();
                 })
                 .build();
-        mOpenCustomAlertDialog.postValue(model);
+        openCustomAlertDialog.postValue(model);
     }
 
     public void updateUserToFirebase() {
-        mIsUserUpdating.postValue(true);
+        isUserUpdating.postValue(true);
 
-        mOriginalUser.setImageUrl(mEncodedImage);
-        mOriginalUser.setFullName( mFullName.getValue() );
-        mOriginalUser.setGender( mGender.getValue() );
-        Date birthday = Utils.stringToDate( mBirthdayStr.getValue() );
-        mOriginalUser.setBirthday(birthday);
+        originalUser.setImageUrl(encodedImage);
+        originalUser.setFullName( fullName.getValue() );
+        originalUser.setGender( gender.getValue() );
+        Date birthday = Utils.stringToDate( birthdayStr.getValue() );
+        originalUser.setBirthday(birthday);
 
-        String uid = mAuthService.getCurrentUid();
-        mAuthService.updateBasicUser(uid, mOriginalUser)
+        String uid = authService.getCurrentUid();
+        authService.updateBasicUser(uid, originalUser)
                 .addOnSuccessListener(aVoid -> {
-                    mSuccessToastMessage.postValue("Update successfully");
-                    mIsDataChanged.postValue(false);
-                    mIsUserUpdating.postValue(false);
+                    successToastMessage.postValue("Update successfully");
+                    isDataChanged.postValue(false);
+                    isUserUpdating.postValue(false);
                 })
                 .addOnFailureListener(e -> {
-                    mErrorToastMessage.postValue("Update unsuccessfully");
-                    mIsUserUpdating.postValue(false);
+                    errorToastMessage.postValue("Update unsuccessfully");
+                    isUserUpdating.postValue(false);
                     Log.e(TAG, "Error" + e);
                 });
     }
 
     private void resetAllFields() {
-        setUser(mOriginalUser);
+        setUser(originalUser);
     }
 
     public void openSingleChoiceGender() {
-        EGender curGenderSelected = mGender.getValue();
+        EGender curGenderSelected = gender.getValue();
         int curIndexSelected = EGender.getCurrentIndex(curGenderSelected);
-        mOpenSingleChoiceGender.postValue(curIndexSelected);
+        openSingleChoiceGender.postValue(curIndexSelected);
     }
 
     @Override
     protected void onCleared() {
         super.onCleared();
-
-        mHandler.removeCallbacksAndMessages(null);
     }
 }

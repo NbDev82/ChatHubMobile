@@ -14,73 +14,73 @@ public class SignUpViewModel extends BaseViewModel {
 
     private static final String TAG = SignUpActivity.class.getSimpleName();
 
-    private final MutableLiveData<String> mEmail = new MutableLiveData<>();
-    private final MutableLiveData<String> mPassword = new MutableLiveData<>();
-    private final MutableLiveData<String> mConfirmPassword = new MutableLiveData<>();
-    private final MutableLiveData<Boolean> mNavigateToLogin = new MutableLiveData<>();
-    private final MutableLiveData<Boolean> mNavigateToHome = new MutableLiveData<>();
-    private final MutableLiveData<Boolean> mIsSigningUp = new MutableLiveData<>();
+    private final MutableLiveData<String> email = new MutableLiveData<>();
+    private final MutableLiveData<String> password = new MutableLiveData<>();
+    private final MutableLiveData<String> confirmPassword = new MutableLiveData<>();
+    private final MutableLiveData<Boolean> navigateToLogin = new MutableLiveData<>();
+    private final MutableLiveData<Boolean> navigateToHome = new MutableLiveData<>();
+    private final MutableLiveData<Boolean> isSigningUp = new MutableLiveData<>();
 
     public MutableLiveData<String> getEmail() {
-        return mEmail;
+        return email;
     }
 
     public MutableLiveData<String> getPassword() {
-        return mPassword;
+        return password;
     }
 
     public MutableLiveData<String> getConfirmPassword() {
-        return mConfirmPassword;
+        return confirmPassword;
     }
 
     public LiveData<Boolean> getNavigateToLogin() {
-        return mNavigateToLogin;
+        return navigateToLogin;
     }
 
     public LiveData<Boolean> getNavigateToHome() {
-        return mNavigateToHome;
+        return navigateToHome;
     }
 
     public LiveData<Boolean> getIsSigningUp() {
-        return mIsSigningUp;
+        return isSigningUp;
     }
 
     public SignUpViewModel(AuthService authService) {
-        mAuthService = authService;
+        this.authService = authService;
     }
 
     public void navigateToLogin() {
-        mNavigateToLogin.postValue(true);
+        navigateToLogin.postValue(true);
     }
 
     public void signUp() {
-        mIsSigningUp.postValue(true);
-        String email = mEmail.getValue() != null ? mEmail.getValue() : "";
-        String password = mPassword.getValue() != null ? mPassword.getValue() : "";
-        String confirmPassword = mConfirmPassword.getValue() != null
-                ? mConfirmPassword.getValue() : "";
+        isSigningUp.postValue(true);
+        String email = this.email.getValue() != null ? this.email.getValue() : "";
+        String password = this.password.getValue() != null ? this.password.getValue() : "";
+        String confirmPassword = this.confirmPassword.getValue() != null
+                ? this.confirmPassword.getValue() : "";
 
         if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-            mErrorToastMessage.postValue("Enter context email");
-            mIsSigningUp.postValue(false);
+            errorToastMessage.postValue("Enter context email");
+            isSigningUp.postValue(false);
             return;
         }
 
         if (password.isEmpty() || password.length() < 6) {
-            mErrorToastMessage.postValue("Enter proper password");
-            mIsSigningUp.postValue(false);
+            errorToastMessage.postValue("Enter proper password");
+            isSigningUp.postValue(false);
             return;
         }
 
         if (!password.equals(confirmPassword)) {
-            mErrorToastMessage.postValue("Password not match both fields");
-            mIsSigningUp.postValue(false);
+            errorToastMessage.postValue("Password not match both fields");
+            isSigningUp.postValue(false);
             return;
         }
         SignUpRequest signUpRequest = new SignUpRequest(email, password, confirmPassword);
-        mAuthService.signUp(signUpRequest, aVoid -> {
-            mSuccessToastMessage.postValue("Sign up successful");
-            mIsSigningUp.postValue(false);
+        authService.signUp(signUpRequest, aVoid -> {
+            successToastMessage.postValue("Sign up successful");
+            isSigningUp.postValue(false);
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
@@ -88,11 +88,11 @@ public class SignUpViewModel extends BaseViewModel {
                 }
             }, 500);
         }, e -> {
-            mErrorToastMessage.postValue(e.getMessage());
+            errorToastMessage.postValue(e.getMessage());
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    mIsSigningUp.postValue(false);
+                    isSigningUp.postValue(false);
                 }
             }, 500);
             Log.e(TAG, "Error: " + e);
@@ -100,6 +100,6 @@ public class SignUpViewModel extends BaseViewModel {
     }
 
     private void navigateToHome() {
-        mNavigateToHome.postValue(true);
+        navigateToHome.postValue(true);
     }
 }

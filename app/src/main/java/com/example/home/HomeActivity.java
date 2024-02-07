@@ -1,31 +1,30 @@
 package com.example.home;
 
+import android.os.Bundle;
+
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
-
-import android.content.Intent;
-import android.os.Bundle;
 
 import com.example.R;
 import com.example.databinding.ActivityHomeBinding;
 import com.example.infrastructure.Utils;
-import com.example.setting.SettingsActivity;
+import com.example.navigation.NavigationManager;
+import com.example.navigation.NavigationManagerImpl;
 import com.example.user.AuthService;
 import com.example.user.AuthServiceImpl;
-import com.example.user.login.LoginActivity;
-import com.example.user.profile.UserProfileActivity;
 
 public class HomeActivity extends AppCompatActivity {
 
+    private NavigationManager navigationManager;
     private HomeViewModel viewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_home);
         Utils.setStatusBarGradiant(this);
+
+        navigationManager = new NavigationManagerImpl(this);
 
         ActivityHomeBinding binding = DataBindingUtil
                 .setContentView(this, R.layout.activity_home);
@@ -36,40 +35,25 @@ public class HomeActivity extends AppCompatActivity {
         binding.setViewModel(viewModel);
         binding.setLifecycleOwner(this);
 
-        setObservers();
+        setupObservers();
     }
 
-    public void setObservers() {
-        viewModel.getNavigateToSettings().observe(this, new Observer<Boolean>() {
-            @Override
-            public void onChanged(Boolean aBoolean) {
-                if (aBoolean) {
-                    Intent intent = new Intent(HomeActivity.this, SettingsActivity.class);
-                    intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-                    startActivity(intent);
-                }
+    public void setupObservers() {
+        viewModel.getNavigateToSettings().observe(this, navigate -> {
+            if (navigate) {
+                navigationManager.navigateToSettings();
             }
         });
 
-        viewModel.getNavigateToUserProfile().observe(this, new Observer<Boolean>() {
-            @Override
-            public void onChanged(Boolean aBoolean) {
-                if (aBoolean) {
-                    Intent intent = new Intent(HomeActivity.this, UserProfileActivity.class);
-                    intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-                    startActivity(intent);
-                }
+        viewModel.getNavigateToUserProfile().observe(this, navigate -> {
+            if (navigate) {
+                navigationManager.navigateToUserProfile();
             }
         });
 
-        viewModel.getNavigateToLogin().observe(this, new Observer<Boolean>() {
-            @Override
-            public void onChanged(Boolean aBoolean) {
-                if (aBoolean) {
-                    Intent intent = new Intent(HomeActivity.this, LoginActivity.class);
-                    intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-                    startActivity(intent);
-                }
+        viewModel.getNavigateToLogin().observe(this, navigate -> {
+            if (navigate) {
+                navigationManager.navigateToLogin();
             }
         });
     }

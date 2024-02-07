@@ -1,6 +1,5 @@
 package com.example.user.login.google;
 
-import android.os.Handler;
 import android.util.Log;
 
 import androidx.lifecycle.LiveData;
@@ -16,21 +15,21 @@ public class GoogleSignInViewModel extends LoginViewModel {
 
     private static final String TAG = GoogleSignInViewModel.class.getSimpleName();
 
-    private final MutableLiveData<Boolean> mIsLoading = new MutableLiveData<>();
-    private final MutableLiveData<Boolean> mNavigateToHome = new MutableLiveData<>();
+    private final MutableLiveData<Boolean> isLoading = new MutableLiveData<>();
+    private final MutableLiveData<Boolean> navigateToHome = new MutableLiveData<>();
 
     public LiveData<Boolean> isLoading() {
-        return mIsLoading;
+        return isLoading;
     }
 
     public LiveData<Boolean> getNavigateToHome() {
-        return mNavigateToHome;
+        return navigateToHome;
     }
 
     public GoogleSignInViewModel(AuthService authService) {
         super(authService);
 
-        mIsLoading.postValue(true);
+        isLoading.postValue(true);
     }
 
     public void handleSignInResult(Task<GoogleSignInAccount> completedTask) {
@@ -39,21 +38,21 @@ public class GoogleSignInViewModel extends LoginViewModel {
             String idToken = account.getIdToken();
             signInWithIdToken(idToken);
         } catch (ApiException e) {
-            mIsLoading.postValue(false);
+            isLoading.postValue(false);
         }
     }
 
     private void signInWithIdToken(String idToken) {
-        mAuthService.signInOrSignUpWithGoogle(idToken, aVoid -> {
-            mIsLoading.postValue(false);
+        authService.signInOrSignUpWithGoogle(idToken, aVoid -> {
+            isLoading.postValue(false);
             navigateToHome();
         }, e -> {
-            mIsLoading.postValue(false);
+            isLoading.postValue(false);
             Log.e(TAG, "Error: ", e);
         });
     }
 
     public void navigateToHome() {
-        mNavigateToHome.postValue(true);
+        navigateToHome.postValue(true);
     }
 }

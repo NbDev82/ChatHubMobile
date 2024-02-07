@@ -11,16 +11,22 @@ import android.os.Bundle;
 import com.example.R;
 import com.example.databinding.ActivityForgotPasswordBinding;
 import com.example.infrastructure.Utils;
+import com.example.navigation.NavigationManager;
+import com.example.navigation.NavigationManagerImpl;
 import com.example.user.AuthService;
 import com.example.user.AuthServiceImpl;
 import com.example.user.login.LoginActivity;
 
 public class ForgotPasswordActivity extends AppCompatActivity {
 
+    private NavigationManager navigationManager;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Utils.setStatusBarGradiant(this);
+
+        navigationManager = new NavigationManagerImpl(this);
 
         ActivityForgotPasswordBinding binding =
                 DataBindingUtil.setContentView(this, R.layout.activity_forgot_password);
@@ -31,14 +37,9 @@ public class ForgotPasswordActivity extends AppCompatActivity {
         binding.setViewModel(viewModel);
         binding.setLifecycleOwner(this);
 
-        viewModel.getNavigateToLogin().observe(this, new Observer<Boolean>() {
-            @Override
-            public void onChanged(Boolean aBoolean) {
-                if (aBoolean) {
-                    Intent intent = new Intent(ForgotPasswordActivity.this, LoginActivity.class);
-                    intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-                    startActivity(intent);
-                }
+        viewModel.getNavigateToLogin().observe(this, navigate -> {
+            if (navigate) {
+                navigationManager.navigateToLogin();
             }
         });
     }

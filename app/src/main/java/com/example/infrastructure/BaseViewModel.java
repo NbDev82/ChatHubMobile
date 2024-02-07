@@ -7,24 +7,24 @@ import com.example.user.AuthService;
 
 public abstract class BaseViewModel extends ViewModel {
 
-    protected final MutableLiveData<String> mSuccessToastMessage = new MutableLiveData<>();
-    protected final MutableLiveData<String> mErrorToastMessage = new MutableLiveData<>();
+    protected final MutableLiveData<String> successToastMessage = new MutableLiveData<>();
+    protected final MutableLiveData<String> errorToastMessage = new MutableLiveData<>();
 
-    protected AuthService mAuthService;
+    protected AuthService authService;
 
     public MutableLiveData<String> getSuccessToastMessage() {
-        return mSuccessToastMessage;
+        return successToastMessage;
     }
 
     public MutableLiveData<String> getErrorToastMessage() {
-        return mErrorToastMessage;
+        return errorToastMessage;
     }
 
     public BaseViewModel() {
     }
 
     public void setOnlineStatus(boolean status) {
-        String uid = mAuthService.getCurrentUid();
-        mAuthService.updateOnlineStatus(uid, status);
+        String uid = authService.getCurrentUid();
+        authService.updateOnlineStatus(uid, status);
     }
 }

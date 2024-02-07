@@ -2,13 +2,11 @@ package com.example.user.login.github;
 
 import android.app.Activity;
 import android.os.Handler;
-import android.util.Half;
 import android.util.Log;
 import android.util.Patterns;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.ViewModel;
 
 import com.example.infrastructure.BaseViewModel;
 import com.example.user.AuthService;
@@ -19,50 +17,50 @@ public class GithubAuthViewModel extends BaseViewModel {
 
     private static final String TAG = GithubAuthViewModel.class.getSimpleName();
 
-    private WeakReference<Activity> mActivityRef;
-    private final MutableLiveData<String> mEmail = new MutableLiveData<>();
-    private final MutableLiveData<Boolean> mNavigateToLogin = new MutableLiveData<>();
-    private final MutableLiveData<Boolean> mNavigateToHome = new MutableLiveData<>();
-    private final MutableLiveData<Boolean> mIsLogging = new MutableLiveData<>();
+    private final WeakReference<Activity> activityRef;
+    private final MutableLiveData<String> email = new MutableLiveData<>();
+    private final MutableLiveData<Boolean> navigateToLogin = new MutableLiveData<>();
+    private final MutableLiveData<Boolean> navigateToHome = new MutableLiveData<>();
+    private final MutableLiveData<Boolean> isLogging = new MutableLiveData<>();
 
     public MutableLiveData<String> getEmail() {
-        return mEmail;
+        return email;
     }
 
     public LiveData<Boolean> getNavigateToLogin() {
-        return mNavigateToLogin;
+        return navigateToLogin;
     }
 
     public LiveData<Boolean> getNavigateToHome() {
-        return mNavigateToHome;
+        return navigateToHome;
     }
 
     public LiveData<Boolean> getIsLogging() {
-        return mIsLogging;
+        return isLogging;
     }
 
     public GithubAuthViewModel(Activity activity, AuthService authService) {
-        mActivityRef = new WeakReference<>(activity);
-        mAuthService = authService;
+        activityRef = new WeakReference<>(activity);
+        this.authService = authService;
     }
 
     public void navigateToLogin() {
-        mNavigateToLogin.postValue(true);
+        navigateToLogin.postValue(true);
     }
 
     public void onGithubLoginBtnClick() {
-        mIsLogging.postValue(true);
-        String email = mEmail.getValue() != null ? mEmail.getValue() : "";
+        isLogging.postValue(true);
+        String email = this.email.getValue() != null ? this.email.getValue() : "";
         if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-            mErrorToastMessage.postValue("Enter a proper Email");
-            mIsLogging.postValue(false);
+            errorToastMessage.postValue("Enter a proper Email");
+            isLogging.postValue(false);
             return;
         }
-        Activity activity = mActivityRef.get();
+        Activity activity = activityRef.get();
         if (activity != null) {
-            mAuthService.signInOrSignUpWithGithub(activity, email, authResult -> {
-                mIsLogging.postValue(false);
-                mSuccessToastMessage.postValue("Login successfully");
+            authService.signInOrSignUpWithGithub(activity, email, authResult -> {
+                isLogging.postValue(false);
+                successToastMessage.postValue("Login successfully");
                 new Handler().postDelayed(new Runnable() {
                     @Override
                     public void run() {
@@ -70,21 +68,21 @@ public class GithubAuthViewModel extends BaseViewModel {
                     }
                 }, 500);
             }, e -> {
-                mIsLogging.postValue(false);
-                mErrorToastMessage.postValue(e.getMessage());
+                isLogging.postValue(false);
+                errorToastMessage.postValue(e.getMessage());
                 Log.e(TAG, "Error: ", e);
             });
         }
     }
 
     public void navigateToHome() {
-        mNavigateToHome.postValue(true);
+        navigateToHome.postValue(true);
     }
 
     @Override
     protected void onCleared() {
         super.onCleared();
 
-        mActivityRef.clear();
+        activityRef.clear();
     }
 }

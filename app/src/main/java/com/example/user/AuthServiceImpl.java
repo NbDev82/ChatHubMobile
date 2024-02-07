@@ -29,11 +29,11 @@ public class AuthServiceImpl implements AuthService {
 
     private static final String TAG = AuthServiceImpl.class.getSimpleName();
 
-    private FirebaseAuth mAuth;
+    private FirebaseAuth auth;
     private FirebaseFirestore db;
 
     public AuthServiceImpl() {
-        mAuth = FirebaseAuth.getInstance();
+        auth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
     }
 
@@ -44,8 +44,8 @@ public class AuthServiceImpl implements AuthService {
         String email = signUpRequest.getEmail();
         String password = signUpRequest.getPassword();
 
-        mAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(task -> {
-            FirebaseUser firebaseUser = mAuth.getCurrentUser();
+        auth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(task -> {
+            FirebaseUser firebaseUser = auth.getCurrentUser();
             if (!task.isSuccessful() || firebaseUser == null) {
                 onFailure.accept(task.getException());
                 return;
@@ -72,7 +72,7 @@ public class AuthServiceImpl implements AuthService {
         String email = signInRequest.getEmail();
         String password = signInRequest.getPassword();
 
-        mAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(task -> {
+        auth.signInWithEmailAndPassword(email, password).addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
                 onSuccess.accept(null);
             } else {
@@ -85,9 +85,9 @@ public class AuthServiceImpl implements AuthService {
     public void signInOrSignUpWithGoogle(String idToken, Consumer<Void> onSuccess, Consumer<Exception> onFailure) {
         AuthCredential credential = GoogleAuthProvider.getCredential(idToken, null);
 
-        mAuth.signInWithCredential(credential)
+        auth.signInWithCredential(credential)
                 .addOnCompleteListener(task -> {
-                    FirebaseUser curUser = mAuth.getCurrentUser();
+                    FirebaseUser curUser = auth.getCurrentUser();
                     if (!task.isSuccessful() || curUser == null) {
                         onFailure.accept(task.getException());
                         return;
@@ -129,13 +129,13 @@ public class AuthServiceImpl implements AuthService {
                 };
         provider.setScopes(scopes);
 
-        Task<AuthResult> pendingResultTask = mAuth.getPendingAuthResult();
+        Task<AuthResult> pendingResultTask = auth.getPendingAuthResult();
         if (pendingResultTask != null) {
             pendingResultTask
                     .addOnSuccessListener(onSuccess::accept)
                     .addOnFailureListener(onFailure::accept);
         } else {
-            mAuth
+            auth
                     .startActivityForSignInWithProvider(activity, provider.build())
                     .addOnSuccessListener(authResult -> {
                         FirebaseUser curUser = authResult.getUser();
@@ -177,7 +177,7 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public String getCurrentUid() {
-        FirebaseUser firebaseUser = mAuth.getCurrentUser();
+        FirebaseUser firebaseUser = auth.getCurrentUser();
         return firebaseUser != null ? firebaseUser.getUid() : "";
     }
 
@@ -220,19 +220,19 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public void signOut() {
-        mAuth.signOut();
+        auth.signOut();
     }
 
     @Override
     public void sendPasswordResetEmail(String email, Consumer<Void> onSuccess, Consumer<Exception> onFailure) {
-        mAuth.sendPasswordResetEmail(email)
+        auth.sendPasswordResetEmail(email)
                 .addOnSuccessListener(onSuccess::accept)
                 .addOnFailureListener(onFailure::accept);
     }
 
     @Override
     public boolean isLoggedIn() {
-        return mAuth.getCurrentUser() != null;
+        return auth.getCurrentUser() != null;
     }
 
     @Override

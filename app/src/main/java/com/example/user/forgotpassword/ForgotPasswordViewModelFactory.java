@@ -4,22 +4,21 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 
-import com.example.home.HomeViewModel;
 import com.example.user.AuthService;
 
 public class ForgotPasswordViewModelFactory implements ViewModelProvider.Factory {
 
-    private final AuthService mAuthService;
+    private final AuthService authService;
 
     public ForgotPasswordViewModelFactory(AuthService mAuthService) {
-        this.mAuthService = mAuthService;
+        this.authService = mAuthService;
     }
 
     @NonNull
     @Override
     public <T extends ViewModel> T create(@NonNull Class<T> modelClass) {
         if (modelClass.isAssignableFrom(ForgotPasswordViewModel.class)) {
-            return (T) new ForgotPasswordViewModel(mAuthService);
+            return (T) new ForgotPasswordViewModel(authService);
         }
         throw new IllegalArgumentException("Unknown ViewModel class");
     }

@@ -15,75 +15,75 @@ public class LoginViewModel extends BaseViewModel {
 
     private static final String TAG = LoginViewModel.class.getSimpleName();
 
-    private final MutableLiveData<String> mEmail = new MutableLiveData<>();
-    private final MutableLiveData<String> mPassword = new MutableLiveData<>();
-    private final MutableLiveData<Boolean> mNavigateToForgotPassword = new MutableLiveData<>();
-    private final MutableLiveData<Boolean> mNavigateToSignUp = new MutableLiveData<>();
-    private final MutableLiveData<Boolean> mNavigateToHome = new MutableLiveData<>();
-    private final MutableLiveData<Boolean> mNavigateToGoogleSignIn = new MutableLiveData<>();
-    private final MutableLiveData<Boolean> mNavigateToGithubAuth = new MutableLiveData<>();
-    private final MutableLiveData<Boolean> mIsLogging = new MutableLiveData<>();
+    private final MutableLiveData<String> email = new MutableLiveData<>();
+    private final MutableLiveData<String> password = new MutableLiveData<>();
+    private final MutableLiveData<Boolean> navigateToForgotPassword = new MutableLiveData<>();
+    private final MutableLiveData<Boolean> navigateToSignUp = new MutableLiveData<>();
+    private final MutableLiveData<Boolean> navigateToHome = new MutableLiveData<>();
+    private final MutableLiveData<Boolean> navigateToGoogleSignIn = new MutableLiveData<>();
+    private final MutableLiveData<Boolean> navigateToGithubAuth = new MutableLiveData<>();
+    private final MutableLiveData<Boolean> isLogging = new MutableLiveData<>();
 
     public MutableLiveData<String> getEmail() {
-        return mEmail;
+        return email;
     }
 
     public MutableLiveData<String> getPassword() {
-        return mPassword;
+        return password;
     }
 
     public LiveData<Boolean> getNavigateToForgotPassword() {
-        return mNavigateToForgotPassword;
+        return navigateToForgotPassword;
     }
 
     public LiveData<Boolean> getNavigateToSignUp() {
-        return mNavigateToSignUp;
+        return navigateToSignUp;
     }
 
     public LiveData<Boolean> getNavigateToHome() {
-        return mNavigateToHome;
+        return navigateToHome;
     }
 
     public LiveData<Boolean> getNavigateToGoogleSignIn() {
-        return mNavigateToGoogleSignIn;
+        return navigateToGoogleSignIn;
     }
 
     public LiveData<Boolean> getNavigateToGithubAuth() {
-        return mNavigateToGithubAuth;
+        return navigateToGithubAuth;
     }
 
     public MutableLiveData<Boolean> getIsLogging() {
-        return mIsLogging;
+        return isLogging;
     }
 
     public LoginViewModel(AuthService authService) {
-        mAuthService = authService;
+        this.authService = authService;
     }
 
     public void onLoginBtnClick() {
-        mIsLogging.postValue(true);
+        isLogging.postValue(true);
         Log.i(TAG, "Login button clicked");
 
         trimAllInputs();
-        String email = mEmail.getValue() != null ? mEmail.getValue() : "";
-        String password = mPassword.getValue() != null ? mPassword.getValue() : "";
+        String email = this.email.getValue() != null ? this.email.getValue() : "";
+        String password = this.password.getValue() != null ? this.password.getValue() : "";
 
         if (!isValidEmail(email)) {
-            mErrorToastMessage.postValue("Enter your email.");
-            mIsLogging.postValue(false);
+            errorToastMessage.postValue("Enter your email.");
+            isLogging.postValue(false);
             return;
         }
 
         if (!isValidPassword(password)) {
-            mErrorToastMessage.postValue("Enter proper password.");
-            mIsLogging.postValue(false);
+            errorToastMessage.postValue("Enter proper password.");
+            isLogging.postValue(false);
             return;
         }
 
         SignInRequest signInRequest = new SignInRequest(email, password);
-        mAuthService.signIn(signInRequest, aVoid -> {
-            mIsLogging.postValue(false);
-            mSuccessToastMessage.postValue("Login successfully");
+        authService.signIn(signInRequest, aVoid -> {
+            isLogging.postValue(false);
+            successToastMessage.postValue("Login successfully");
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
@@ -91,11 +91,11 @@ public class LoginViewModel extends BaseViewModel {
                 }
             }, 100);
         }, e -> {
-            mErrorToastMessage.postValue(e.getMessage());
+            errorToastMessage.postValue(e.getMessage());
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    mIsLogging.postValue(false);
+                    isLogging.postValue(false);
                 }
             }, 500);
             Log.e(TAG, "Error: " + e);
@@ -103,11 +103,11 @@ public class LoginViewModel extends BaseViewModel {
     }
 
     private void trimAllInputs() {
-        String email = mEmail.getValue() != null ? mEmail.getValue() : "";
-        String password = mPassword.getValue() != null ? mPassword.getValue() : "";
+        String email = this.email.getValue() != null ? this.email.getValue() : "";
+        String password = this.password.getValue() != null ? this.password.getValue() : "";
 
-        mEmail.postValue(email.trim());
-        mPassword.postValue(password.trim());
+        this.email.postValue(email.trim());
+        this.password.postValue(password.trim());
     }
 
     private boolean isValidEmail(String email) {
@@ -119,36 +119,36 @@ public class LoginViewModel extends BaseViewModel {
     }
 
     public void navigateToForgotPassword() {
-        mNavigateToForgotPassword.postValue(true);
+        navigateToForgotPassword.postValue(true);
     }
 
     public void navigateToSignUp() {
-        mNavigateToSignUp.postValue(true);
+        navigateToSignUp.postValue(true);
     }
 
     public void navigateIfAuthenticated() {
-        if (mAuthService.isLoggedIn()) {
-            mNavigateToHome.postValue(true);
+        if (authService.isLoggedIn()) {
+            navigateToHome.postValue(true);
         }
     }
 
     public void navigateToHome() {
-        mNavigateToHome.postValue(true);
+        navigateToHome.postValue(true);
     }
 
     public void navigateToFingerprintSignIn() {
-        mErrorToastMessage.postValue("Without implementation");
+        errorToastMessage.postValue("Without implementation");
     }
 
     public void navigateToSmsSignIn() {
-        mErrorToastMessage.postValue("Without implementation");
+        errorToastMessage.postValue("Without implementation");
     }
 
     public void navigateToGoogleSignIn() {
-        mNavigateToGoogleSignIn.postValue(true);
+        navigateToGoogleSignIn.postValue(true);
     }
 
     public void navigateToGithubAuth() {
-        mNavigateToGithubAuth.postValue(true);
+        navigateToGithubAuth.postValue(true);
     }
 }

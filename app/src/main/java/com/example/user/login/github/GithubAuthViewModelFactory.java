@@ -10,19 +10,19 @@ import com.example.user.AuthService;
 
 public class GithubAuthViewModelFactory implements ViewModelProvider.Factory {
 
-    private final Activity mActivity;
-    private final AuthService mAuthService;
+    private final Activity activity;
+    private final AuthService authService;
 
     public GithubAuthViewModelFactory(Activity activity, AuthService authService) {
-        this.mActivity = activity;
-        this.mAuthService = authService;
+        this.activity = activity;
+        this.authService = authService;
     }
 
     @NonNull
     @Override
     public <T extends ViewModel> T create(@NonNull Class<T> modelClass) {
         if (modelClass.isAssignableFrom(GithubAuthViewModel.class)) {
-            return (T) new GithubAuthViewModel(mActivity, mAuthService);
+            return (T) new GithubAuthViewModel(activity, authService);
         }
         throw new IllegalArgumentException("Unknown ViewModel class");
     }

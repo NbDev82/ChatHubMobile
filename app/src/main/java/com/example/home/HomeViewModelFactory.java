@@ -8,17 +8,17 @@ import com.example.user.AuthService;
 
 public class HomeViewModelFactory implements ViewModelProvider.Factory {
 
-    private final AuthService mAuthService;
+    private final AuthService authService;
 
-    public HomeViewModelFactory(AuthService mAuthService) {
-        this.mAuthService = mAuthService;
+    public HomeViewModelFactory(AuthService authService) {
+        this.authService = authService;
     }
 
     @NonNull
     @Override
     public <T extends ViewModel> T create(@NonNull Class<T> modelClass) {
         if (modelClass.isAssignableFrom(HomeViewModel.class)) {
-            return (T) new HomeViewModel(mAuthService);
+            return (T) new HomeViewModel(authService);
         }
         throw new IllegalArgumentException("Unknown ViewModel class");
     }

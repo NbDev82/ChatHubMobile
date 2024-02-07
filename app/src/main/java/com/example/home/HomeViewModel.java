@@ -4,45 +4,42 @@ import android.os.Handler;
 import android.util.Log;
 
 import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.ViewModel;
 
 import com.example.infrastructure.BaseViewModel;
 import com.example.user.AuthService;
-import com.example.user.AuthServiceImpl;
-import com.example.user.User;
 
 public class HomeViewModel extends BaseViewModel {
 
     private static final String TAG = HomeViewModel.class.getSimpleName();
 
-    private final MutableLiveData<String> mEmail = new MutableLiveData<>("");
-    private final MutableLiveData<Boolean> mNavigateToUserProfile = new MutableLiveData<>();
-    private final MutableLiveData<Boolean> mNavigateToSettings = new MutableLiveData<>();
-    private final MutableLiveData<Boolean> mNavigateToLogin = new MutableLiveData<>();
+    private final MutableLiveData<String> email = new MutableLiveData<>("");
+    private final MutableLiveData<Boolean> navigateToUserProfile = new MutableLiveData<>();
+    private final MutableLiveData<Boolean> navigateToSettings = new MutableLiveData<>();
+    private final MutableLiveData<Boolean> navigateToLogin = new MutableLiveData<>();
 
     public MutableLiveData<String> getEmail() {
-        return mEmail;
+        return email;
     }
 
     public MutableLiveData<Boolean> getNavigateToUserProfile() {
-        return mNavigateToUserProfile;
+        return navigateToUserProfile;
     }
 
     public MutableLiveData<Boolean> getNavigateToSettings() {
-        return mNavigateToSettings;
+        return navigateToSettings;
     }
 
     public MutableLiveData<Boolean> getNavigateToLogin() {
-        return mNavigateToLogin;
+        return navigateToLogin;
     }
 
     public HomeViewModel(AuthService authService) {
-        mAuthService = authService;
+        this.authService = authService;
 
-        mAuthService.getCurrentUser()
+        this.authService.getCurrentUser()
                 .addOnSuccessListener(user -> {
                     if (user != null) {
-                        mEmail.postValue(user.getEmail());
+                        email.postValue(user.getEmail());
                     }
                 })
                 .addOnFailureListener(e -> {
@@ -51,16 +48,16 @@ public class HomeViewModel extends BaseViewModel {
     }
 
     public void navigateToSettings() {
-        mNavigateToSettings.postValue(true);
+        navigateToSettings.postValue(true);
     }
 
     public void navigateToUserProfile() {
-        mNavigateToUserProfile.postValue(true);
+        navigateToUserProfile.postValue(true);
     }
 
     public void signOut() {
-        mAuthService.signOut();
-        mSuccessToastMessage.postValue("Sign out");
+        authService.signOut();
+        successToastMessage.postValue("Sign out");
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
@@ -70,6 +67,6 @@ public class HomeViewModel extends BaseViewModel {
     }
 
     private void navigateToLogin() {
-        mNavigateToLogin.postValue(true);
+        navigateToLogin.postValue(true);
     }
 }

@@ -7,14 +7,14 @@ import android.os.Handler;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
-import androidx.core.content.res.ResourcesCompat;
 import androidx.lifecycle.ViewModelProvider;
 
-import com.example.customcontrol.CustomToast;
 import com.example.R;
+import com.example.customcontrol.CustomToast;
 import com.example.customcontrol.LoadingDialog;
-import com.example.home.HomeActivity;
 import com.example.infrastructure.Utils;
+import com.example.navigation.NavigationManager;
+import com.example.navigation.NavigationManagerImpl;
 import com.example.user.AuthService;
 import com.example.user.AuthServiceImpl;
 import com.example.user.login.LoginActivity;
@@ -26,44 +26,43 @@ import com.google.android.gms.tasks.Task;
 
 public class GoogleSignInActivity extends LoginActivity {
 
-    private GoogleSignInViewModel mViewModel;
-    private LoadingDialog mLoadingDialog;
+    private NavigationManager navigationManager;
+    private GoogleSignInViewModel viewModel;
+    private LoadingDialog loadingDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Utils.setStatusBarGradiant(this);
 
+        navigationManager = new NavigationManagerImpl(this);
+
         AuthService authService = new AuthServiceImpl();
         GoogleSignInViewModelFactory factory = new GoogleSignInViewModelFactory(authService);
-        mViewModel = new ViewModelProvider(this, factory).get(GoogleSignInViewModel.class);
+        viewModel = new ViewModelProvider(this, factory).get(GoogleSignInViewModel.class);
 
-        mLoadingDialog = new LoadingDialog(GoogleSignInActivity.this);
-        setObservers();
+        loadingDialog = new LoadingDialog(GoogleSignInActivity.this);
+        setupObservers();
 
         displayOneTapSignInUI();
     }
 
-    private void setObservers() {
-        mViewModel.isLoading().observe(this, isLoading -> {
+    private void setupObservers() {
+        viewModel.isLoading().observe(this, isLoading -> {
             if (isLoading) {
-                mLoadingDialog.show();
+                loadingDialog.show();
             } else {
-                mLoadingDialog.dismiss();
+                loadingDialog.dismiss();
             }
         });
 
-        mViewModel.getNavigateToHome().observe(this, navigate -> {
+        viewModel.getNavigateToHome().observe(this, navigate -> {
             if (navigate) {
-                CustomToast.showToastMessage(this, "Login successfully", icon -> {
-                    icon.setBackground(ResourcesCompat.getDrawable(getResources(),
-                            R.drawable.ic_circle_check_solid,
-                            getTheme()));
-                });
+                CustomToast.showSuccessToast(this, "Login successfully");
                 new Handler().postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        navigateToHome();
+                        navigationManager.navigateToHome();
                     }
                 }, 100);
             }
@@ -87,14 +86,8 @@ public class GoogleSignInActivity extends LoginActivity {
                 if (result.getResultCode() == Activity.RESULT_OK) {
                     Intent data = result.getData();
                     Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
-                    mViewModel.handleSignInResult(task);
+                    viewModel.handleSignInResult(task);
                 }
             }
     );
-
-    private void navigateToHome() {
-        Intent intent = new Intent(GoogleSignInActivity.this, HomeActivity.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-        startActivity(intent);
-    }
 }

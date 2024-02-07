@@ -15,66 +15,66 @@ public class SettingsViewModel extends BaseViewModel {
 
     private static final String TAG = SettingsViewModel.class.getSimpleName();
 
-    private final MutableLiveData<Bitmap> mProfileImg = new MutableLiveData<>();
-    private final MutableLiveData<String> mFullName = new MutableLiveData<>();
-    private final MutableLiveData<String> mPhoneNumber = new MutableLiveData<>();
-    private final MutableLiveData<String> mEmail = new MutableLiveData<>();
-    private final MutableLiveData<Boolean> mNavigateToHome = new MutableLiveData<>();
-    private final MutableLiveData<Boolean> mNavigateToUserProfile = new MutableLiveData<>();
-    private final MutableLiveData<Boolean> mNavigateToChangePhoneNumber = new MutableLiveData<>();
-    private final MutableLiveData<Boolean> mNavigateToChangeEmail = new MutableLiveData<>();
-    private final MutableLiveData<Boolean> mNavigateToAccountLinking = new MutableLiveData<>();
-    private final MutableLiveData<Boolean> mNavigateToMyQrCode = new MutableLiveData<>();
-    private final MutableLiveData<Boolean> mNavigateToLockMyApp = new MutableLiveData<>();
-    private final MutableLiveData<Boolean> mNavigateToChangePassword = new MutableLiveData<>();
+    private final MutableLiveData<Bitmap> profileImg = new MutableLiveData<>();
+    private final MutableLiveData<String> fullName = new MutableLiveData<>();
+    private final MutableLiveData<String> phoneNumber = new MutableLiveData<>();
+    private final MutableLiveData<String> email = new MutableLiveData<>();
+    private final MutableLiveData<Boolean> navigateToHome = new MutableLiveData<>();
+    private final MutableLiveData<Boolean> navigateToUserProfile = new MutableLiveData<>();
+    private final MutableLiveData<Boolean> navigateToChangePhoneNumber = new MutableLiveData<>();
+    private final MutableLiveData<Boolean> navigateToChangeEmail = new MutableLiveData<>();
+    private final MutableLiveData<Boolean> navigateToAccountLinking = new MutableLiveData<>();
+    private final MutableLiveData<Boolean> navigateToMyQrCode = new MutableLiveData<>();
+    private final MutableLiveData<Boolean> navigateToLockMyApp = new MutableLiveData<>();
+    private final MutableLiveData<Boolean> navigateToChangePassword = new MutableLiveData<>();
     private User mUser;
 
     public LiveData<Bitmap> getProfileImg() {
-        return mProfileImg;
+        return profileImg;
     }
 
     public LiveData<String> getFullName() {
-        return mFullName;
+        return fullName;
     }
 
     public LiveData<String> getPhoneNumber() {
-        return mPhoneNumber;
+        return phoneNumber;
     }
 
     public LiveData<String> getEmail() {
-        return mEmail;
+        return email;
     }
 
     public MutableLiveData<Boolean> getNavigateToHome() {
-        return mNavigateToHome;
+        return navigateToHome;
     }
 
     public MutableLiveData<Boolean> getNavigateToUserProfile() {
-        return mNavigateToUserProfile;
+        return navigateToUserProfile;
     }
 
     public MutableLiveData<Boolean> getNavigateToChangePhoneNumber() {
-        return mNavigateToChangePhoneNumber;
+        return navigateToChangePhoneNumber;
     }
 
     public MutableLiveData<Boolean> getNavigateToChangeEmail() {
-        return mNavigateToChangeEmail;
+        return navigateToChangeEmail;
     }
 
     public MutableLiveData<Boolean> getNavigateToAccountLinking() {
-        return mNavigateToAccountLinking;
+        return navigateToAccountLinking;
     }
 
     public MutableLiveData<Boolean> getNavigateToMyQrCode() {
-        return mNavigateToMyQrCode;
+        return navigateToMyQrCode;
     }
 
     public MutableLiveData<Boolean> getNavigateToLockMyApp() {
-        return mNavigateToLockMyApp;
+        return navigateToLockMyApp;
     }
 
     public MutableLiveData<Boolean> getNavigateToChangePassword() {
-        return mNavigateToChangePassword;
+        return navigateToChangePassword;
     }
 
     public User getUser() {
@@ -82,18 +82,18 @@ public class SettingsViewModel extends BaseViewModel {
     }
 
     public SettingsViewModel(AuthService authService) {
-        mAuthService = authService;
+        this.authService = authService;
 
-        mAuthService.getCurrentUser()
+        this.authService.getCurrentUser()
                 .addOnSuccessListener(user -> {
                     if (user != null) {
                         mUser = user;
 
                         Bitmap profileImg = Utils.decodeImage( user.getImageUrl() );
-                        mProfileImg.postValue(profileImg);
-                        mFullName.postValue( user.getFullName() );
-                        mPhoneNumber.postValue( user.getPhoneNumber() );
-                        mEmail.postValue( user.getEmail() );
+                        this.profileImg.postValue(profileImg);
+                        fullName.postValue( user.getFullName() );
+                        phoneNumber.postValue( user.getPhoneNumber() );
+                        email.postValue( user.getEmail() );
                     }
                 })
                 .addOnFailureListener(e -> {
@@ -102,34 +102,34 @@ public class SettingsViewModel extends BaseViewModel {
     }
 
     public void navigateToHome() {
-        mNavigateToHome.postValue(true);
+        navigateToHome.postValue(true);
     }
 
     public void navigateToUserProfile() {
-        mNavigateToUserProfile.postValue(true);
+        navigateToUserProfile.postValue(true);
     }
 
     public void navigateToChangePhoneNumber() {
-        mNavigateToChangePhoneNumber.postValue(true);
+        navigateToChangePhoneNumber.postValue(true);
     }
 
     public void navigateToChangeEmail() {
-        mNavigateToChangePhoneNumber.postValue(true);
+        navigateToChangePhoneNumber.postValue(true);
     }
 
     public void navigateToAccountLinking() {
-        mNavigateToAccountLinking.postValue(true);
+        navigateToAccountLinking.postValue(true);
     }
 
     public void navigateToMyQrCode() {
-        mNavigateToMyQrCode.postValue(true);
+        navigateToMyQrCode.postValue(true);
     }
 
     public void navigateToLockMyApp() {
-        mNavigateToLockMyApp.postValue(true);
+        navigateToLockMyApp.postValue(true);
     }
 
     public void navigateToChangePassword() {
-        mNavigateToChangePhoneNumber.postValue(true);
+        navigateToChangePhoneNumber.postValue(true);
     }
 }

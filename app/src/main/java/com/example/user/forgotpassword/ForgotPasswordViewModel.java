@@ -13,42 +13,42 @@ public class ForgotPasswordViewModel extends BaseViewModel {
 
     private static final String TAG = ForgotPasswordViewModel.class.getSimpleName();
 
-    private final MutableLiveData<String> mEmail = new MutableLiveData<>();
-    private final MutableLiveData<Boolean> mNavigateToLogin = new MutableLiveData<>();
-    private final MutableLiveData<Boolean> mIsSending = new MutableLiveData<>();
+    private final MutableLiveData<String> email = new MutableLiveData<>();
+    private final MutableLiveData<Boolean> navigateToLogin = new MutableLiveData<>();
+    private final MutableLiveData<Boolean> isSending = new MutableLiveData<>();
 
     public MutableLiveData<String> getEmail() {
-        return mEmail;
+        return email;
     }
 
     public LiveData<Boolean> getNavigateToLogin() {
-        return mNavigateToLogin;
+        return navigateToLogin;
     }
 
     public LiveData<Boolean> getIsSending() {
-        return mIsSending;
+        return isSending;
     }
 
     public ForgotPasswordViewModel(AuthService authService) {
-        mAuthService = authService;
+        this.authService = authService;
     }
 
     public void navigateToLogin() {
-        mNavigateToLogin.postValue(true);
+        navigateToLogin.postValue(true);
     }
 
     public void onSendResetPasswordClick() {
-        mIsSending.postValue(true);
-        String email = mEmail.getValue();
+        isSending.postValue(true);
+        String email = this.email.getValue();
         if (email == null || email.isEmpty()) {
-            mErrorToastMessage.postValue("Enter your email");
+            errorToastMessage.postValue("Enter your email");
             return;
         }
         
-        mEmail.postValue( email.trim() );
-        mAuthService.sendPasswordResetEmail(email, aVoid -> {
-            mSuccessToastMessage.postValue("Password reset link sent to your Email");
-            mIsSending.postValue(false);
+        this.email.postValue( email.trim() );
+        authService.sendPasswordResetEmail(email, aVoid -> {
+            successToastMessage.postValue("Password reset link sent to your Email");
+            isSending.postValue(false);
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
@@ -56,8 +56,8 @@ public class ForgotPasswordViewModel extends BaseViewModel {
                 }
             }, 500);
         }, e -> {
-            mErrorToastMessage.postValue("Failed to reset password");
-            mIsSending.postValue(false);
+            errorToastMessage.postValue("Failed to reset password");
+            isSending.postValue(false);
             Log.e(TAG, "Error: " + e);
         });
     }

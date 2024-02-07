@@ -16,7 +16,7 @@ public class GoogleSignInViewModelFactory extends LoginViewModelFactory {
     @Override
     public <T extends ViewModel> T create(@NonNull Class<T> modelClass) {
         if (modelClass.isAssignableFrom(GoogleSignInViewModel.class)) {
-            return (T) new GoogleSignInViewModel(mAuthService);
+            return (T) new GoogleSignInViewModel(authService);
         }
         throw new IllegalArgumentException("Unknown ViewModel class");
     }

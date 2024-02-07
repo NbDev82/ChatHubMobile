@@ -1,30 +1,31 @@
 package com.example.setting;
 
-import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.res.ResourcesCompat;
 import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.ViewModelProvider;
 
-import com.example.customcontrol.CustomToast;
 import com.example.R;
+import com.example.customcontrol.CustomToast;
 import com.example.databinding.ActivitySettingsBinding;
-import com.example.home.HomeActivity;
 import com.example.infrastructure.Utils;
+import com.example.navigation.NavigationManager;
+import com.example.navigation.NavigationManagerImpl;
 import com.example.user.AuthService;
 import com.example.user.AuthServiceImpl;
-import com.example.user.profile.UserProfileActivity;
 
 public class SettingsActivity extends AppCompatActivity {
 
+    private NavigationManager navigationManager;
     private SettingsViewModel viewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Utils.setStatusBarGradiant(this);
+
+        navigationManager = new NavigationManagerImpl(this);
 
         ActivitySettingsBinding binding = DataBindingUtil
                 .setContentView(this, R.layout.activity_settings);
@@ -35,22 +36,19 @@ public class SettingsActivity extends AppCompatActivity {
         binding.setViewModel(viewModel);
         binding.setLifecycleOwner(this);
 
-        setObservers();
-
+        setupObservers();
     }
 
-    private void setObservers() {
+    private void setupObservers() {
         viewModel.getNavigateToHome().observe(this, navigate -> {
             if (navigate) {
-                Intent intent = new Intent(this, HomeActivity.class);
-                startActivity(intent);
+                navigationManager.navigateToHome();
             }
         });
 
         viewModel.getNavigateToUserProfile().observe(this, navigate -> {
             if (navigate) {
-                Intent intent = new Intent(this, UserProfileActivity.class);
-                startActivity(intent);
+                navigationManager.navigateToUserProfile();
             }
         });
 

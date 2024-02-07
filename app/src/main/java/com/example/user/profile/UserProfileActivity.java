@@ -15,7 +15,6 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.example.R;
@@ -24,8 +23,9 @@ import com.example.customcontrol.customalertdialog.AlertDialogModel;
 import com.example.customcontrol.inputdialogfragment.InputDialogFragment;
 import com.example.customcontrol.inputdialogfragment.InputDialogModel;
 import com.example.databinding.ActivityUserProfileBinding;
-import com.example.home.HomeActivity;
 import com.example.infrastructure.Utils;
+import com.example.navigation.NavigationManager;
+import com.example.navigation.NavigationManagerImpl;
 import com.example.user.AuthService;
 import com.example.user.AuthServiceImpl;
 import com.example.user.EGender;
@@ -39,54 +39,50 @@ public class UserProfileActivity extends AppCompatActivity {
 
     private static final String TAG = UserProfileActivity.class.getSimpleName();
 
-    private UserProfileViewModel mProfileViewModel;
-    private int mSelectedItem = 0;
+    private NavigationManager navigationManager;
+    private UserProfileViewModel profileViewModel;
+    private int selectedItem = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Utils.setStatusBarGradiant(this);
 
+        navigationManager = new NavigationManagerImpl(this);
+
         ActivityUserProfileBinding binding = DataBindingUtil
                 .setContentView(this, R.layout.activity_user_profile);
 
         AuthService authService = new AuthServiceImpl();
         UserProfileViewModelFactory factory = new UserProfileViewModelFactory(authService);
-        mProfileViewModel = new ViewModelProvider(this, factory).get(UserProfileViewModel.class);
+        profileViewModel = new ViewModelProvider(this, factory).get(UserProfileViewModel.class);
 
-        binding.setViewModel(mProfileViewModel);
+        binding.setViewModel(profileViewModel);
         binding.setLifecycleOwner(this);
 
-        setObservers();
+        setupObservers();
     }
 
-    private void setObservers() {
-        mProfileViewModel.getNavigateToHome().observe(this, new Observer<Boolean>() {
-            @Override
-            public void onChanged(Boolean aBoolean) {
-                if (aBoolean) {
-                    Intent intent = new Intent(UserProfileActivity.this, HomeActivity.class);
-                    startActivity(intent);
-                }
+    private void setupObservers() {
+        profileViewModel.getNavigateToHome().observe(this, navigate -> {
+            if (navigate) {
+                navigationManager.navigateToHome();
             }
         });
 
-        mProfileViewModel.getOpenImagePicker().observe(this, new Observer<Boolean>() {
-            @Override
-            public void onChanged(Boolean aBoolean) {
-                if (aBoolean) {
-                    openImagePicker();
-                }
+        profileViewModel.getOpenImagePicker().observe(this, pick -> {
+            if (pick) {
+                openImagePicker();
             }
         });
 
-        mProfileViewModel.getOpenCustomInputDialog().observe(this, this::openCustomInputDialog);
+        profileViewModel.getOpenCustomInputDialog().observe(this, this::openCustomInputDialog);
 
-        mProfileViewModel.getOpenDatePickerDialog().observe(this, this::openDatePickerDialog);
+        profileViewModel.getOpenDatePickerDialog().observe(this, this::openDatePickerDialog);
 
-        mProfileViewModel.getOpenCustomAlertDialog().observe(this, this::openCustomAlertDialog);
+        profileViewModel.getOpenCustomAlertDialog().observe(this, this::openCustomAlertDialog);
 
-        mProfileViewModel.getOpenSingleChoiceGender().observe(this, this::openSingleChoiceGender);
+        profileViewModel.getOpenSingleChoiceGender().observe(this, this::openSingleChoiceGender);
     }
 
     private void openImagePicker() {
@@ -108,7 +104,7 @@ public class UserProfileActivity extends AppCompatActivity {
                             Log.e(TAG, "Error: " + e);
                         }
                         Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
-                        mProfileViewModel.setImageBitmap(bitmap);
+                        profileViewModel.setImageBitmap(bitmap);
                     }
                 }
             }
@@ -129,7 +125,7 @@ public class UserProfileActivity extends AppCompatActivity {
             public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
                 Calendar selectedDate = Calendar.getInstance();
                 selectedDate.set(year, month, dayOfMonth);
-                mProfileViewModel.setBirthday(selectedDate.getTime());
+                profileViewModel.setBirthday(selectedDate.getTime());
             }
         }, year, month, dayOfMonth);
 
@@ -142,7 +138,7 @@ public class UserProfileActivity extends AppCompatActivity {
     }
 
     private void openSingleChoiceGender(int selectedItem) {
-        mSelectedItem = selectedItem;
+        this.selectedItem = selectedItem;
         String[] genderStrs = EGender.getAllDisplays();
 
         MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(this)
@@ -151,14 +147,14 @@ public class UserProfileActivity extends AppCompatActivity {
                 .setSingleChoiceItems(genderStrs, selectedItem, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        mSelectedItem = which;
+                        UserProfileActivity.this.selectedItem = which;
                     }
                 })
                 .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        EGender curSelected = EGender.values()[mSelectedItem];
-                        mProfileViewModel.setGender(curSelected);
+                        EGender curSelected = EGender.values()[UserProfileActivity.this.selectedItem];
+                        profileViewModel.setGender(curSelected);
                         dialog.dismiss();
                     }
                 });
