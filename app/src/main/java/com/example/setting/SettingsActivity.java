@@ -10,6 +10,7 @@ import com.example.R;
 import com.example.customcontrol.CustomToast;
 import com.example.databinding.ActivitySettingsBinding;
 import com.example.infrastructure.Utils;
+import com.example.navigation.EAnimationType;
 import com.example.navigation.NavigationManager;
 import com.example.navigation.NavigationManagerImpl;
 import com.example.user.AuthService;
@@ -42,13 +43,13 @@ public class SettingsActivity extends AppCompatActivity {
     private void setupObservers() {
         viewModel.getNavigateToHome().observe(this, navigate -> {
             if (navigate) {
-                navigationManager.navigateToHome();
+                navigationManager.navigateToHome(EAnimationType.FADE_OUT);
             }
         });
 
         viewModel.getNavigateToUserProfile().observe(this, navigate -> {
             if (navigate) {
-                navigationManager.navigateToUserProfile();
+                navigationManager.navigateToUserProfile(EAnimationType.FADE_IN);
             }
         });
 

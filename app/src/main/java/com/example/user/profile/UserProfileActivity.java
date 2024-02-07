@@ -24,6 +24,7 @@ import com.example.customcontrol.inputdialogfragment.InputDialogFragment;
 import com.example.customcontrol.inputdialogfragment.InputDialogModel;
 import com.example.databinding.ActivityUserProfileBinding;
 import com.example.infrastructure.Utils;
+import com.example.navigation.EAnimationType;
 import com.example.navigation.NavigationManager;
 import com.example.navigation.NavigationManagerImpl;
 import com.example.user.AuthService;
@@ -66,7 +67,7 @@ public class UserProfileActivity extends AppCompatActivity {
     private void setupObservers() {
         profileViewModel.getNavigateToHome().observe(this, navigate -> {
             if (navigate) {
-                navigationManager.navigateToHome();
+                navigationManager.navigateToHome(EAnimationType.FADE_IN);
             }
         });
 

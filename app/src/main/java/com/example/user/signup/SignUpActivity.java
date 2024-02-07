@@ -10,6 +10,7 @@ import androidx.lifecycle.ViewModelProvider;
 import com.example.R;
 import com.example.databinding.ActivitySignUpBinding;
 import com.example.infrastructure.Utils;
+import com.example.navigation.EAnimationType;
 import com.example.navigation.NavigationManager;
 import com.example.navigation.NavigationManagerImpl;
 import com.example.user.AuthService;
@@ -41,13 +42,13 @@ public class SignUpActivity extends AppCompatActivity {
     private void setupObservers() {
         viewModel.getNavigateToLogin().observe(this, navigate -> {
             if (navigate) {
-                navigationManager.navigateToLogin();
+                navigationManager.navigateToLogin(EAnimationType.FADE_OUT);
             }
         });
 
         viewModel.getNavigateToHome().observe(this, navigate -> {
             if (navigate) {
-                navigationManager.navigateToHome();
+                navigationManager.navigateToHome(EAnimationType.FADE_IN);
             }
         });
     }

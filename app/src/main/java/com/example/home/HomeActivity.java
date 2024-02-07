@@ -9,6 +9,7 @@ import androidx.lifecycle.ViewModelProvider;
 import com.example.R;
 import com.example.databinding.ActivityHomeBinding;
 import com.example.infrastructure.Utils;
+import com.example.navigation.EAnimationType;
 import com.example.navigation.NavigationManager;
 import com.example.navigation.NavigationManagerImpl;
 import com.example.user.AuthService;
@@ -41,19 +42,19 @@ public class HomeActivity extends AppCompatActivity {
     public void setupObservers() {
         viewModel.getNavigateToSettings().observe(this, navigate -> {
             if (navigate) {
-                navigationManager.navigateToSettings();
+                navigationManager.navigateToSettings(EAnimationType.FADE_IN);
             }
         });
 
         viewModel.getNavigateToUserProfile().observe(this, navigate -> {
             if (navigate) {
-                navigationManager.navigateToUserProfile();
+                navigationManager.navigateToUserProfile(EAnimationType.FADE_IN);
             }
         });
 
         viewModel.getNavigateToLogin().observe(this, navigate -> {
             if (navigate) {
-                navigationManager.navigateToLogin();
+                navigationManager.navigateToLogin(EAnimationType.FADE_OUT);
             }
         });
     }

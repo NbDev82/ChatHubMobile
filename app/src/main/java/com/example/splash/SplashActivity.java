@@ -7,6 +7,7 @@ import android.os.Handler;
 
 import com.example.R;
 import com.example.infrastructure.Utils;
+import com.example.navigation.EAnimationType;
 import com.example.navigation.NavigationManager;
 import com.example.navigation.NavigationManagerImpl;
 import com.example.user.AuthService;
@@ -30,9 +31,9 @@ public class SplashActivity extends AppCompatActivity {
             @Override
             public void run() {
                 if (mAuthService.isLoggedIn()) {
-                    navigationManager.navigateToHome();
+                    navigationManager.navigateToHome(EAnimationType.FADE_IN);
                 } else {
-                    navigationManager.navigateToLogin();
+                    navigationManager.navigateToLogin(EAnimationType.FADE_IN);
                 }
                 finish();
             }

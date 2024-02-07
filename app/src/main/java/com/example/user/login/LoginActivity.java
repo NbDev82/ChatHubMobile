@@ -9,6 +9,7 @@ import androidx.lifecycle.ViewModelProvider;
 import com.example.R;
 import com.example.databinding.ActivityLoginBinding;
 import com.example.infrastructure.Utils;
+import com.example.navigation.EAnimationType;
 import com.example.navigation.NavigationManager;
 import com.example.navigation.NavigationManagerImpl;
 import com.example.user.AuthService;
@@ -43,31 +44,31 @@ public class LoginActivity extends AppCompatActivity {
     private void setupObservers() {
         viewModel.getNavigateToForgotPassword().observe(this, navigate -> {
             if (navigate) {
-                navigationManager.navigateToForgotPassword();
+                navigationManager.navigateToForgotPassword(EAnimationType.FADE_IN);
             }
         });
 
         viewModel.getNavigateToSignUp().observe(this, navigate -> {
             if (navigate) {
-                navigationManager.navigateToSignUp();
+                navigationManager.navigateToSignUp(EAnimationType.FADE_IN);
             }
         });
 
         viewModel.getNavigateToHome().observe(this, navigate -> {
             if (navigate) {
-                navigationManager.navigateToHome();
+                navigationManager.navigateToHome(EAnimationType.FADE_IN);
             }
         });
 
         viewModel.getNavigateToGoogleSignIn().observe(this, navigate -> {
             if (navigate) {
-                navigationManager.navigateToGoogleSignIn();
+                navigationManager.navigateToGoogleSignIn(EAnimationType.FADE_IN);
             }
         });
 
         viewModel.getNavigateToGithubAuth().observe(this, navigate -> {
             if (navigate) {
-                navigationManager.navigateToGithubAuth();
+                navigationManager.navigateToGithubAuth(EAnimationType.FADE_IN);
             }
         });
     }

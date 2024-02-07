@@ -13,6 +13,7 @@ import com.example.R;
 import com.example.customcontrol.CustomToast;
 import com.example.customcontrol.LoadingDialog;
 import com.example.infrastructure.Utils;
+import com.example.navigation.EAnimationType;
 import com.example.navigation.NavigationManager;
 import com.example.navigation.NavigationManagerImpl;
 import com.example.user.AuthService;
@@ -62,7 +63,7 @@ public class GoogleSignInActivity extends LoginActivity {
                 new Handler().postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        navigationManager.navigateToHome();
+                        navigationManager.navigateToHome(EAnimationType.FADE_IN);
                     }
                 }, 100);
             }

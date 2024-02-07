@@ -1,12 +1,12 @@
 package com.example.navigation;
 
 public interface NavigationManager {
-    void navigateToHome();
-    void navigateToSettings();
-    void navigateToUserProfile();
-    void navigateToLogin();
-    void navigateToForgotPassword();
-    void navigateToSignUp();
-    void navigateToGoogleSignIn();
-    void navigateToGithubAuth();
+    void navigateToHome(EAnimationType animationType);
+    void navigateToSettings(EAnimationType animationType);
+    void navigateToUserProfile(EAnimationType animationType);
+    void navigateToLogin(EAnimationType animationType);
+    void navigateToForgotPassword(EAnimationType animationType);
+    void navigateToSignUp(EAnimationType animationType);
+    void navigateToGoogleSignIn(EAnimationType animationType);
+    void navigateToGithubAuth(EAnimationType animationType);
 }
