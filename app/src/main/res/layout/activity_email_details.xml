@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+        <import type="android.view.View"/>
+        <variable
+            name="viewModel"
+            type="com.example.user.emaildetails.EmailDetailsViewModel" />
+    </data>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:background="@color/primary_bg"
+        tools:successToastMessage="@{viewModel.successToastMessage}"
+        tools:errorToastMessage="@{viewModel.errorToastMessage}">
+
+        <androidx.appcompat.widget.Toolbar
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/toolbar_height"
+            android:background="@drawable/gradient_color_primary">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_nav_arrow_left"
+                app:tint="@color/white"
+                android:onClickListener="@{() -> viewModel.navigateToSettings()}"
+                android:contentDescription="Back to home"/>
+
+            <TextView
+                android:id="@+id/toolbar_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="Email details"
+                android:textColor="@color/white"
+                android:textStyle="bold"
+                android:textSize="@dimen/primary_title_size" />
+        </androidx.appcompat.widget.Toolbar>
+
+        <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:refreshing="@{viewModel.isRefreshing}"
+            app:onRefreshListener="@{() -> viewModel.loadData()}">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="@dimen/common_horizontal_padding_layout"
+                android:orientation="vertical">
+
+                <com.google.android.material.textfield.TextInputLayout
+                    style="@style/CustomTextInputLayoutPrimary"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Current email"
+                    app:endIconMode="clear_text"
+                    app:startIconContentDescription="Mail Icon"
+                    app:startIconDrawable="@drawable/ic_mail">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="textEmailAddress"
+                        android:maxLines="1"
+                        android:text="@={viewModel.email}"
+                        android:enabled="false"
+                        android:textSize="@dimen/primary_text_size" />
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_20sdp"
+                    android:animateLayoutChanges="true">
+
+                    <com.google.android.material.button.MaterialButton
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/_45sdp"
+                        android:text="Verify"
+                        android:textColor="@color/white"
+                        android:textSize="@dimen/primary_text_size"
+                        android:textStyle="bold"
+                        android:onClick="@{()-> viewModel.sendEmailVerification()}"
+                        android:enabled="@{!viewModel.isEmailVerified}"
+                        android:visibility="@{viewModel.isVerifyingEmail ? View.INVISIBLE : View.VISIBLE}"
+                        app:cornerRadius="@dimen/_8sdp" />
+
+
+                    <ProgressBar
+                        android:layout_width="@dimen/_25sdp"
+                        android:layout_height="@dimen/_25sdp"
+                        android:layout_gravity="center"
+                        android:visibility="@{viewModel.isVerifyingEmail ? View.VISIBLE : View.INVISIBLE}"
+                        tools:visibility="invisible"/>
+                </FrameLayout>
+
+                <TextView
+                    android:id="@+id/subTitleTxv"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_10sdp"
+                    android:text="@{viewModel.isEmailVerified ? @string/email_verified_note : @string/email_is_not_verified_note}"
+                    android:textColor="@{viewModel.isEmailVerified ? @color/success : @color/error}"
+                    android:textSize="@dimen/primary_text_size"
+                    tools:text="@string/email_verified_note"
+                    tools:textColor="@color/success" />
+            </LinearLayout>
+
+        </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+    </LinearLayout>
+</layout>

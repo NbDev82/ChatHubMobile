@@ -21,6 +21,7 @@ import com.google.firebase.auth.GoogleAuthProvider;
 import com.google.firebase.auth.OAuthProvider;
 import com.google.firebase.auth.SignInMethodQueryResult;
 import com.google.firebase.auth.UserInfo;
+import com.google.firebase.auth.UserProfileChangeRequest;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -388,5 +389,62 @@ public class AuthServiceImpl implements AuthService {
     public String getCurrentEmail() {
         FirebaseUser user = auth.getCurrentUser();
         return user != null ? user.getEmail() : "";
+    }
+
+    @Override
+    public void disableCurrentUser(Consumer<Void> onSuccess, Consumer<Exception> onFailure) {
+        FirebaseUser user = auth.getCurrentUser();
+        if (user == null) {
+            onFailure.accept(new UserNotAuthenticatedException("User is not authenticated"));
+            return;
+        }
+
+        Map<String, Object> claims = new HashMap<>();
+        claims.put("disabled", true);
+
+        String uid = user.getUid();
+        DocumentReference userRef = db.collection(EUserField.COLLECTION_NAME.getName())
+                .document(uid);
+
+
+    }
+
+    @Override
+    public void checkCurrentEmailVerificationStatus(Consumer<Boolean> onSuccess,
+                                                    Consumer<Exception> onFailure) {
+        FirebaseUser user = auth.getCurrentUser();
+        if (user == null) {
+            onFailure.accept(new UserNotAuthenticatedException("User is not authenticated"));
+            return;
+        }
+
+        user.reload().addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                boolean isEmailVerified = user.isEmailVerified();
+                onSuccess.accept(isEmailVerified);
+            } else {
+                onFailure.accept(task.getException());
+            }
+        });
+    }
+
+    @Override
+    public void sendCurrentUserEmailVerification(Consumer<Void> onSuccess,
+                                                 Consumer<Exception> onFailure) {
+        FirebaseUser user = auth.getCurrentUser();
+        if (user == null) {
+            onFailure.accept(new UserNotAuthenticatedException("User is not authenticated"));
+            return;
+        }
+
+        user.sendEmailVerification()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        onSuccess.accept(null);
+                    } else {
+                        Exception exception = task.getException();
+                        onFailure.accept(exception);
+                    }
+                });
     }
 }

@@ -40,4 +40,9 @@ public interface AuthService {
 
     boolean isCurrentUserEmail(@Nullable String email);
     String getCurrentEmail();
+    void disableCurrentUser(Consumer<Void> onSuccess, Consumer<Exception> onFailure);
+    void checkCurrentEmailVerificationStatus(Consumer<Boolean> onSuccess,
+                                             Consumer<Exception> onFailure);
+    void sendCurrentUserEmailVerification(Consumer<Void> onSuccess,
+                                          Consumer<Exception> onFailure);
 }

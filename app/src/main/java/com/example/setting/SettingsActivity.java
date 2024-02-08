@@ -61,7 +61,7 @@ public class SettingsActivity extends AppCompatActivity {
 
         viewModel.getNavigateToChangeEmail().observe(this, navigate -> {
             if (navigate) {
-                showNotImplementToast();
+                navigationManager.navigateToEmailDetails(EAnimationType.FADE_IN);
             }
         });
 

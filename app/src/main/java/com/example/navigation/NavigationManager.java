@@ -11,4 +11,5 @@ public interface NavigationManager {
     void navigateToGithubAuth(EAnimationType animationType);
     void navigateToChangePassword(EAnimationType animationType);
     void navigateToAccountLinking(EAnimationType animationType);
+    void navigateToEmailDetails(EAnimationType animationType);
 }

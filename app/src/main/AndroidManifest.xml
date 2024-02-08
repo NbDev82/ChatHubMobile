@@ -15,6 +15,9 @@
         android:theme="@style/Theme.ChatHub"
         tools:targetApi="31">
         <activity
+            android:name=".user.emaildetails.EmailDetailsActivity"
+            android:exported="false" />
+        <activity
             android:name=".user.accountlink.AccountLinkingActivity"
             android:exported="false" />
         <activity

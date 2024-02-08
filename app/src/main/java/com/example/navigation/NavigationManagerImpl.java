@@ -12,6 +12,7 @@ import com.example.home.HomeActivity;
 import com.example.setting.SettingsActivity;
 import com.example.user.accountlink.AccountLinkingActivity;
 import com.example.user.changepassword.ChangePasswordActivity;
+import com.example.user.emaildetails.EmailDetailsActivity;
 import com.example.user.forgotpassword.ForgotPasswordActivity;
 import com.example.user.login.LoginActivity;
 import com.example.user.login.github.GithubAuthActivity;
@@ -75,6 +76,11 @@ public class NavigationManagerImpl implements NavigationManager {
     @Override
     public void navigateToAccountLinking(EAnimationType animationType) {
         navigateToActivity(AccountLinkingActivity.class, animationType);
+    }
+
+    @Override
+    public void navigateToEmailDetails(EAnimationType animationType) {
+        navigateToActivity(EmailDetailsActivity.class, animationType);
     }
 
     private void navigateToActivity(Class<? extends Activity> activityClass, EAnimationType animationType) {
