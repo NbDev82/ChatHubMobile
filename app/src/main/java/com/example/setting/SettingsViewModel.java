@@ -73,7 +73,7 @@ public class SettingsViewModel extends BaseViewModel {
         return navigateToLockMyApp;
     }
 
-    public MutableLiveData<Boolean> getNavigateToChangePassword() {
+    public LiveData<Boolean> getNavigateToChangePassword() {
         return navigateToChangePassword;
     }
 
@@ -114,7 +114,7 @@ public class SettingsViewModel extends BaseViewModel {
     }
 
     public void navigateToChangeEmail() {
-        navigateToChangePhoneNumber.postValue(true);
+        navigateToChangeEmail.postValue(true);
     }
 
     public void navigateToAccountLinking() {
@@ -130,6 +130,6 @@ public class SettingsViewModel extends BaseViewModel {
     }
 
     public void navigateToChangePassword() {
-        navigateToChangePhoneNumber.postValue(true);
+        navigateToChangePassword.postValue(true);
     }
 }

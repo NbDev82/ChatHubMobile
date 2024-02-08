@@ -1,17 +1,26 @@
 package com.example.user;
 
 import android.app.Activity;
+import android.text.TextUtils;
 import android.util.Log;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
+import com.example.user.changepassword.UpdatePasswordRequest;
 import com.example.user.login.SignInRequest;
 import com.example.user.signup.SignUpRequest;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.EmailAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
 import com.google.firebase.auth.OAuthProvider;
+import com.google.firebase.auth.SignInMethodQueryResult;
+import com.google.firebase.auth.UserInfo;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -247,5 +256,137 @@ public class AuthServiceImpl implements AuthService {
         updates.put(EUserField.BIRTHDAY.getName(), user.getBirthday());
 
         return userRef.update(updates);
+    }
+
+    @Override
+    public void updatePassword(String newPassword,
+                               Consumer<Void> onSuccess,
+                               Consumer<Exception> onFailure) {
+        FirebaseUser user = auth.getCurrentUser();
+        if (user == null) {
+            onFailure.accept(new UserNotAuthenticatedException("User is not authenticated"));
+            return;
+        }
+
+        user.updatePassword(newPassword)
+                .addOnCompleteListener(updateTask -> {
+                    if (updateTask.isSuccessful()) {
+                        onSuccess.accept(null);
+                        Log.i(TAG, "Password updated");
+                    } else {
+                        onFailure.accept(updateTask.getException());
+                        Log.e(TAG, "Error: Password not updated", updateTask.getException());
+                    }
+                });
+    }
+
+    @Override
+    public void checkOldPassword(String email, String oldPassword,
+                                 Consumer<Void> onSuccess,
+                                 Consumer<Exception> onFailure) {
+
+        FirebaseUser user = auth.getCurrentUser();
+        if (user == null) {
+            onFailure.accept(new UserNotAuthenticatedException("User is not authenticated"));
+            return;
+        }
+
+        AuthCredential credential = EmailAuthProvider.getCredential(email, oldPassword);
+        user.reauthenticate(credential)
+                .addOnSuccessListener(result -> {
+                    onSuccess.accept(null);
+                })
+                .addOnFailureListener(onFailure::accept);
+    }
+
+    @Override
+    public void fetchSignInMethods(Consumer<List<ESignInMethod>> onSuccess,
+                                   Consumer<Exception> onFailure) {
+        FirebaseUser user = auth.getCurrentUser();
+        if (user == null) {
+            onFailure.accept(new UserNotAuthenticatedException("User is not authenticated"));
+            return;
+        }
+
+        List<ESignInMethod> signInMethodEnums = new ArrayList<>();
+        for (UserInfo userInfo : user.getProviderData()) {
+            String providerId = userInfo.getProviderId();
+            ESignInMethod signInMethod = ESignInMethod.fromProviderId(providerId);
+            if (signInMethod != null) {
+                signInMethodEnums.add(signInMethod);
+            }
+        }
+        onSuccess.accept(signInMethodEnums);
+    }
+
+    @Override
+    public void linkCurrentUserWithCredential(AuthCredential authCredential,
+                                              Consumer<Void> onSuccess,
+                                              Consumer<Exception> onFailure) {
+        FirebaseUser user = auth.getCurrentUser();
+        if (user == null) {
+            onFailure.accept(new UserNotAuthenticatedException("User is not authenticated"));
+            return;
+        }
+
+        // the email of current user the same with email which get from authCredential instance
+
+        user.linkWithCredential(authCredential)
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        FirebaseUser linkedUser = task.getResult().getUser();
+
+                        boolean isNewUser = task.getResult().getAdditionalUserInfo().isNewUser();
+//                        if (!isNewUser) {
+//                            mergeUserData(user, linkedUser);
+//                        }
+
+                        onSuccess.accept(null);
+                    } else {
+                        Exception exception = task.getException();
+                        onFailure.accept(exception);
+                    }
+                });
+    }
+
+    @Override
+    public void linkEmailPasswordWithCurrentUser(String email,
+                                                 String password,
+                                                 Consumer<Void> onSuccess,
+                                                 Consumer<Exception> onFailure) {
+        FirebaseUser user = auth.getCurrentUser();
+        if (user == null) {
+            onFailure.accept(new UserNotAuthenticatedException("User is not authenticated"));
+            return;
+        }
+
+        if (!TextUtils.equals(user.getEmail(), email)) {
+            onFailure.accept(new EmailMismatchException("Email does not match the current user's email"));
+            return;
+        }
+
+        AuthCredential emailCredential = EmailAuthProvider.getCredential(email, password);
+
+        user.linkWithCredential(emailCredential)
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        onSuccess.accept(null);
+                    } else {
+                        Exception exception = task.getException();
+                        onFailure.accept(exception);
+                    }
+                });
+    }
+
+    @Override
+    public boolean isCurrentUserEmail(@Nullable String email) {
+        FirebaseUser user = auth.getCurrentUser();
+        return user != null && user.getEmail() != null && user.getEmail().equals(email);
+    }
+
+    @Override
+    public String getCurrentEmail() {
+        FirebaseUser user = auth.getCurrentUser();
+        return user != null ? user.getEmail() : "";
     }
 }

@@ -10,6 +10,8 @@
     <dimen name="sub_title_width">@dimen/_70sdp</dimen>
     <dimen name="sub_title_height">@dimen/_16sdp</dimen>
 
+    <dimen name="common_horizontal_padding_layout">@dimen/_30sdp</dimen>
+
     <!-- activity_user_profile.xml-->
     <dimen name="profile_item_height">@dimen/_50sdp</dimen>
     <dimen name="profile_icon_size">@dimen/_25sdp</dimen>
@@ -20,6 +22,8 @@
     <dimen name="settings_item_height">@dimen/_50sdp</dimen>
     <dimen name="settings_section_distance">@dimen/_5sdp</dimen>
     <dimen name="settings_sub_title_margin">@dimen/_10sdp</dimen>
+
+    <!-- activity_change_password.xml-->
 
     <dimen name="card_corner_radius">@dimen/_16sdp</dimen>
     <dimen name="input_layout_corner_radius">@dimen/_10sdp</dimen>

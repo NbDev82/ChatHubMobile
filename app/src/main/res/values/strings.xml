@@ -12,4 +12,6 @@
 
     <!-- Authentication -->
     <string name="default_web_client_id">44681322913-nahflnqljbaocapigpqmb90a9b3obhij.apps.googleusercontent.com</string>
+    <string name="account_linking_note">Please note: When linking, the new account must have the same email address as the current account</string>
+    <string name="without_default_password_note">You haven\'t set an in-app password yet. Please click the button below to set a new one</string>
 </resources>

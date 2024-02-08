@@ -67,7 +67,7 @@ public class SettingsActivity extends AppCompatActivity {
 
         viewModel.getNavigateToAccountLinking().observe(this, navigate -> {
             if (navigate) {
-                showNotImplementToast();
+                navigationManager.navigateToAccountLinking(EAnimationType.FADE_IN);
             }
         });
 
@@ -85,7 +85,7 @@ public class SettingsActivity extends AppCompatActivity {
 
         viewModel.getNavigateToChangePassword().observe(this, navigate -> {
             if (navigate) {
-                showNotImplementToast();
+                navigationManager.navigateToChangePassword(EAnimationType.FADE_IN);
             }
         });
     }

@@ -9,4 +9,6 @@ public interface NavigationManager {
     void navigateToSignUp(EAnimationType animationType);
     void navigateToGoogleSignIn(EAnimationType animationType);
     void navigateToGithubAuth(EAnimationType animationType);
+    void navigateToChangePassword(EAnimationType animationType);
+    void navigateToAccountLinking(EAnimationType animationType);
 }
