@@ -19,6 +19,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
 import com.google.firebase.auth.OAuthProvider;
+import com.google.firebase.auth.PhoneAuthCredential;
 import com.google.firebase.auth.SignInMethodQueryResult;
 import com.google.firebase.auth.UserInfo;
 import com.google.firebase.auth.UserProfileChangeRequest;
@@ -445,6 +446,45 @@ public class AuthServiceImpl implements AuthService {
                         Exception exception = task.getException();
                         onFailure.accept(exception);
                     }
+                });
+    }
+
+    @Override
+    public FirebaseAuth getFirebaseAuth() {
+        return auth;
+    }
+
+    @Override
+    public void signInWithPhoneCredential(PhoneAuthCredential phoneAuthCredential,
+                                          Consumer<Void> onSuccess,
+                                          Consumer<Exception> onFailure) {
+
+        auth.signInWithCredential(phoneAuthCredential)
+                .addOnCompleteListener(task -> {
+                    FirebaseUser curUser = auth.getCurrentUser();
+                    if (!task.isSuccessful() || curUser == null) {
+                        onFailure.accept(task.getException());
+                        return;
+                    }
+
+                    checkUserExitsByEmail(curUser.getEmail())
+                            .addOnSuccessListener(exits -> {
+                                if (exits) {
+                                    onSuccess.accept(null);
+                                    return;
+                                }
+
+                                String uid = curUser.getUid();
+                                User user = new User(curUser.getEmail());
+                                addUser(uid, user, onSuccess, e -> {
+                                    onFailure.accept(e);
+                                    curUser.delete();
+                                });
+                            })
+                            .addOnFailureListener(e -> {
+                                Log.e(TAG, "Error fetching user data: " + e);
+                            });
+
                 });
     }
 }

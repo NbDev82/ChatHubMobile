@@ -9,6 +9,8 @@ import com.example.user.signup.SignUpRequest;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.PhoneAuthCredential;
 
 import java.util.List;
 import java.util.function.Consumer;
@@ -45,4 +47,9 @@ public interface AuthService {
                                              Consumer<Exception> onFailure);
     void sendCurrentUserEmailVerification(Consumer<Void> onSuccess,
                                           Consumer<Exception> onFailure);
+    FirebaseAuth getFirebaseAuth();
+
+    void signInWithPhoneCredential(PhoneAuthCredential phoneAuthCredential,
+                                   Consumer<Void> onSuccess,
+                                   Consumer<Exception> onFailure);
 }

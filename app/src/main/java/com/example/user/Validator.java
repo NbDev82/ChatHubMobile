@@ -62,4 +62,17 @@ public class Validator {
 
         return null;
     }
+
+    public static String validPhoneNumber(@Nullable String phoneNumber) {
+        if (phoneNumber == null) {
+            return "Phone number is required";
+        }
+
+        String regex = "^[+]?[0-9]{8,15}$";
+        if (!phoneNumber.matches(regex)) {
+            return "Invalid phone number";
+        }
+
+        return null;
+    }
 }

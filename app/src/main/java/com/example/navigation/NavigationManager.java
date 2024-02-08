@@ -1,5 +1,7 @@
 package com.example.navigation;
 
+import android.os.Bundle;
+
 public interface NavigationManager {
     void navigateToHome(EAnimationType animationType);
     void navigateToSettings(EAnimationType animationType);
@@ -12,4 +14,6 @@ public interface NavigationManager {
     void navigateToChangePassword(EAnimationType animationType);
     void navigateToAccountLinking(EAnimationType animationType);
     void navigateToEmailDetails(EAnimationType animationType);
+    void navigateToSendOtp(EAnimationType animationType);
+    void navigateToVerifyOtp(Bundle data, EAnimationType animationType);
 }

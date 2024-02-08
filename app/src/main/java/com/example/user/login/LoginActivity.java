@@ -60,6 +60,12 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
 
+        viewModel.getNavigateToSendOtp().observe(this, navigate -> {
+            if (navigate) {
+                navigationManager.navigateToSendOtp(EAnimationType.FADE_IN);
+            }
+        });
+
         viewModel.getNavigateToGoogleSignIn().observe(this, navigate -> {
             if (navigate) {
                 navigationManager.navigateToGoogleSignIn(EAnimationType.FADE_IN);

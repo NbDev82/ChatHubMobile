@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
+import android.os.Bundle;
 
 import androidx.annotation.AnimRes;
 
@@ -17,6 +18,7 @@ import com.example.user.forgotpassword.ForgotPasswordActivity;
 import com.example.user.login.LoginActivity;
 import com.example.user.login.github.GithubAuthActivity;
 import com.example.user.login.google.GoogleSignInActivity;
+import com.example.user.login.otp.send.SendOtpActivity;
 import com.example.user.profile.UserProfileActivity;
 import com.example.user.signup.SignUpActivity;
 
@@ -83,39 +85,63 @@ public class NavigationManagerImpl implements NavigationManager {
         navigateToActivity(EmailDetailsActivity.class, animationType);
     }
 
+    @Override
+    public void navigateToSendOtp(EAnimationType animationType) {
+        navigateToActivity(SendOtpActivity.class, animationType);
+    }
+
+    @Override
+    public void navigateToVerifyOtp(Bundle data, EAnimationType animationType) {
+        navigateToActivity(SendOtpActivity.class, data, animationType);
+    }
+
     private void navigateToActivity(Class<? extends Activity> activityClass, EAnimationType animationType) {
+        navigateToActivity(activityClass, null, animationType);
+    }
+
+    private void navigateToActivity(Class<? extends Activity> activityClass, Bundle data, EAnimationType animationType) {
         switch (animationType) {
             case FADE_IN:
-                navigateFadeForward(activityClass);
+                navigateFadeForward(activityClass, data);
                 break;
             case FADE_OUT:
-                navigateFadeBackward(activityClass);
+                navigateFadeBackward(activityClass, data);
                 break;
             default:
-                navigateWithoutAnimation(activityClass);
+                navigateWithoutAnimation(activityClass, data);
                 break;
         }
     }
 
-    private void navigateFadeForward(Class<? extends Activity> activityClass) {
-        navigateFadeBackward(activityClass, R.anim.fade_in, R.anim.fade_out);
+    private void navigateFadeForward(Class<? extends Activity> activityClass, Bundle data) {
+        navigateToActivity(activityClass, data, R.anim.fade_in, R.anim.fade_out);
     }
 
-    private <T> void navigateFadeBackward(Class<T> activityClass) {
-        navigateFadeBackward(activityClass, R.anim.fade_out, R.anim.fade_in);
+    private void navigateFadeBackward(Class<? extends Activity> activityClass, Bundle data) {
+        navigateToActivity(activityClass, data, R.anim.fade_out, R.anim.fade_in);
     }
 
-    private <T> void navigateWithoutAnimation(Class<T> activityClass) {
+    private void navigateWithoutAnimation(Class<? extends Activity> activityClass, Bundle data) {
         Intent intent = new Intent(context, activityClass);
         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+
+        if (data != null) {
+            intent.putExtras(data);
+        }
+
         context.startActivity(intent);
     }
 
-    private <T> void navigateFadeBackward(Class<T> activityClass,
-                                          @AnimRes int enterAnim,
-                                          @AnimRes int exitAnim) {
+    private void navigateToActivity(Class<? extends Activity> activityClass,
+                                        Bundle data,
+                                        @AnimRes int enterAnim,
+                                        @AnimRes int exitAnim) {
         Intent intent = new Intent(context, activityClass);
         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+
+        if (data != null) {
+            intent.putExtras(data);
+        }
 
         if (context instanceof Activity) {
             Activity activity = (Activity) context;

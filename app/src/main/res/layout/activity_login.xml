@@ -192,7 +192,7 @@
                         android:layout_height="@dimen/_30sdp"
                         android:layout_marginEnd="@dimen/item_gap"
                         android:background="@drawable/ic_sms"
-                        android:onClick="@{()-> viewModel.navigateToSmsSignIn()}" />
+                        android:onClick="@{()-> viewModel.navigateToSendOtp()}" />
 
                     <ImageView
                         android:layout_width="@dimen/_30sdp"

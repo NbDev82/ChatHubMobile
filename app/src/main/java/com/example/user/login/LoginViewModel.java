@@ -20,6 +20,7 @@ public class LoginViewModel extends BaseViewModel {
     private final MutableLiveData<Boolean> navigateToForgotPassword = new MutableLiveData<>();
     private final MutableLiveData<Boolean> navigateToSignUp = new MutableLiveData<>();
     private final MutableLiveData<Boolean> navigateToHome = new MutableLiveData<>();
+    private final MutableLiveData<Boolean> navigateToSendOtp = new MutableLiveData<>();
     private final MutableLiveData<Boolean> navigateToGoogleSignIn = new MutableLiveData<>();
     private final MutableLiveData<Boolean> navigateToGithubAuth = new MutableLiveData<>();
     private final MutableLiveData<Boolean> isLogging = new MutableLiveData<>();
@@ -42,6 +43,10 @@ public class LoginViewModel extends BaseViewModel {
 
     public LiveData<Boolean> getNavigateToHome() {
         return navigateToHome;
+    }
+
+    public LiveData<Boolean> getNavigateToSendOtp() {
+        return navigateToSendOtp;
     }
 
     public LiveData<Boolean> getNavigateToGoogleSignIn() {
@@ -140,8 +145,8 @@ public class LoginViewModel extends BaseViewModel {
         errorToastMessage.postValue("Without implementation");
     }
 
-    public void navigateToSmsSignIn() {
-        errorToastMessage.postValue("Without implementation");
+    public void navigateToSendOtp() {
+        navigateToSendOtp.postValue(true);
     }
 
     public void navigateToGoogleSignIn() {
