@@ -245,8 +245,8 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public Task<List<ESignInMethod>> fetchSignInMethods() {
-        TaskCompletionSource<List<ESignInMethod>> source = new TaskCompletionSource<>();
+    public Task<List<String>> fetchSignInMethods() {
+        TaskCompletionSource<List<String>> source = new TaskCompletionSource<>();
 
         FirebaseUser user = auth.getCurrentUser();
         if (user == null) {
@@ -254,16 +254,13 @@ public class AuthServiceImpl implements AuthService {
             return source.getTask();
         }
 
-        List<ESignInMethod> signInMethodEnums = new ArrayList<>();
+        List<String> providerIds = new ArrayList<>();
         for (UserInfo userInfo : user.getProviderData()) {
             String providerId = userInfo.getProviderId();
-            ESignInMethod signInMethod = ESignInMethod.fromProviderId(providerId);
-            if (signInMethod != null) {
-                signInMethodEnums.add(signInMethod);
-            }
+            providerIds.add(providerId);
         }
 
-        source.setResult(signInMethodEnums);
+        source.setResult(providerIds);
         return source.getTask();
     }
 

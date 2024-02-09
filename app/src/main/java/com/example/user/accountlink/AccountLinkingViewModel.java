@@ -8,12 +8,14 @@ import androidx.lifecycle.MutableLiveData;
 import com.example.customcontrol.emailpassworddialog.EmailPasswordDialogModel;
 import com.example.infrastructure.BaseViewModel;
 import com.example.user.AuthService;
-import com.example.user.ESignInMethod;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthCredential;
+import com.google.firebase.auth.EmailAuthProvider;
+import com.google.firebase.auth.GithubAuthProvider;
 import com.google.firebase.auth.GoogleAuthProvider;
+import com.google.firebase.auth.PhoneAuthProvider;
 
 public class AccountLinkingViewModel extends BaseViewModel {
 
@@ -89,19 +91,19 @@ public class AccountLinkingViewModel extends BaseViewModel {
         isGithubAccountLinked.postValue(false);
 
         authService.fetchSignInMethods()
-                .addOnSuccessListener(signInMethods -> {
-                    for (ESignInMethod signInMethod : signInMethods) {
-                        switch (signInMethod) {
-                            case PASSWORD:
+                .addOnSuccessListener(providerIds -> {
+                    for (String providerId : providerIds) {
+                        switch (providerId) {
+                            case EmailAuthProvider.PROVIDER_ID:
                                 isInAppPasswordLinked.postValue(true);
                                 break;
-                            case GOOGLE:
+                            case GoogleAuthProvider.PROVIDER_ID:
                                 isGoogleAccountLinked.postValue(true);
                                 break;
-                            case GITHUB:
+                            case GithubAuthProvider.PROVIDER_ID:
                                 isGithubAccountLinked.postValue(true);
                                 break;
-                            case SMS:
+                            case PhoneAuthProvider.PROVIDER_ID:
                                 isSmsAccountLinked.postValue(true);
                                 break;
                         }

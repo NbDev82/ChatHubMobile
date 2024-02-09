@@ -7,8 +7,10 @@ import androidx.lifecycle.MutableLiveData;
 
 import com.example.infrastructure.BaseViewModel;
 import com.example.user.AuthService;
-import com.example.user.ESignInMethod;
 import com.example.user.Validator;
+import com.google.firebase.auth.EmailAuthProvider;
+
+import java.util.Objects;
 
 public class ChangePasswordViewModel extends BaseViewModel {
 
@@ -79,9 +81,9 @@ public class ChangePasswordViewModel extends BaseViewModel {
 
     private void checkPasswordSetStatus() {
         authService.fetchSignInMethods()
-                .addOnSuccessListener(signInMethods -> {
-                    boolean isPasswordSet = signInMethods.stream()
-                            .anyMatch(signInMethod -> signInMethod == ESignInMethod.PASSWORD);
+                .addOnSuccessListener(providerIds -> {
+                    boolean isPasswordSet = providerIds.stream()
+                            .anyMatch(signInMethod -> Objects.equals(signInMethod, EmailAuthProvider.PROVIDER_ID));
                     this.isPasswordSet.postValue(isPasswordSet);
                 })
                 .addOnFailureListener(e -> {

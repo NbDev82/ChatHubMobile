@@ -43,7 +43,7 @@ public interface AuthService {
 
     Task<Void> checkOldPassword(String email, String password);
 
-    Task<List<ESignInMethod>> fetchSignInMethods();
+    Task<List<String>> fetchSignInMethods();
 
     Task<Void> linkCurrentUserWithCredential(AuthCredential googleCredential);
 
