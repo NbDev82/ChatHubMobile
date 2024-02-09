@@ -3,11 +3,13 @@ package com.example.user.login.otp.verify;
 import android.os.Bundle;
 import android.util.Log;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.example.R;
+import com.example.customcontrol.CustomToast;
 import com.example.databinding.ActivityVerifyOtpBinding;
 import com.example.infrastructure.Utils;
 import com.example.navigation.EAnimationType;
@@ -16,12 +18,15 @@ import com.example.navigation.NavigationManagerImpl;
 import com.example.user.AuthService;
 import com.example.user.AuthServiceImpl;
 import com.example.user.EUserField;
-import com.example.user.login.otp.send.SendOtpActivity;
+import com.example.user.login.otp.phonenumberinput.PhoneNumberInputActivity;
+import com.google.firebase.FirebaseException;
 import com.google.firebase.auth.PhoneAuthCredential;
+import com.google.firebase.auth.PhoneAuthOptions;
 import com.google.firebase.auth.PhoneAuthProvider;
 
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.concurrent.TimeUnit;
 
 public class VerifyOtpActivity extends AppCompatActivity {
 
@@ -32,6 +37,7 @@ public class VerifyOtpActivity extends AppCompatActivity {
     private VerifyOtpViewModel viewModel;
     private static long timeoutSeconds = TIME_OUT_SECONDS;
     private String verificationCode;
+    private PhoneAuthProvider.ForceResendingToken resendingToken;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,6 +78,56 @@ public class VerifyOtpActivity extends AppCompatActivity {
         signIn(credential);
     }
 
+
+    private void sendOtp(String phoneNumber, boolean isResend) {
+        setInProgress(true);
+        PhoneAuthOptions.Builder builder = PhoneAuthOptions
+                .newBuilder( authService.getFirebaseAuth() )
+                .setPhoneNumber(phoneNumber)
+                .setTimeout(VerifyOtpActivity.TIME_OUT_SECONDS, TimeUnit.SECONDS)
+                .setActivity(this)
+                .setCallbacks(new PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
+                    @Override
+                    public void onVerificationCompleted(@NonNull PhoneAuthCredential phoneAuthCredential) {
+                        signIn(phoneAuthCredential);
+                        setInProgress(false);
+                    }
+
+                    @Override
+                    public void onVerificationFailed(@NonNull FirebaseException e) {
+                        CustomToast.showErrorToast(VerifyOtpActivity.this, "OTP verification failed");
+                        setInProgress(false);
+                    }
+
+                    @Override
+                    public void onCodeSent(@NonNull String s, @NonNull PhoneAuthProvider.ForceResendingToken forceResendingToken) {
+                        super.onCodeSent(s, forceResendingToken);
+                        verificationCode = s;
+                        resendingToken = forceResendingToken;
+                        CustomToast.showSuccessToast(VerifyOtpActivity.this, "OTP sent successfully");
+                        setInProgress(false);
+                    }
+                });
+        if (isResend) {
+            PhoneAuthProvider.verifyPhoneNumber(builder
+                    .setForceResendingToken(resendingToken)
+                    .build());
+        } else {
+            PhoneAuthProvider.verifyPhoneNumber(builder.build());
+        }
+    }
+
+    private void signIn(PhoneAuthCredential phoneAuthCredential) {
+        authService.signInWithPhoneCredential(phoneAuthCredential, aVoid -> {
+
+        }, e -> {
+            Log.e(PhoneNumberInputActivity.class.getSimpleName(), "Error: ", e);
+        });
+    }
+
+    void setInProgress(boolean isProgress) {
+    }
+
     void startResendTimer() {
         Timer timer = new Timer();
         timer.scheduleAtFixedRate(new TimerTask() {
@@ -90,21 +146,10 @@ public class VerifyOtpActivity extends AppCompatActivity {
         }, 0, 1000);
     }
 
-    private void signIn(PhoneAuthCredential phoneAuthCredential) {
-        authService.signInWithPhoneCredential(phoneAuthCredential, aVoid -> {
-
-        }, e -> {
-            Log.e(SendOtpActivity.class.getSimpleName(), "Error: ", e);
-        });
-    }
-
     void setResendText(String text) {
     }
 
     void setResendTextStatus(boolean enabled) {
 
-    }
-
-    void setInProgress(boolean isProgress) {
     }
 }

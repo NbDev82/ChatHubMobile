@@ -7,7 +7,7 @@
         <import type="android.view.View"/>
         <variable
             name="viewModel"
-            type="com.example.user.login.otp.send.SendOtpViewModel" />
+            type="com.example.user.login.otp.phonenumberinput.PhoneNumberInputViewModel" />
     </data>
 
     <RelativeLayout
@@ -52,40 +52,65 @@
                 android:textSize="@dimen/primary_text_size" />
         </LinearLayout>
 
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/phoneNumberTIL"
-            style="@style/CustomTextInputLayoutPrimary"
+        <LinearLayout
+            android:id="@+id/phoneNumberLL"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@id/otpTitleLL"
             android:layout_marginTop="@dimen/_20sdp"
-            app:prefixText="@{viewModel.prefixPhoneNumber}"
-            app:counterEnabled="true"
-            app:counterMaxLength="11"
-            android:hint="Phone number"
-            app:endIconMode="clear_text"
-            app:startIconContentDescription="Phone Icon"
-            app:startIconDrawable="@drawable/ic_phone"
-            app:errorEnabled="true"
-            app:errorIconDrawable="@drawable/ic_circle_xmark_solid"
-            app:error="@{viewModel.phoneNumberError}">
-
-            <com.google.android.material.textfield.TextInputEditText
+            android:orientation="vertical">
+            <com.google.android.material.textfield.TextInputLayout
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense.ExposedDropdownMenu"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:inputType="phone"
-                android:maxLines="1"
-                android:onTextChanged="@{(s, start, before, count) -> viewModel.validatePhoneNumber(s)}"
-                android:text="@={viewModel.phoneNumber}"
-                android:textSize="@dimen/primary_text_size" />
+                app:boxCornerRadiusBottomEnd="@dimen/input_layout_corner_radius"
+                app:boxCornerRadiusBottomStart="@dimen/input_layout_corner_radius"
+                app:boxCornerRadiusTopEnd="@dimen/input_layout_corner_radius"
+                app:boxCornerRadiusTopStart="@dimen/input_layout_corner_radius"
+                app:boxStrokeWidth="1dp"
+                android:enabled="false"
+                android:hint="Country code">
 
-        </com.google.android.material.textfield.TextInputLayout>
+                <AutoCompleteTextView
+                    android:id="@+id/autoCompleteTextView"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:inputType="textAutoComplete"
+                    android:text="@={viewModel.countryCode}"
+                    tools:text="+84" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                style="@style/CustomTextInputLayoutPrimary"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_5sdp"
+                android:hint="Phone number"
+                app:endIconMode="clear_text"
+                app:errorEnabled="true"
+                app:error="@{viewModel.phoneNumberError}">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="phone"
+                    android:maxLines="1"
+                    android:onTextChanged="@{(s, start, before, count) -> viewModel.validatePhoneNumber(s)}"
+                    android:text="@={viewModel.localNumber}"
+                    android:textSize="@dimen/primary_text_size"
+                    tools:text="123456789" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+        </LinearLayout>
 
         <FrameLayout
             android:id="@+id/nextBtn"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@id/phoneNumberTIL"
+            android:layout_marginTop="@dimen/_10sdp"
+            android:layout_below="@id/phoneNumberLL"
             android:animateLayoutChanges="true">
 
             <com.google.android.material.button.MaterialButton
@@ -95,16 +120,16 @@
                 android:textColor="@color/white"
                 android:textSize="@dimen/primary_text_size"
                 android:textStyle="bold"
-                android:onClick="@{()-> viewModel.sendOtp()}"
+                android:onClick="@{()-> viewModel.verifyPhoneNumberAndNavigate()}"
                 android:enabled="@{viewModel.phoneNumberError == null}"
-                android:visibility="@{viewModel.isOtpSending ? View.INVISIBLE : View.VISIBLE}"
+                android:visibility="@{viewModel.isPhoneVerifying ? View.INVISIBLE : View.VISIBLE}"
                 app:cornerRadius="@dimen/_8sdp" />
 
             <ProgressBar
                 android:layout_width="@dimen/_25sdp"
                 android:layout_height="@dimen/_25sdp"
                 android:layout_gravity="center"
-                android:visibility="@{viewModel.isOtpSending ? View.VISIBLE : View.INVISIBLE}"
+                android:visibility="@{viewModel.isPhoneVerifying ? View.VISIBLE : View.INVISIBLE}"
                 tools:visibility="invisible"/>
         </FrameLayout>
 

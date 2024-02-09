@@ -52,4 +52,8 @@ public interface AuthService {
     void signInWithPhoneCredential(PhoneAuthCredential phoneAuthCredential,
                                    Consumer<Void> onSuccess,
                                    Consumer<Exception> onFailure);
+
+    void existsByPhoneNumber(String phoneNumber,
+                             Consumer<Boolean> onSuccess,
+                             Consumer<Exception> onFailure);
 }

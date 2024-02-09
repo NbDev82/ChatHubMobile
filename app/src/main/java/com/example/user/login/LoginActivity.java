@@ -62,7 +62,7 @@ public class LoginActivity extends AppCompatActivity {
 
         viewModel.getNavigateToSendOtp().observe(this, navigate -> {
             if (navigate) {
-                navigationManager.navigateToSendOtp(EAnimationType.FADE_IN);
+                navigationManager.navigateToPhoneNumberInput(EAnimationType.FADE_IN);
             }
         });
 

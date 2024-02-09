@@ -14,6 +14,6 @@ public interface NavigationManager {
     void navigateToChangePassword(EAnimationType animationType);
     void navigateToAccountLinking(EAnimationType animationType);
     void navigateToEmailDetails(EAnimationType animationType);
-    void navigateToSendOtp(EAnimationType animationType);
+    void navigateToPhoneNumberInput(EAnimationType animationType);
     void navigateToVerifyOtp(Bundle data, EAnimationType animationType);
 }

@@ -28,6 +28,9 @@
     <dimen name="card_corner_radius">@dimen/_16sdp</dimen>
     <dimen name="input_layout_corner_radius">@dimen/_10sdp</dimen>
 
+    <!-- activity_send_otp.xml-->
+    <dimen name="otp_input_layout_height">@dimen/_10sdp</dimen>
+
     <dimen name="toolbar_height">@dimen/_40sdp</dimen>
 
     <dimen name="item_gap">@dimen/_30sdp</dimen>

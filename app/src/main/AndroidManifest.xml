@@ -18,7 +18,7 @@
             android:name=".user.login.otp.verify.VerifyOtpActivity"
             android:exported="false" />
         <activity
-            android:name=".user.login.otp.send.SendOtpActivity"
+            android:name=".user.login.otp.phonenumberinput.PhoneNumberInputActivity"
             android:exported="false" />
         <activity
             android:name=".user.emaildetails.EmailDetailsActivity"

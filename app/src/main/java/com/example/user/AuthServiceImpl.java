@@ -4,13 +4,10 @@ import android.app.Activity;
 import android.text.TextUtils;
 import android.util.Log;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import com.example.user.changepassword.UpdatePasswordRequest;
 import com.example.user.login.SignInRequest;
 import com.example.user.signup.SignUpRequest;
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
@@ -20,9 +17,7 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
 import com.google.firebase.auth.OAuthProvider;
 import com.google.firebase.auth.PhoneAuthCredential;
-import com.google.firebase.auth.SignInMethodQueryResult;
 import com.google.firebase.auth.UserInfo;
-import com.google.firebase.auth.UserProfileChangeRequest;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -486,5 +481,23 @@ public class AuthServiceImpl implements AuthService {
                             });
 
                 });
+    }
+
+    @Override
+    public void existsByPhoneNumber(String phoneNumber,
+                                    Consumer<Boolean> onSuccess,
+                                    Consumer<Exception> onFailure) {
+        CollectionReference usersRef = db.collection(EUserField.COLLECTION_NAME.getName());
+        Query query = usersRef.whereEqualTo(EUserField.PHONE_NUMBER.getName(), phoneNumber)
+                .limit(1);
+        query.get().addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                boolean exists = !task.getResult().isEmpty();
+                onSuccess.accept(exists);
+            } else {
+                Exception exception = task.getException();
+                onFailure.accept(exception);
+            }
+        });
     }
 }

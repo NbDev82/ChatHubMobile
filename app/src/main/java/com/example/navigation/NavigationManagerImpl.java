@@ -18,7 +18,7 @@ import com.example.user.forgotpassword.ForgotPasswordActivity;
 import com.example.user.login.LoginActivity;
 import com.example.user.login.github.GithubAuthActivity;
 import com.example.user.login.google.GoogleSignInActivity;
-import com.example.user.login.otp.send.SendOtpActivity;
+import com.example.user.login.otp.phonenumberinput.PhoneNumberInputActivity;
 import com.example.user.profile.UserProfileActivity;
 import com.example.user.signup.SignUpActivity;
 
@@ -86,13 +86,13 @@ public class NavigationManagerImpl implements NavigationManager {
     }
 
     @Override
-    public void navigateToSendOtp(EAnimationType animationType) {
-        navigateToActivity(SendOtpActivity.class, animationType);
+    public void navigateToPhoneNumberInput(EAnimationType animationType) {
+        navigateToActivity(PhoneNumberInputActivity.class, animationType);
     }
 
     @Override
     public void navigateToVerifyOtp(Bundle data, EAnimationType animationType) {
-        navigateToActivity(SendOtpActivity.class, data, animationType);
+        navigateToActivity(PhoneNumberInputActivity.class, data, animationType);
     }
 
     private void navigateToActivity(Class<? extends Activity> activityClass, EAnimationType animationType) {

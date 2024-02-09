@@ -2,11 +2,15 @@ package com.example.user.login.otp.verify;
 
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.lifecycle.MutableLiveData;
 
 import com.example.infrastructure.BaseViewModel;
 import com.example.user.AuthService;
 import com.google.android.gms.auth.api.Auth;
+import com.google.firebase.FirebaseException;
+import com.google.firebase.auth.PhoneAuthCredential;
+import com.google.firebase.auth.PhoneAuthProvider;
 
 public class VerifyOtpViewModel extends BaseViewModel {
 
@@ -54,6 +58,21 @@ public class VerifyOtpViewModel extends BaseViewModel {
     }
 
     public void verifyOtp() {
+    }
+
+
+    private PhoneAuthProvider.OnVerificationStateChangedCallbacks getOnVerificationStateChangedCallbacks() {
+        return new PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
+            @Override
+            public void onVerificationCompleted(@NonNull PhoneAuthCredential phoneAuthCredential) {
+
+            }
+
+            @Override
+            public void onVerificationFailed(@NonNull FirebaseException e) {
+
+            }
+        };
     }
 
     public void navigateToSignUp() {
