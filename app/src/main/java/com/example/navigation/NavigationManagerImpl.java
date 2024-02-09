@@ -19,6 +19,7 @@ import com.example.user.login.LoginActivity;
 import com.example.user.login.github.GithubAuthActivity;
 import com.example.user.login.google.GoogleSignInActivity;
 import com.example.user.login.otp.phonenumberinput.PhoneNumberInputActivity;
+import com.example.user.login.otp.verify.VerifyOtpActivity;
 import com.example.user.profile.UserProfileActivity;
 import com.example.user.signup.SignUpActivity;
 
@@ -92,7 +93,7 @@ public class NavigationManagerImpl implements NavigationManager {
 
     @Override
     public void navigateToVerifyOtp(Bundle data, EAnimationType animationType) {
-        navigateToActivity(PhoneNumberInputActivity.class, data, animationType);
+        navigateToActivity(VerifyOtpActivity.class, data, animationType);
     }
 
     private void navigateToActivity(Class<? extends Activity> activityClass, EAnimationType animationType) {

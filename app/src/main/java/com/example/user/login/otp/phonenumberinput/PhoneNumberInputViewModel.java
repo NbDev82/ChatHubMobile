@@ -19,7 +19,7 @@ public class PhoneNumberInputViewModel extends BaseViewModel {
 
     private final MutableLiveData<String> countryCode = new MutableLiveData<>("+84");
     private final MutableLiveData<String> localNumber = new MutableLiveData<>();
-    private final MutableLiveData<String> phoneNumberError = new MutableLiveData<>();
+    private final MutableLiveData<String> phoneNumberError = new MutableLiveData<>("");
     private final MutableLiveData<Boolean> isPhoneVerifying = new MutableLiveData<>();
     private final MutableLiveData<Bundle> navigateToVerifyOtpWithPhoneNumber = new MutableLiveData<>();
     private final MutableLiveData<Boolean> navigateToSignUp = new MutableLiveData<>();
@@ -51,11 +51,9 @@ public class PhoneNumberInputViewModel extends BaseViewModel {
 
     public PhoneNumberInputViewModel(AuthService authService) {
         this.authService = authService;
-
-        validatePhoneNumber("");
     }
 
-    public void validatePhoneNumber(CharSequence s) {
+    public void checkPhoneNumber(CharSequence s) {
         String countryCode = this.countryCode.getValue();
         String localNumber = s.toString();
         String phoneNumber = getFullPhoneNumber(countryCode, localNumber);
@@ -71,7 +69,7 @@ public class PhoneNumberInputViewModel extends BaseViewModel {
             if (isExists) {
                 navigateToVerifyOtpWithPhoneNumber();
             } else {
-                errorToastMessage.postValue("Your enter number does not exists");
+                phoneNumberError.postValue("Your phone number is not sign up. Let's sign up");
             }
         }, e -> {
             this.isPhoneVerifying.postValue(false);

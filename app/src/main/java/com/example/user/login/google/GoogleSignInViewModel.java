@@ -10,6 +10,8 @@ import com.example.user.login.LoginViewModel;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthCredential;
+import com.google.firebase.auth.GoogleAuthProvider;
 
 public class GoogleSignInViewModel extends LoginViewModel {
 
@@ -43,7 +45,8 @@ public class GoogleSignInViewModel extends LoginViewModel {
     }
 
     private void signInWithIdToken(String idToken) {
-        authService.signInOrSignUpWithGoogle(idToken, aVoid -> {
+        AuthCredential credential = GoogleAuthProvider.getCredential(idToken, null);
+        authService.signInWithCredential(credential, aVoid -> {
             isLoading.postValue(false);
             navigateToHome();
         }, e -> {

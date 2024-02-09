@@ -95,9 +95,9 @@
                 <com.google.android.material.textfield.TextInputEditText
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:inputType="phone"
+                    android:inputType="number"
                     android:maxLines="1"
-                    android:onTextChanged="@{(s, start, before, count) -> viewModel.validatePhoneNumber(s)}"
+                    android:onTextChanged="@{(s, start, before, count) -> viewModel.checkPhoneNumber(s)}"
                     android:text="@={viewModel.localNumber}"
                     android:textSize="@dimen/primary_text_size"
                     tools:text="123456789" />

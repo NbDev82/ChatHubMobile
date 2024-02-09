@@ -7,6 +7,7 @@ import android.util.Log;
 import androidx.annotation.Nullable;
 
 import com.example.user.login.SignInRequest;
+import com.example.user.login.otp.verify.VerifyOtpViewModel;
 import com.example.user.signup.SignUpRequest;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthCredential;
@@ -14,9 +15,9 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.EmailAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.auth.GoogleAuthProvider;
 import com.google.firebase.auth.OAuthProvider;
-import com.google.firebase.auth.PhoneAuthCredential;
+import com.google.firebase.auth.PhoneAuthOptions;
+import com.google.firebase.auth.PhoneAuthProvider;
 import com.google.firebase.auth.UserInfo;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
@@ -29,6 +30,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 
 public class AuthServiceImpl implements AuthService {
@@ -63,7 +65,8 @@ public class AuthServiceImpl implements AuthService {
     }
 
     private void addUser(String uid, User user,
-                         Consumer<Void> onSuccess, Consumer<Exception> onFailure) {
+                         Consumer<Void> onSuccess,
+                         Consumer<Exception> onFailure) {
         DocumentReference documentRef = db
                 .collection(EUserField.COLLECTION_NAME.getName())
                 .document(uid);
@@ -74,7 +77,9 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public void signIn(SignInRequest signInRequest, Consumer<Void> onSuccess, Consumer<Exception> onFailure) {
+    public void signInWithEmailPassword(SignInRequest signInRequest,
+                                        Consumer<Void> onSuccess,
+                                        Consumer<Exception> onFailure) {
         String email = signInRequest.getEmail();
         String password = signInRequest.getPassword();
 
@@ -88,42 +93,10 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public void signInOrSignUpWithGoogle(String idToken, Consumer<Void> onSuccess, Consumer<Exception> onFailure) {
-        AuthCredential credential = GoogleAuthProvider.getCredential(idToken, null);
-
-        auth.signInWithCredential(credential)
-                .addOnCompleteListener(task -> {
-                    FirebaseUser curUser = auth.getCurrentUser();
-                    if (!task.isSuccessful() || curUser == null) {
-                        onFailure.accept(task.getException());
-                        return;
-                    }
-
-                    checkUserExitsByEmail(curUser.getEmail())
-                            .addOnSuccessListener(exits -> {
-                                if (exits) {
-                                    onSuccess.accept(null);
-                                    return;
-                                }
-
-                                String uid = curUser.getUid();
-                                User user = new User(curUser.getEmail());
-                                addUser(uid, user, onSuccess, e -> {
-                                    onFailure.accept(e);
-                                    curUser.delete();
-                                });
-                            })
-                            .addOnFailureListener(e -> {
-                                Log.e(TAG, "Error fetching user data: " + e);
-                            });
-
-                });
-    }
-
-    @Override
-    public void signInOrSignUpWithGithub(Activity activity, String email,
-                                         Consumer<AuthResult> onSuccess,
-                                         Consumer<Exception> onFailure) {
+    public void signInWithGithub(Activity activity,
+                                 String email,
+                                 Consumer<AuthResult> onSuccess,
+                                 Consumer<Exception> onFailure) {
         OAuthProvider.Builder provider = OAuthProvider.newBuilder("github.com");
         provider.addCustomParameter("login", email);
 
@@ -230,7 +203,9 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public void sendPasswordResetEmail(String email, Consumer<Void> onSuccess, Consumer<Exception> onFailure) {
+    public void sendPasswordResetEmail(String email,
+                                       Consumer<Void> onSuccess,
+                                       Consumer<Exception> onFailure) {
         auth.sendPasswordResetEmail(email)
                 .addOnSuccessListener(onSuccess::accept)
                 .addOnFailureListener(onFailure::accept);
@@ -450,11 +425,11 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public void signInWithPhoneCredential(PhoneAuthCredential phoneAuthCredential,
-                                          Consumer<Void> onSuccess,
-                                          Consumer<Exception> onFailure) {
+    public void signInWithCredential(AuthCredential authCredential,
+                                     Consumer<Void> onSuccess,
+                                     Consumer<Exception> onFailure) {
 
-        auth.signInWithCredential(phoneAuthCredential)
+        auth.signInWithCredential(authCredential)
                 .addOnCompleteListener(task -> {
                     FirebaseUser curUser = auth.getCurrentUser();
                     if (!task.isSuccessful() || curUser == null) {
@@ -499,5 +474,26 @@ public class AuthServiceImpl implements AuthService {
                 onFailure.accept(exception);
             }
         });
+    }
+
+    @Override
+    public void sendOtp(Activity activity,
+                        String phoneNumber,
+                        boolean isResend,
+                        PhoneAuthProvider.ForceResendingToken resendingToken,
+                        PhoneAuthProvider.OnVerificationStateChangedCallbacks callbacks) {
+        PhoneAuthOptions.Builder builder = PhoneAuthOptions
+                .newBuilder(auth)
+                .setPhoneNumber(phoneNumber)
+                .setTimeout(VerifyOtpViewModel.TIME_OUT_SECONDS, TimeUnit.SECONDS)
+                .setActivity(activity)
+                .setCallbacks(callbacks);
+        if (isResend) {
+            PhoneAuthProvider.verifyPhoneNumber(builder
+                    .setForceResendingToken(resendingToken)
+                    .build());
+        } else {
+            PhoneAuthProvider.verifyPhoneNumber(builder.build());
+        }
     }
 }

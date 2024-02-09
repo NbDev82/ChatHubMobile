@@ -58,7 +58,7 @@ public class GithubAuthViewModel extends BaseViewModel {
         }
         Activity activity = activityRef.get();
         if (activity != null) {
-            authService.signInOrSignUpWithGithub(activity, email, authResult -> {
+            authService.signInWithGithub(activity, email, authResult -> {
                 isLogging.postValue(false);
                 successToastMessage.postValue("Login successfully");
                 new Handler().postDelayed(new Runnable() {

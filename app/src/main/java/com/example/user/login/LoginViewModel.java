@@ -86,7 +86,7 @@ public class LoginViewModel extends BaseViewModel {
         }
 
         SignInRequest signInRequest = new SignInRequest(email, password);
-        authService.signIn(signInRequest, aVoid -> {
+        authService.signInWithEmailPassword(signInRequest, aVoid -> {
             isLogging.postValue(false);
             successToastMessage.postValue("Login successfully");
             new Handler().postDelayed(new Runnable() {

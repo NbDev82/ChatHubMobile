@@ -91,11 +91,11 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@id/phoneNumberTIL"
-            android:textStyle="bold"
             android:layout_centerHorizontal="true"
-            android:textColor="@color/primary_text"
-            android:text="@{viewModel.resendContent}"
+            android:enabled="@{viewModel.resendContentStatus}"
             android:onClick="@{() -> viewModel.resendOtp()}"
+            android:text="@{viewModel.resendContent}"
+            android:textColor="@color/primary_text"
             android:textSize="@dimen/primary_text_size"
             tools:text="Resend OTP in 30 sec" />
 
