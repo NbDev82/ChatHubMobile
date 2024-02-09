@@ -46,19 +46,16 @@ public class ForgotPasswordViewModel extends BaseViewModel {
         }
         
         this.email.postValue( email.trim() );
-        authService.sendPasswordResetEmail(email, aVoid -> {
-            successToastMessage.postValue("Password reset link sent to your Email");
-            isSending.postValue(false);
-            new Handler().postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    navigateToLogin();
-                }
-            }, 500);
-        }, e -> {
-            errorToastMessage.postValue("Failed to reset password");
-            isSending.postValue(false);
-            Log.e(TAG, "Error: " + e);
-        });
+        authService.sendPasswordResetEmail(email)
+                .addOnSuccessListener(aVoid -> {
+                    successToastMessage.postValue("Password reset link sent to your Email");
+                    isSending.postValue(false);
+                    new Handler().postDelayed(this::navigateToLogin, 500);
+                })
+                .addOnFailureListener(e -> {
+                    errorToastMessage.postValue("Failed to reset password");
+                    isSending.postValue(false);
+                    Log.e(TAG, "Error: " + e);
+                });
     }
 }

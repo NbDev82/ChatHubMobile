@@ -88,26 +88,28 @@ public class AccountLinkingViewModel extends BaseViewModel {
         isSmsAccountLinked.postValue(false);
         isGithubAccountLinked.postValue(false);
 
-        authService.fetchSignInMethods(signInMethods -> {
-            for (ESignInMethod signInMethod : signInMethods) {
-                switch (signInMethod) {
-                    case PASSWORD:
-                        isInAppPasswordLinked.postValue(true);
-                        break;
-                    case GOOGLE:
-                        isGoogleAccountLinked.postValue(true);
-                        break;
-                    case GITHUB:
-                        isGithubAccountLinked.postValue(true);
-                        break;
-                    case SMS:
-                        isSmsAccountLinked.postValue(true);
-                        break;
-                }
-            }
-        }, e -> {
-            Log.e(TAG, "Error: ", e);
-        });
+        authService.fetchSignInMethods()
+                .addOnSuccessListener(signInMethods -> {
+                    for (ESignInMethod signInMethod : signInMethods) {
+                        switch (signInMethod) {
+                            case PASSWORD:
+                                isInAppPasswordLinked.postValue(true);
+                                break;
+                            case GOOGLE:
+                                isGoogleAccountLinked.postValue(true);
+                                break;
+                            case GITHUB:
+                                isGithubAccountLinked.postValue(true);
+                                break;
+                            case SMS:
+                                isSmsAccountLinked.postValue(true);
+                                break;
+                        }
+                    }
+                })
+                .addOnFailureListener(e -> {
+                    Log.e(TAG, "Error: ", e);
+                });
     }
 
     public void navigateToSettings() {
@@ -128,15 +130,17 @@ public class AccountLinkingViewModel extends BaseViewModel {
                         return;
                     }
 
-                    authService.updatePassword(password, aVoid -> {
-                        loadSignInMethods();
-                        isInAppAdding.postValue(false);
-                        successToastMessage.postValue("Add password successfully");
-                    }, e -> {
-                        errorToastMessage.postValue("Add password unsuccessfully");
-                        isInAppAdding.postValue(false);
-                        Log.e(TAG, "Error: ", e);
-                    });
+                    authService.updatePassword(password)
+                            .addOnSuccessListener(aVoid -> {
+                                loadSignInMethods();
+                                isInAppAdding.postValue(false);
+                                successToastMessage.postValue("Add password successfully");
+                            })
+                            .addOnFailureListener(e -> {
+                                errorToastMessage.postValue("Add password unsuccessfully");
+                                isInAppAdding.postValue(false);
+                                Log.e(TAG, "Error: ", e);
+                            });
                 })
                 .build();
         openEmailPasswordDialog.postValue(model);
@@ -156,15 +160,17 @@ public class AccountLinkingViewModel extends BaseViewModel {
             GoogleSignInAccount account = completedTask.getResult(ApiException.class);
             String idToken = account.getIdToken();
             AuthCredential googleCredential = GoogleAuthProvider.getCredential(idToken, null);
-            authService.linkCurrentUserWithCredential(googleCredential, aVoid -> {
-                loadSignInMethods();
-                successToastMessage.postValue("Link google account successfully");
-                isGoogleAdding.postValue(false);
-            }, e -> {
-                isGoogleAdding.postValue(false);
-                errorToastMessage.postValue("Link google account unsuccessfully");
-                Log.e(TAG, "Error: ", e);
-            });
+            authService.linkCurrentUserWithCredential(googleCredential)
+                    .addOnSuccessListener(aVoid -> {
+                        loadSignInMethods();
+                        successToastMessage.postValue("Link google account successfully");
+                        isGoogleAdding.postValue(false);
+                    })
+                    .addOnFailureListener(e -> {
+                        isGoogleAdding.postValue(false);
+                        errorToastMessage.postValue("Link google account unsuccessfully");
+                        Log.e(TAG, "Error: ", e);
+                    });
         } catch (ApiException e) {
             errorToastMessage.postValue("Link google account unsuccessfully");
             isGoogleAdding.postValue(false);

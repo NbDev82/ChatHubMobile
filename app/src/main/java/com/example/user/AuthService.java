@@ -13,21 +13,13 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.PhoneAuthProvider;
 
 import java.util.List;
-import java.util.function.Consumer;
 
 public interface AuthService {
-    void signUp(SignUpRequest signUpRequest,
-                Consumer<Void> onSuccess,
-                Consumer<Exception> onFailure);
+    Task<Void> signUp(SignUpRequest signUpRequest);
 
-    void signInWithEmailPassword(SignInRequest signInRequest,
-                                 Consumer<Void> onSuccess,
-                                 Consumer<Exception> onFailure);
+    Task<AuthResult> signInWithEmailPassword(SignInRequest signInRequest);
 
-    void signInWithGithub(Activity activity,
-                          String email,
-                          Consumer<AuthResult> onSuccess,
-                          Consumer<Exception> onFailure);
+    Task<AuthResult> signInWithGithub(Activity activity, String email);
 
     void updateOnlineStatus(String uid, boolean isOnline);
 
@@ -37,59 +29,39 @@ public interface AuthService {
 
     Task<User> getUserByUid(String uid);
 
-    Task<Boolean> checkUserExitsByEmail(String email);
+    Task<Boolean> checkUserExistsByEmail(String email);
 
     void signOut();
 
-    void sendPasswordResetEmail(String email,
-                                Consumer<Void> onSuccess,
-                                Consumer<Exception> onFailure);
+    Task<Void> sendPasswordResetEmail(String email);
 
     boolean isLoggedIn();
 
     Task<Void> updateBasicUser(String uid, User user);
 
-    void updatePassword(String newPassword,
-                        Consumer<Void> onSuccess,
-                        Consumer<Exception> onFailure);
+    Task<Void> updatePassword(String newPassword);
 
-    void checkOldPassword(String email,
-                          String password,
-                          Consumer<Void> onSuccess,
-                          Consumer<Exception> onFailure);
+    Task<Void> checkOldPassword(String email, String password);
 
-    void fetchSignInMethods(Consumer<List<ESignInMethod>> onSuccess,
-                            Consumer<Exception> onFailure);
+    Task<List<ESignInMethod>> fetchSignInMethods();
 
-    void linkCurrentUserWithCredential(AuthCredential googleCredential,
-                                       Consumer<Void> onSuccess,
-                                       Consumer<Exception> onFailure);
+    Task<Void> linkCurrentUserWithCredential(AuthCredential googleCredential);
 
-    void linkEmailPasswordWithCurrentUser(String email, String password,
-                                          Consumer<Void> onSuccess,
-                                          Consumer<Exception> onFailure);
+    Task<AuthResult> linkEmailPasswordWithCurrentUser(String email, String password);
 
     boolean isCurrentUserEmail(@Nullable String email);
 
     String getCurrentEmail();
 
-    void disableCurrentUser(Consumer<Void> onSuccess, Consumer<Exception> onFailure);
+    Task<Boolean> checkCurrentEmailVerificationStatus();
 
-    void checkCurrentEmailVerificationStatus(Consumer<Boolean> onSuccess,
-                                             Consumer<Exception> onFailure);
-
-    void sendCurrentUserEmailVerification(Consumer<Void> onSuccess,
-                                          Consumer<Exception> onFailure);
+    Task<Void> sendCurrentUserEmailVerification();
 
     FirebaseAuth getFirebaseAuth();
 
-    void signInWithCredential(AuthCredential authCredential,
-                              Consumer<Void> onSuccess,
-                              Consumer<Exception> onFailure);
+    Task<Void> signInWithCredential(AuthCredential authCredential);
 
-    void existsByPhoneNumber(String phoneNumber,
-                             Consumer<Boolean> onSuccess,
-                             Consumer<Exception> onFailure);
+    Task<Boolean> existsByPhoneNumber(String phoneNumber);
 
     void sendOtp(Activity activity,
                  String phoneNumber,

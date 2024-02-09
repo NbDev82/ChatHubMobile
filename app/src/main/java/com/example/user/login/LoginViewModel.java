@@ -86,25 +86,27 @@ public class LoginViewModel extends BaseViewModel {
         }
 
         SignInRequest signInRequest = new SignInRequest(email, password);
-        authService.signInWithEmailPassword(signInRequest, aVoid -> {
-            isLogging.postValue(false);
-            successToastMessage.postValue("Login successfully");
-            new Handler().postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    navigateToHome();
-                }
-            }, 100);
-        }, e -> {
-            errorToastMessage.postValue(e.getMessage());
-            new Handler().postDelayed(new Runnable() {
-                @Override
-                public void run() {
+        authService.signInWithEmailPassword(signInRequest)
+                .addOnSuccessListener(aVoid -> {
                     isLogging.postValue(false);
-                }
-            }, 500);
-            Log.e(TAG, "Error: " + e);
-        });
+                    successToastMessage.postValue("Login successfully");
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                                                    navigateToHome();
+                                                                     }
+                    }, 100);
+                })
+                .addOnFailureListener(e -> {
+                    errorToastMessage.postValue(e.getMessage());
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                                                    isLogging.postValue(false);
+                                                                               }
+                    }, 500);
+                    Log.e(TAG, "Error: " + e);
+                });
     }
 
     private void trimAllInputs() {

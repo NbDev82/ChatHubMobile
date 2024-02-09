@@ -58,20 +58,22 @@ public class GithubAuthViewModel extends BaseViewModel {
         }
         Activity activity = activityRef.get();
         if (activity != null) {
-            authService.signInWithGithub(activity, email, authResult -> {
-                isLogging.postValue(false);
-                successToastMessage.postValue("Login successfully");
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        navigateToHome();
-                    }
-                }, 500);
-            }, e -> {
-                isLogging.postValue(false);
-                errorToastMessage.postValue(e.getMessage());
-                Log.e(TAG, "Error: ", e);
-            });
+            authService.signInWithGithub(activity, email)
+                    .addOnSuccessListener(authResult -> {
+                        isLogging.postValue(false);
+                        successToastMessage.postValue("Login successfully");
+                        new Handler().postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                navigateToHome();
+                            }
+                        }, 500);
+                    })
+                    .addOnFailureListener(e -> {
+                        isLogging.postValue(false);
+                        errorToastMessage.postValue(e.getMessage());
+                        Log.e(TAG, "Error: ", e);
+                    });
         }
     }
 

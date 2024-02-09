@@ -64,18 +64,20 @@ public class PhoneNumberInputViewModel extends BaseViewModel {
     public void verifyPhoneNumberAndNavigate() {
         this.isPhoneVerifying.postValue(true);
         String phoneNumber = getFullPhoneNumber();
-        authService.existsByPhoneNumber(phoneNumber, isExists -> {
-            this.isPhoneVerifying.postValue(false);
-            if (isExists) {
-                navigateToVerifyOtpWithPhoneNumber();
-            } else {
-                phoneNumberError.postValue("Your phone number is not sign up. Let's sign up");
-            }
-        }, e -> {
-            this.isPhoneVerifying.postValue(false);
-            errorToastMessage.postValue("Verify phone number unsuccessfully");
-            Log.e(TAG, "Error: ", e);
-        });
+        authService.existsByPhoneNumber(phoneNumber)
+                .addOnSuccessListener(isExists -> {
+                    this.isPhoneVerifying.postValue(false);
+                    if (isExists) {
+                        navigateToVerifyOtpWithPhoneNumber();
+                    } else {
+                        phoneNumberError.postValue("Your phone number is not sign up. Let's sign up");
+                    }
+                })
+                .addOnFailureListener(e -> {
+                    this.isPhoneVerifying.postValue(false);
+                    errorToastMessage.postValue("Verify phone number unsuccessfully");
+                    Log.e(TAG, "Error: ", e);
+                });
     }
 
     private String getFullPhoneNumber() {

@@ -78,25 +78,17 @@ public class SignUpViewModel extends BaseViewModel {
             return;
         }
         SignUpRequest signUpRequest = new SignUpRequest(email, password, confirmPassword);
-        authService.signUp(signUpRequest, aVoid -> {
-            successToastMessage.postValue("Sign up successful");
-            isSigningUp.postValue(false);
-            new Handler().postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    navigateToHome();
-                }
-            }, 500);
-        }, e -> {
-            errorToastMessage.postValue(e.getMessage());
-            new Handler().postDelayed(new Runnable() {
-                @Override
-                public void run() {
+        authService.signUp(signUpRequest)
+                .addOnSuccessListener(aVoid -> {
+                    successToastMessage.postValue("Sign up successful");
                     isSigningUp.postValue(false);
-                }
-            }, 500);
-            Log.e(TAG, "Error: " + e);
-        });
+                    new Handler().postDelayed(this::navigateToHome, 500);
+                })
+                .addOnFailureListener(e -> {
+                    errorToastMessage.postValue(e.getMessage());
+                    new Handler().postDelayed(() -> isSigningUp.postValue(false), 500);
+                    Log.e(TAG, "Error: " + e);
+                });
     }
 
     private void navigateToHome() {

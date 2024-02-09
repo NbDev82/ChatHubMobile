@@ -46,13 +46,15 @@ public class GoogleSignInViewModel extends LoginViewModel {
 
     private void signInWithIdToken(String idToken) {
         AuthCredential credential = GoogleAuthProvider.getCredential(idToken, null);
-        authService.signInWithCredential(credential, aVoid -> {
-            isLoading.postValue(false);
-            navigateToHome();
-        }, e -> {
-            isLoading.postValue(false);
-            Log.e(TAG, "Error: ", e);
-        });
+        authService.signInWithCredential(credential)
+                .addOnSuccessListener(aVoid -> {
+                    isLoading.postValue(false);
+                    navigateToHome();
+                })
+                .addOnFailureListener(e -> {
+                    isLoading.postValue(false);
+                    Log.e(TAG, "Error: ", e);
+                });
     }
 
     public void navigateToHome() {

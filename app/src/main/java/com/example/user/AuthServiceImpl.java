@@ -10,6 +10,7 @@ import com.example.user.login.SignInRequest;
 import com.example.user.login.otp.verify.VerifyOtpViewModel;
 import com.example.user.signup.SignUpRequest;
 import com.google.android.gms.tasks.Task;
+import com.google.android.gms.tasks.TaskCompletionSource;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.EmailAuthProvider;
@@ -31,7 +32,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
-import java.util.function.Consumer;
 
 public class AuthServiceImpl implements AuthService {
 
@@ -46,57 +46,48 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public void signUp(SignUpRequest signUpRequest,
-                       Consumer<Void> onSuccess,
-                       Consumer<Exception> onFailure) {
+    public Task<Void> signUp(SignUpRequest signUpRequest) {
+        TaskCompletionSource<Void> source = new TaskCompletionSource<>();
+
         String email = signUpRequest.getEmail();
         String password = signUpRequest.getPassword();
 
         auth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(task -> {
-            FirebaseUser firebaseUser = auth.getCurrentUser();
-            if (!task.isSuccessful() || firebaseUser == null) {
-                onFailure.accept(task.getException());
-                return;
+            if (task.isSuccessful()) {
+                FirebaseUser firebaseUser = auth.getCurrentUser();
+                String uid = firebaseUser.getUid();
+                User user = new User(email);
+                addUser(uid, user).addOnSuccessListener(aVoid -> {
+                    source.setResult(null);
+                }).addOnFailureListener(source::setException);
+            } else {
+                source.setException(task.getException());
             }
-            String uid = firebaseUser.getUid();
-            User user = new User(email);
-            addUser(uid, user, onSuccess, onFailure);
         });
+
+        return source.getTask();
     }
 
-    private void addUser(String uid, User user,
-                         Consumer<Void> onSuccess,
-                         Consumer<Exception> onFailure) {
+    private Task<Void> addUser(String uid, User user) {
         DocumentReference documentRef = db
                 .collection(EUserField.COLLECTION_NAME.getName())
                 .document(uid);
 
-        documentRef.set(user)
-                .addOnCompleteListener(t -> onSuccess.accept(null))
-                .addOnFailureListener(onFailure::accept);
+        return documentRef.set(user);
     }
 
     @Override
-    public void signInWithEmailPassword(SignInRequest signInRequest,
-                                        Consumer<Void> onSuccess,
-                                        Consumer<Exception> onFailure) {
+    public Task<AuthResult> signInWithEmailPassword(SignInRequest signInRequest) {
         String email = signInRequest.getEmail();
         String password = signInRequest.getPassword();
 
-        auth.signInWithEmailAndPassword(email, password).addOnCompleteListener(task -> {
-            if (task.isSuccessful()) {
-                onSuccess.accept(null);
-            } else {
-                onFailure.accept(task.getException());
-            }
-        });
+        return auth.signInWithEmailAndPassword(email, password);
     }
 
     @Override
-    public void signInWithGithub(Activity activity,
-                                 String email,
-                                 Consumer<AuthResult> onSuccess,
-                                 Consumer<Exception> onFailure) {
+    public Task<AuthResult> signInWithGithub(Activity activity, String email) {
+        TaskCompletionSource<AuthResult> source = new TaskCompletionSource<>();
+
         OAuthProvider.Builder provider = OAuthProvider.newBuilder("github.com");
         provider.addCustomParameter("login", email);
 
@@ -111,37 +102,37 @@ public class AuthServiceImpl implements AuthService {
         Task<AuthResult> pendingResultTask = auth.getPendingAuthResult();
         if (pendingResultTask != null) {
             pendingResultTask
-                    .addOnSuccessListener(onSuccess::accept)
-                    .addOnFailureListener(onFailure::accept);
+                    .addOnSuccessListener(source::setResult)
+                    .addOnFailureListener(source::setException);
         } else {
             auth
                     .startActivityForSignInWithProvider(activity, provider.build())
                     .addOnSuccessListener(authResult -> {
                         FirebaseUser curUser = authResult.getUser();
 
-                        checkUserExitsByEmail(curUser.getEmail())
+                        checkUserExistsByEmail(curUser.getEmail())
                                 .addOnSuccessListener(exits -> {
                                     if (exits) {
-                                        onSuccess.accept(null);
+                                        source.setResult(authResult);
                                         return;
                                     }
                                     String uid = curUser.getUid();
                                     User user = new User(curUser.getEmail());
-                                    addUser(uid, user, aVoid -> {
-                                        onSuccess.accept(authResult);
-                                    }, e -> {
-                                        onFailure.accept(e);
-                                        curUser.delete();
-                                    });
+                                    addUser(uid, user)
+                                            .addOnSuccessListener(aVoid -> source.setResult(authResult))
+                                            .addOnFailureListener(e -> {
+                                                source.setException(e);
+                                                curUser.delete();
+                                            });
                                 })
                                 .addOnFailureListener(e -> {
+                                    source.setException(e);
                                     Log.e(TAG, "Error fetching user data: " + e);
                                 });
                     })
-                    .addOnFailureListener(e -> {
-                        onFailure.accept(e);
-                    });
+                    .addOnFailureListener(source::setException);
         }
+        return source.getTask();
     }
 
     @Override
@@ -183,7 +174,7 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public Task<Boolean> checkUserExitsByEmail(String email) {
+    public Task<Boolean> checkUserExistsByEmail(String email) {
         CollectionReference usersRef = db.collection(EUserField.COLLECTION_NAME.getName());
 
         Query query = usersRef.whereEqualTo(EUserField.EMAIL.getName(), email);
@@ -203,12 +194,8 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public void sendPasswordResetEmail(String email,
-                                       Consumer<Void> onSuccess,
-                                       Consumer<Exception> onFailure) {
-        auth.sendPasswordResetEmail(email)
-                .addOnSuccessListener(onSuccess::accept)
-                .addOnFailureListener(onFailure::accept);
+    public Task<Void> sendPasswordResetEmail(String email) {
+        return auth.sendPasswordResetEmail(email);
     }
 
     @Override
@@ -231,53 +218,40 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public void updatePassword(String newPassword,
-                               Consumer<Void> onSuccess,
-                               Consumer<Exception> onFailure) {
+    public Task<Void> updatePassword(String newPassword) {
+        TaskCompletionSource<Void> source = new TaskCompletionSource<>();
+
         FirebaseUser user = auth.getCurrentUser();
         if (user == null) {
-            onFailure.accept(new UserNotAuthenticatedException("User is not authenticated"));
-            return;
+            source.setException(new UserNotAuthenticatedException("User is not authenticated"));
+            return source.getTask();
         }
 
-        user.updatePassword(newPassword)
-                .addOnCompleteListener(updateTask -> {
-                    if (updateTask.isSuccessful()) {
-                        onSuccess.accept(null);
-                        Log.i(TAG, "Password updated");
-                    } else {
-                        onFailure.accept(updateTask.getException());
-                        Log.e(TAG, "Error: Password not updated", updateTask.getException());
-                    }
-                });
+        return user.updatePassword(newPassword);
     }
 
     @Override
-    public void checkOldPassword(String email, String oldPassword,
-                                 Consumer<Void> onSuccess,
-                                 Consumer<Exception> onFailure) {
+    public Task<Void> checkOldPassword(String email, String oldPassword) {
+        TaskCompletionSource<Void> source = new TaskCompletionSource<>();
 
         FirebaseUser user = auth.getCurrentUser();
         if (user == null) {
-            onFailure.accept(new UserNotAuthenticatedException("User is not authenticated"));
-            return;
+            source.setException(new UserNotAuthenticatedException("User is not authenticated"));
+            return source.getTask();
         }
 
         AuthCredential credential = EmailAuthProvider.getCredential(email, oldPassword);
-        user.reauthenticate(credential)
-                .addOnSuccessListener(result -> {
-                    onSuccess.accept(null);
-                })
-                .addOnFailureListener(onFailure::accept);
+        return user.reauthenticate(credential);
     }
 
     @Override
-    public void fetchSignInMethods(Consumer<List<ESignInMethod>> onSuccess,
-                                   Consumer<Exception> onFailure) {
+    public Task<List<ESignInMethod>> fetchSignInMethods() {
+        TaskCompletionSource<List<ESignInMethod>> source = new TaskCompletionSource<>();
+
         FirebaseUser user = auth.getCurrentUser();
         if (user == null) {
-            onFailure.accept(new UserNotAuthenticatedException("User is not authenticated"));
-            return;
+            source.setException(new UserNotAuthenticatedException("User is not authenticated"));
+            return source.getTask();
         }
 
         List<ESignInMethod> signInMethodEnums = new ArrayList<>();
@@ -288,17 +262,19 @@ public class AuthServiceImpl implements AuthService {
                 signInMethodEnums.add(signInMethod);
             }
         }
-        onSuccess.accept(signInMethodEnums);
+
+        source.setResult(signInMethodEnums);
+        return source.getTask();
     }
 
     @Override
-    public void linkCurrentUserWithCredential(AuthCredential authCredential,
-                                              Consumer<Void> onSuccess,
-                                              Consumer<Exception> onFailure) {
+    public Task<Void> linkCurrentUserWithCredential(AuthCredential authCredential) {
+        TaskCompletionSource<Void> source = new TaskCompletionSource<>();
+
         FirebaseUser user = auth.getCurrentUser();
         if (user == null) {
-            onFailure.accept(new UserNotAuthenticatedException("User is not authenticated"));
-            return;
+            source.setException(new UserNotAuthenticatedException("User is not authenticated"));
+            return source.getTask();
         }
 
         // the email of current user the same with email which get from authCredential instance
@@ -313,28 +289,28 @@ public class AuthServiceImpl implements AuthService {
 //                            mergeUserData(user, linkedUser);
 //                        }
 
-                        onSuccess.accept(null);
+                        source.setResult(null);
                     } else {
                         Exception exception = task.getException();
-                        onFailure.accept(exception);
+                        source.setException(exception);
                     }
                 });
+        return source.getTask();
     }
 
     @Override
-    public void linkEmailPasswordWithCurrentUser(String email,
-                                                 String password,
-                                                 Consumer<Void> onSuccess,
-                                                 Consumer<Exception> onFailure) {
+    public Task<AuthResult> linkEmailPasswordWithCurrentUser(String email, String password) {
+        TaskCompletionSource<AuthResult> source = new TaskCompletionSource<>();
+
         FirebaseUser user = auth.getCurrentUser();
         if (user == null) {
-            onFailure.accept(new UserNotAuthenticatedException("User is not authenticated"));
-            return;
+            source.setException(new UserNotAuthenticatedException("User is not authenticated"));
+            return source.getTask();
         }
 
         if (!TextUtils.equals(user.getEmail(), email)) {
-            onFailure.accept(new EmailMismatchException("Email does not match the current user's email"));
-            return;
+            source.setException(new EmailMismatchException("Email does not match the current user's email"));
+            return source.getTask();
         }
 
         AuthCredential emailCredential = EmailAuthProvider.getCredential(email, password);
@@ -342,12 +318,13 @@ public class AuthServiceImpl implements AuthService {
         user.linkWithCredential(emailCredential)
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
-                        onSuccess.accept(null);
+                        source.setResult(task.getResult());
                     } else {
-                        Exception exception = task.getException();
-                        onFailure.accept(exception);
+                        source.setException(task.getException());
                     }
                 });
+
+        return source.getTask();
     }
 
     @Override
@@ -363,60 +340,47 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public void disableCurrentUser(Consumer<Void> onSuccess, Consumer<Exception> onFailure) {
+    public Task<Boolean> checkCurrentEmailVerificationStatus() {
+        TaskCompletionSource<Boolean> source = new TaskCompletionSource<>();
+
         FirebaseUser user = auth.getCurrentUser();
         if (user == null) {
-            onFailure.accept(new UserNotAuthenticatedException("User is not authenticated"));
-            return;
-        }
-
-        Map<String, Object> claims = new HashMap<>();
-        claims.put("disabled", true);
-
-        String uid = user.getUid();
-        DocumentReference userRef = db.collection(EUserField.COLLECTION_NAME.getName())
-                .document(uid);
-
-
-    }
-
-    @Override
-    public void checkCurrentEmailVerificationStatus(Consumer<Boolean> onSuccess,
-                                                    Consumer<Exception> onFailure) {
-        FirebaseUser user = auth.getCurrentUser();
-        if (user == null) {
-            onFailure.accept(new UserNotAuthenticatedException("User is not authenticated"));
-            return;
+            source.setException(new UserNotAuthenticatedException("User is not authenticated"));
+            return source.getTask();
         }
 
         user.reload().addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
                 boolean isEmailVerified = user.isEmailVerified();
-                onSuccess.accept(isEmailVerified);
+                source.setResult(isEmailVerified);
             } else {
-                onFailure.accept(task.getException());
+                source.setException(task.getException());
             }
         });
+
+        return source.getTask();
     }
 
     @Override
-    public void sendCurrentUserEmailVerification(Consumer<Void> onSuccess,
-                                                 Consumer<Exception> onFailure) {
+    public Task<Void> sendCurrentUserEmailVerification() {
+        TaskCompletionSource<Void> source = new TaskCompletionSource<>();
+
         FirebaseUser user = auth.getCurrentUser();
         if (user == null) {
-            onFailure.accept(new UserNotAuthenticatedException("User is not authenticated"));
-            return;
+            source.setException(new UserNotAuthenticatedException("User is not authenticated"));
+            return source.getTask();
         }
 
         user.sendEmailVerification()
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
-                        onSuccess.accept(null);
+                        source.setResult(null);
                     } else {
-                        Exception exception = task.getException();
-                        onFailure.accept(exception);
+                        source.setException(task.getException());
                     }
                 });
+
+        return source.getTask();
     }
 
     @Override
@@ -425,55 +389,64 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public void signInWithCredential(AuthCredential authCredential,
-                                     Consumer<Void> onSuccess,
-                                     Consumer<Exception> onFailure) {
+    public Task<Void> signInWithCredential(AuthCredential authCredential) {
+        TaskCompletionSource<Void> source = new TaskCompletionSource<>();
 
         auth.signInWithCredential(authCredential)
                 .addOnCompleteListener(task -> {
-                    FirebaseUser curUser = auth.getCurrentUser();
-                    if (!task.isSuccessful() || curUser == null) {
-                        onFailure.accept(task.getException());
+                    if (!task.isSuccessful()) {
+                        source.setException(task.getException());
                         return;
                     }
 
-                    checkUserExitsByEmail(curUser.getEmail())
-                            .addOnSuccessListener(exits -> {
-                                if (exits) {
-                                    onSuccess.accept(null);
+                    FirebaseUser curUser = auth.getCurrentUser();
+                    if (curUser == null) {
+                        source.setException(new Exception("Current user is null"));
+                        return;
+                    }
+
+                    checkUserExistsByEmail(curUser.getEmail())
+                            .addOnSuccessListener(exists -> {
+                                if (exists) {
+                                    source.setResult(null);
                                     return;
                                 }
-
                                 String uid = curUser.getUid();
                                 User user = new User(curUser.getEmail());
-                                addUser(uid, user, onSuccess, e -> {
-                                    onFailure.accept(e);
-                                    curUser.delete();
-                                });
+                                addUser(uid, user)
+                                        .addOnSuccessListener(aVoid -> source.setResult(null))
+                                        .addOnFailureListener(e -> {
+                                            source.setException(e);
+                                            curUser.delete();
+                                        });
                             })
                             .addOnFailureListener(e -> {
+                                source.setException(e);
                                 Log.e(TAG, "Error fetching user data: " + e);
                             });
-
                 });
+
+        return source.getTask();
     }
 
     @Override
-    public void existsByPhoneNumber(String phoneNumber,
-                                    Consumer<Boolean> onSuccess,
-                                    Consumer<Exception> onFailure) {
+    public Task<Boolean> existsByPhoneNumber(String phoneNumber) {
+        TaskCompletionSource<Boolean> source = new TaskCompletionSource<>();
+
         CollectionReference usersRef = db.collection(EUserField.COLLECTION_NAME.getName());
         Query query = usersRef.whereEqualTo(EUserField.PHONE_NUMBER.getName(), phoneNumber)
                 .limit(1);
         query.get().addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
                 boolean exists = !task.getResult().isEmpty();
-                onSuccess.accept(exists);
+                source.setResult(exists);
             } else {
                 Exception exception = task.getException();
-                onFailure.accept(exception);
+                source.setException(exception);
             }
         });
+
+        return source.getTask();
     }
 
     @Override

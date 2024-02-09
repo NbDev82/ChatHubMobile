@@ -78,13 +78,15 @@ public class ChangePasswordViewModel extends BaseViewModel {
     }
 
     private void checkPasswordSetStatus() {
-        authService.fetchSignInMethods(signInMethods -> {
-            boolean isPasswordSet = signInMethods.stream()
-                    .anyMatch(signInMethod -> signInMethod == ESignInMethod.PASSWORD);
-            this.isPasswordSet.postValue(isPasswordSet);
-        }, e -> {
-            Log.e(TAG, "Error: ", e);
-        });
+        authService.fetchSignInMethods()
+                .addOnSuccessListener(signInMethods -> {
+                    boolean isPasswordSet = signInMethods.stream()
+                            .anyMatch(signInMethod -> signInMethod == ESignInMethod.PASSWORD);
+                    this.isPasswordSet.postValue(isPasswordSet);
+                })
+                .addOnFailureListener(e -> {
+                    Log.e(TAG, "Error: ", e);
+                });
     }
 
     public void navigateToAccountLinking() {
@@ -143,13 +145,15 @@ public class ChangePasswordViewModel extends BaseViewModel {
 
         isUpdating.postValue(true);
         String newPassword = this.newPassword.getValue();
-        authService.updatePassword(newPassword, aVoid -> {
-            successToastMessage.postValue("Update successfully");
-            isUpdating.postValue(false);
-        }, e -> {
-            successToastMessage.postValue("Update unsuccessfully");
-            isUpdating.postValue(false);
-        });
+        authService.updatePassword(newPassword)
+                .addOnSuccessListener(aVoid -> {
+                    successToastMessage.postValue("Update successfully");
+                    isUpdating.postValue(false);
+                })
+                .addOnFailureListener(e -> {
+                    successToastMessage.postValue("Update unsuccessfully");
+                    isUpdating.postValue(false);
+                });
     }
 
     private void validFields() {

@@ -125,17 +125,19 @@ public class VerifyOtpViewModel extends BaseViewModel {
 
     private void signIn(PhoneAuthCredential phoneCredential) {
         this.isOtpVerifying.postValue(true);
-        authService.signInWithCredential(phoneCredential, aVoid -> {
-            this.isOtpVerifying.postValue(false);
-            successToastMessage.postValue("Verify successfully");
-            new Handler().postDelayed(() -> {
-                navigateToHome();
-            }, 500);
-        }, e -> {
-            this.isOtpVerifying.postValue(false);
-            errorToastMessage.postValue("Verify unsuccessfully");
-            Log.e(PhoneNumberInputActivity.class.getSimpleName(), "Error: ", e);
-        });
+        authService.signInWithCredential(phoneCredential)
+                .addOnSuccessListener(aVoid -> {
+                    this.isOtpVerifying.postValue(false);
+                    successToastMessage.postValue("Verify successfully");
+                    new Handler().postDelayed(() -> {
+                        navigateToHome();
+                    }, 500);
+                })
+                .addOnFailureListener(e -> {
+                    this.isOtpVerifying.postValue(false);
+                    errorToastMessage.postValue("Verify unsuccessfully");
+                    Log.e(PhoneNumberInputActivity.class.getSimpleName(), "Error: ", e);
+                });
     }
 
     public void navigateToHome() {
