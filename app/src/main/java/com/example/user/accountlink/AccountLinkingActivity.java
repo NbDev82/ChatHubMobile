@@ -13,6 +13,8 @@ import androidx.lifecycle.ViewModelProvider;
 import com.example.R;
 import com.example.customcontrol.emailpassworddialog.EmailPasswordDialogFragment;
 import com.example.customcontrol.emailpassworddialog.EmailPasswordDialogModel;
+import com.example.customcontrol.phonecredential.PhoneCredentialDialogFragment;
+import com.example.customcontrol.phonecredential.PhoneCredentialDialogModel;
 import com.example.databinding.ActivityAccountLinkingBinding;
 import com.example.infrastructure.Utils;
 import com.example.navigation.EAnimationType;
@@ -64,6 +66,8 @@ public class AccountLinkingActivity extends AppCompatActivity {
         });
 
         viewModel.getOpenEmailPasswordDialog().observe(this, this::openEmailPasswordDialog);
+
+        viewModel.getOpenPhoneCredentialDialog().observe(this, this::openPhoneCredentialDialog);
     }
 
     private void displayOneTapSignInUI() {
@@ -91,5 +95,10 @@ public class AccountLinkingActivity extends AppCompatActivity {
     private void openEmailPasswordDialog(EmailPasswordDialogModel model) {
         EmailPasswordDialogFragment dialog = new EmailPasswordDialogFragment(model);
         dialog.show(getSupportFragmentManager(), EmailPasswordDialogFragment.TAG);
+    }
+
+    private void openPhoneCredentialDialog(PhoneCredentialDialogModel model) {
+        PhoneCredentialDialogFragment dialog = new PhoneCredentialDialogFragment(model);
+        dialog.show(getSupportFragmentManager(), PhoneCredentialDialogFragment.TAG);
     }
 }

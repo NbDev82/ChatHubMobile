@@ -7,6 +7,7 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.example.infrastructure.BaseViewModel;
+import com.example.infrastructure.Utils;
 import com.example.user.AuthService;
 import com.example.user.EUserField;
 import com.example.user.Validator;
@@ -56,7 +57,7 @@ public class PhoneNumberInputViewModel extends BaseViewModel {
     public void checkPhoneNumber(CharSequence s) {
         String countryCode = this.countryCode.getValue();
         String localNumber = s.toString();
-        String phoneNumber = getFullPhoneNumber(countryCode, localNumber);
+        String phoneNumber = Utils.getFullPhoneNumber(countryCode, localNumber);
         String error = Validator.validPhoneNumber(phoneNumber);
         this.phoneNumberError.postValue(error);
     }
@@ -81,16 +82,9 @@ public class PhoneNumberInputViewModel extends BaseViewModel {
     }
 
     private String getFullPhoneNumber() {
-        String prefix = countryCode.getValue();
+        String countryCode = this.countryCode.getValue();
         String number = localNumber.getValue();
-        return getFullPhoneNumber(prefix, number);
-    }
-
-    private String getFullPhoneNumber(@Nullable String countryCode, @Nullable String localNumber) {
-        if (countryCode != null && localNumber != null) {
-            return countryCode.concat(localNumber);
-        }
-        return null;
+        return Utils.getFullPhoneNumber(countryCode, number);
     }
 
     private void navigateToVerifyOtpWithPhoneNumber() {

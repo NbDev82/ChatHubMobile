@@ -6,6 +6,7 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.example.customcontrol.emailpassworddialog.EmailPasswordDialogModel;
+import com.example.customcontrol.phonecredential.PhoneCredentialDialogModel;
 import com.example.infrastructure.BaseViewModel;
 import com.example.user.AuthService;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
@@ -32,6 +33,7 @@ public class AccountLinkingViewModel extends BaseViewModel {
     private final MutableLiveData<Boolean> isSmsAccountLinked = new MutableLiveData<>();
     private final MutableLiveData<Boolean> isSmsAdding = new MutableLiveData<>();
     private final MutableLiveData<EmailPasswordDialogModel> openEmailPasswordDialog = new MutableLiveData<>();
+    private final MutableLiveData<PhoneCredentialDialogModel> openPhoneCredentialDialog = new MutableLiveData<>();
     private final AuthService authService;
 
     public LiveData<Boolean> getNavigateToSettings() {
@@ -78,13 +80,17 @@ public class AccountLinkingViewModel extends BaseViewModel {
         return openEmailPasswordDialog;
     }
 
+    public LiveData<PhoneCredentialDialogModel> getOpenPhoneCredentialDialog() {
+        return openPhoneCredentialDialog;
+    }
+
     public AccountLinkingViewModel(AuthService authService) {
         this.authService = authService;
 
-        loadSignInMethods();
+        loadProviders();
     }
 
-    public void loadSignInMethods() {
+    public void loadProviders() {
         isInAppPasswordLinked.postValue(false);
         isGoogleAccountLinked.postValue(false);
         isSmsAccountLinked.postValue(false);
@@ -134,14 +140,14 @@ public class AccountLinkingViewModel extends BaseViewModel {
 
                     authService.updatePassword(password)
                             .addOnSuccessListener(aVoid -> {
-                                loadSignInMethods();
+                                loadProviders();
                                 isInAppAdding.postValue(false);
                                 successToastMessage.postValue("Add password successfully");
                             })
                             .addOnFailureListener(e -> {
                                 errorToastMessage.postValue("Add password unsuccessfully");
                                 isInAppAdding.postValue(false);
-                                Log.e(TAG, "Error: ", e);
+                                Log.e(TAG, "Error during in-App password linking: " + e.getMessage(), e);
                             });
                 })
                 .build();
@@ -164,14 +170,14 @@ public class AccountLinkingViewModel extends BaseViewModel {
             AuthCredential googleCredential = GoogleAuthProvider.getCredential(idToken, null);
             authService.linkCurrentUserWithCredential(googleCredential)
                     .addOnSuccessListener(aVoid -> {
-                        loadSignInMethods();
+                        loadProviders();
                         successToastMessage.postValue("Link google account successfully");
                         isGoogleAdding.postValue(false);
                     })
                     .addOnFailureListener(e -> {
                         isGoogleAdding.postValue(false);
                         errorToastMessage.postValue("Link google account unsuccessfully");
-                        Log.e(TAG, "Error: ", e);
+                        Log.e(TAG, "Error during Google linking: " + e.getMessage(), e);
                     });
         } catch (ApiException e) {
             errorToastMessage.postValue("Link google account unsuccessfully");
@@ -185,6 +191,22 @@ public class AccountLinkingViewModel extends BaseViewModel {
     }
 
     public void addSmsAccount() {
-        errorToastMessage.postValue("addSmsAccount without implementation");
+        isSmsAdding.postValue(true);
+        PhoneCredentialDialogModel model = new PhoneCredentialDialogModel.Builder()
+                .setVerifyButtonClickListener(phoneAuthCredential -> {
+                    authService.linkCurrentUserWithCredential(phoneAuthCredential)
+                            .addOnSuccessListener(aVoid -> {
+                                isSmsAdding.postValue(false);
+                                successToastMessage.postValue("Link phone number successfully");
+                                loadProviders();
+                            })
+                            .addOnFailureListener(e -> {
+                                isSmsAdding.postValue(false);
+                                errorToastMessage.postValue("Link phone number unsuccessfully");
+                                Log.e(TAG, "Error during SMS linking: " + e.getMessage(), e);
+                            });
+                })
+                .build();
+        openPhoneCredentialDialog.postValue(model);
     }
 }

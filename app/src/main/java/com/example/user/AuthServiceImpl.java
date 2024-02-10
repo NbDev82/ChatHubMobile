@@ -6,6 +6,7 @@ import android.util.Log;
 
 import androidx.annotation.Nullable;
 
+import com.example.infrastructure.Utils;
 import com.example.user.login.SignInRequest;
 import com.example.user.login.otp.verify.VerifyOtpViewModel;
 import com.example.user.signup.SignUpRequest;
@@ -455,7 +456,7 @@ public class AuthServiceImpl implements AuthService {
         PhoneAuthOptions.Builder builder = PhoneAuthOptions
                 .newBuilder(auth)
                 .setPhoneNumber(phoneNumber)
-                .setTimeout(VerifyOtpViewModel.TIME_OUT_SECONDS, TimeUnit.SECONDS)
+                .setTimeout(Utils.OTP_TIME_OUT_SECONDS, TimeUnit.SECONDS)
                 .setActivity(activity)
                 .setCallbacks(callbacks);
         if (isResend) {

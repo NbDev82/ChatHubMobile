@@ -15,6 +15,8 @@ import androidx.core.content.res.ResourcesCompat;
 
 import com.example.R;
 
+import org.jetbrains.annotations.Nullable;
+
 import java.io.ByteArrayOutputStream;
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -23,6 +25,7 @@ import java.util.Date;
 
 public class Utils {
     public static final String KEY_PREFERENCE_NAME = "chatAppPreference";
+    public static long OTP_TIME_OUT_SECONDS = 60L;
 
     private static final String TAG = Utils.class.getSimpleName();
     private static final String DATE_PATTERN = "dd/MM/yyyy";
@@ -76,5 +79,13 @@ public class Utils {
     public static Bitmap decodeImage(String encodedImage) {
         byte[] bytes = Base64.decode(encodedImage, Base64.DEFAULT);
         return BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+    }
+
+    public static String getFullPhoneNumber(@Nullable String countryCode,
+                                             @Nullable String localNumber) {
+        if (countryCode != null && localNumber != null) {
+            return countryCode.concat(localNumber);
+        }
+        return null;
     }
 }

@@ -7,7 +7,9 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
+import com.example.customcontrol.CustomToast;
 import com.example.infrastructure.BaseViewModel;
+import com.example.infrastructure.Utils;
 import com.example.user.AuthService;
 import com.example.user.login.otp.phonenumberinput.PhoneNumberInputActivity;
 import com.google.firebase.FirebaseException;
@@ -16,7 +18,7 @@ import com.google.firebase.auth.PhoneAuthProvider;
 
 public class VerifyOtpViewModel extends BaseViewModel {
 
-    public static final long TIME_OUT_SECONDS = 60L;
+    private static final String TAG = VerifyOtpViewModel.class.getSimpleName();
 
     private final MutableLiveData<String> phoneNumber = new MutableLiveData<>();
     private final MutableLiveData<String> otp = new MutableLiveData<>();
@@ -94,8 +96,13 @@ public class VerifyOtpViewModel extends BaseViewModel {
 
     public void verifyOtp() {
         String enteredOtp = otp.getValue() != null ? otp.getValue() : "";
-        PhoneAuthCredential phoneCredential = PhoneAuthProvider.getCredential(verificationId, enteredOtp);
-        signIn(phoneCredential);
+        try {
+            PhoneAuthCredential phoneCredential = PhoneAuthProvider.getCredential(verificationId, enteredOtp);
+            signIn(phoneCredential);
+        } catch (IllegalArgumentException e) {
+            errorToastMessage.postValue("Failed to verify OTP");
+            Log.e(TAG, "Error: " + e.getMessage(), e);
+        }
     }
 
     public PhoneAuthProvider.OnVerificationStateChangedCallbacks getOnVerificationStateChangedCallbacks() {
@@ -157,7 +164,7 @@ public class VerifyOtpViewModel extends BaseViewModel {
     }
 
     public void resetTimeoutSeconds() {
-        timeoutSeconds = TIME_OUT_SECONDS;
+        timeoutSeconds = Utils.OTP_TIME_OUT_SECONDS;
     }
 
     public PhoneAuthProvider.ForceResendingToken getResendingToken() {
