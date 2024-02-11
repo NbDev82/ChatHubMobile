@@ -23,5 +23,7 @@
         <item name="boxCornerRadiusTopEnd">@dimen/input_layout_corner_radius</item>
         <item name="boxCornerRadiusBottomStart">@dimen/input_layout_corner_radius</item>
         <item name="boxCornerRadiusBottomEnd">@dimen/input_layout_corner_radius</item>
+
+        <item name="errorIconDrawable">@null</item>
     </style>
 </resources>

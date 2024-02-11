@@ -7,11 +7,13 @@ import android.util.Log;
 import androidx.annotation.Nullable;
 
 import com.example.infrastructure.Utils;
+import com.example.user.changepassword.UpdatePasswordRequest;
 import com.example.user.login.SignInRequest;
 import com.example.user.login.otp.verify.VerifyOtpViewModel;
 import com.example.user.signup.SignUpRequest;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.TaskCompletionSource;
+import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.EmailAuthProvider;
@@ -233,29 +235,54 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public Task<Void> updatePassword(String newPassword) {
-        TaskCompletionSource<Void> source = new TaskCompletionSource<>();
-
-        FirebaseUser user = auth.getCurrentUser();
-        if (user == null) {
-            source.setException(new UserNotAuthenticatedException("User is not authenticated"));
-            return source.getTask();
+        if (!isLoggedIn()) {
+            return Tasks.forException(new UserNotAuthenticatedException("User is not authenticated"));
         }
 
+        FirebaseUser user = auth.getCurrentUser();
         return user.updatePassword(newPassword);
     }
 
     @Override
-    public Task<Void> checkOldPassword(String email, String oldPassword) {
+    public Task<Void> updatePassword(UpdatePasswordRequest updateRequest) {
         TaskCompletionSource<Void> source = new TaskCompletionSource<>();
 
-        FirebaseUser user = auth.getCurrentUser();
-        if (user == null) {
+        if (!isLoggedIn()) {
             source.setException(new UserNotAuthenticatedException("User is not authenticated"));
             return source.getTask();
         }
 
-        AuthCredential credential = EmailAuthProvider.getCredential(email, oldPassword);
-        return user.reauthenticate(credential);
+        checkOldPassword(updateRequest.getEmail(), updateRequest.getOldPassword())
+                .addOnSuccessListener(aCheckVoid -> {
+                    updatePassword(updateRequest.getNewPassword())
+                            .addOnCompleteListener(task -> {
+                                if (task.isSuccessful()) {
+                                    source.setResult(task.getResult());
+                                } else {
+                                    Exception exception = task.getException();
+                                    source.setException(exception);
+                                }
+                            });
+                })
+                .addOnFailureListener(source::setException);
+
+        return source.getTask();
+    }
+
+    @Override
+    public Task<Void> checkOldPassword(String email, String oldPassword) {
+        if (!isLoggedIn()) {
+            return Tasks.forException(new UserNotAuthenticatedException("User is not authenticated"));
+        }
+
+        FirebaseUser user = auth.getCurrentUser();
+        try {
+            AuthCredential credential = EmailAuthProvider.getCredential(email, oldPassword);
+            return user.reauthenticate(credential);
+        } catch (IllegalArgumentException e) {
+            Log.e(TAG, "Error: " + e.getMessage(), e);
+            return Tasks.forException(e);
+        }
     }
 
     @Override
@@ -288,18 +315,9 @@ public class AuthServiceImpl implements AuthService {
             return source.getTask();
         }
 
-        // the email of current user the same with email which get from authCredential instance
-
         user.linkWithCredential(authCredential)
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
-                        FirebaseUser linkedUser = task.getResult().getUser();
-
-                        boolean isNewUser = task.getResult().getAdditionalUserInfo().isNewUser();
-//                        if (!isNewUser) {
-//                            mergeUserData(user, linkedUser);
-//                        }
-
                         source.setResult(task.getResult());
                     } else {
                         Exception exception = task.getException();
@@ -508,9 +526,7 @@ public class AuthServiceImpl implements AuthService {
     @Override
     public Task<AuthResult> linkGithubWithCurrentUser(Activity activity, String email) {
         TaskCompletionSource<AuthResult> source = new TaskCompletionSource<>();
-
-        FirebaseUser currentUser = auth.getCurrentUser();
-        if (currentUser == null) {
+        if (!isLoggedIn()) {
             source.setException(new UserNotAuthenticatedException("User is not authenticated"));
             return source.getTask();
         }
@@ -532,6 +548,7 @@ public class AuthServiceImpl implements AuthService {
                     .addOnSuccessListener(source::setResult)
                     .addOnFailureListener(source::setException);
         } else {
+            FirebaseUser currentUser = auth.getCurrentUser();
             currentUser
                     .startActivityForLinkWithProvider(activity, provider.build())
                     .addOnSuccessListener(source::setResult)

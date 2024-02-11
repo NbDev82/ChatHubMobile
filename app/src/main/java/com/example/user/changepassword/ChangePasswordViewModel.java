@@ -7,6 +7,7 @@ import androidx.lifecycle.MutableLiveData;
 
 import com.example.infrastructure.BaseViewModel;
 import com.example.user.AuthService;
+import com.example.user.UserNotAuthenticatedException;
 import com.example.user.Validator;
 import com.google.firebase.auth.EmailAuthProvider;
 
@@ -99,8 +100,8 @@ public class ChangePasswordViewModel extends BaseViewModel {
         navigateToSettings.postValue(true);
     }
 
-    public void validateOldPassword() {
-        String oldPassword = this.oldPassword.getValue();
+    public void validateOldPassword(CharSequence s) {
+        String oldPassword = s.toString();
 
         String error = Validator.validatePassword(oldPassword);
         if (error != null) {
@@ -108,52 +109,54 @@ public class ChangePasswordViewModel extends BaseViewModel {
             return;
         }
 
-        oldPasswordError.postValue("Incorrect old password");
-
         oldPasswordError.postValue(null);
 
         validFields();
     }
 
-    public void validatePassword() {
-        String newPassword = this.newPassword.getValue();
+    public void validateNewPassword(CharSequence s) {
+        String newPassword = s.toString();
         String error = Validator.validatePassword(newPassword);
+
         if (error != null) {
-            oldPasswordError.postValue(error);
+            newPasswordError.postValue(error);
             return;
         }
-        oldPasswordError.postValue(null);
+        newPasswordError.postValue(null);
         validFields();
     }
 
-    public void validateConfirmPassword() {
+    public void validateConfirmPassword(CharSequence s) {
         String newPasswordValue = this.newPassword.getValue();
-        String confirmPasswordValue = this.confirmPassword.getValue();
 
         String newPassword = newPasswordValue != null ? newPasswordValue.trim() : "";
-        String confirmPassword = confirmPasswordValue != null ? confirmPasswordValue.trim() : "";
+        String confirmPassword = s.toString();
 
         if (!confirmPassword.equals(newPassword)) {
             confirmPasswordError.postValue("Confirm password doesn't match");
             return;
         }
         confirmPasswordError.postValue(null);
-
         validFields();
     }
 
     public void updatePassword() {
-        successToastMessage.postValue("Update");
-
         isUpdating.postValue(true);
+        String email = "";
+        String currentPassword = this.oldPassword.getValue();
         String newPassword = this.newPassword.getValue();
-        authService.updatePassword(newPassword)
+        UpdatePasswordRequest request = new UpdatePasswordRequest(email, currentPassword, newPassword);
+        authService.updatePassword(request)
                 .addOnSuccessListener(aVoid -> {
                     successToastMessage.postValue("Update successfully");
                     isUpdating.postValue(false);
                 })
                 .addOnFailureListener(e -> {
-                    successToastMessage.postValue("Update unsuccessfully");
+                    if (e instanceof UserNotAuthenticatedException) {
+                        oldPasswordError.postValue(e.getMessage());
+                    } else {
+                        errorToastMessage.postValue("Update unsuccessfully");
+                    }
                     isUpdating.postValue(false);
                 });
     }

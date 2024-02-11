@@ -4,6 +4,7 @@ import android.app.Activity;
 
 import androidx.annotation.Nullable;
 
+import com.example.user.changepassword.UpdatePasswordRequest;
 import com.example.user.login.SignInRequest;
 import com.example.user.signup.SignUpRequest;
 import com.google.android.gms.tasks.Task;
@@ -45,6 +46,8 @@ public interface AuthService {
     Task<Void> updateBasicUser(String uid, User user);
 
     Task<Void> updatePassword(String newPassword);
+
+    Task<Void> updatePassword(UpdatePasswordRequest updateRequest);
 
     Task<Void> checkOldPassword(String email, String password);
 
