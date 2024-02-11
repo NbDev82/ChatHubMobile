@@ -10,6 +10,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.PhoneAuthCredential;
 import com.google.firebase.auth.PhoneAuthProvider;
 
 import java.util.List;
@@ -21,7 +22,11 @@ public interface AuthService {
 
     Task<AuthResult> signInWithGithub(Activity activity, String email);
 
-    void updateOnlineStatus(String uid, boolean isOnline);
+    Task<Void> updateOnlineStatus(String uid, boolean isOnline);
+
+    Task<Void> updateEmail(String uid, String email);
+
+    Task<Void> updatePhoneNumber(String uid, String phoneNumber);
 
     String getCurrentUid();
 
@@ -45,7 +50,9 @@ public interface AuthService {
 
     Task<List<String>> fetchSignInMethods();
 
-    Task<Void> linkCurrentUserWithCredential(AuthCredential googleCredential);
+    Task<AuthResult> linkCurrentUserWithCredential(AuthCredential authCredential);
+
+    Task<AuthResult> linkCurrentUserWithPhoneAuthCredential(PhoneAuthCredential phoneAuthCredential);
 
     Task<AuthResult> linkEmailPasswordWithCurrentUser(String email, String password);
 

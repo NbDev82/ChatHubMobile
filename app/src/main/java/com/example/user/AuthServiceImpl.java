@@ -19,6 +19,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GithubAuthProvider;
 import com.google.firebase.auth.OAuthProvider;
+import com.google.firebase.auth.PhoneAuthCredential;
 import com.google.firebase.auth.PhoneAuthOptions;
 import com.google.firebase.auth.PhoneAuthProvider;
 import com.google.firebase.auth.UserInfo;
@@ -138,13 +139,24 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public void updateOnlineStatus(String uid, boolean isOnline) {
+    public Task<Void> updateOnlineStatus(String uid, boolean isOnline) {
         DocumentReference userRef = db.collection(EUserField.COLLECTION_NAME.getName())
                 .document(uid);
-        Map<String, Object> updates = new HashMap<>();
-        updates.put(EUserField.IS_ONLINE.getName(), isOnline);
+        return userRef.update(EUserField.IS_ONLINE.getName(), isOnline);
+    }
 
-        userRef.update(updates);
+    @Override
+    public Task<Void> updateEmail(String uid, String email) {
+        DocumentReference userRef = db.collection(EUserField.COLLECTION_NAME.getName())
+                .document(uid);
+        return userRef.update(EUserField.EMAIL.getName(), email);
+    }
+
+    @Override
+    public Task<Void> updatePhoneNumber(String uid, String phoneNumber) {
+        DocumentReference userRef = db.collection(EUserField.COLLECTION_NAME.getName())
+                .document(uid);
+        return userRef.update(EUserField.PHONE_NUMBER.getName(), phoneNumber);
     }
 
     @Override
@@ -267,8 +279,8 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public Task<Void> linkCurrentUserWithCredential(AuthCredential authCredential) {
-        TaskCompletionSource<Void> source = new TaskCompletionSource<>();
+    public Task<AuthResult> linkCurrentUserWithCredential(AuthCredential authCredential) {
+        TaskCompletionSource<AuthResult> source = new TaskCompletionSource<>();
 
         FirebaseUser user = auth.getCurrentUser();
         if (user == null) {
@@ -288,12 +300,36 @@ public class AuthServiceImpl implements AuthService {
 //                            mergeUserData(user, linkedUser);
 //                        }
 
-                        source.setResult(null);
+                        source.setResult(task.getResult());
                     } else {
                         Exception exception = task.getException();
                         source.setException(exception);
                     }
                 });
+        return source.getTask();
+    }
+
+    @Override
+    public Task<AuthResult> linkCurrentUserWithPhoneAuthCredential(PhoneAuthCredential phoneAuthCredential) {
+        TaskCompletionSource<AuthResult> source = new TaskCompletionSource<>();
+
+        FirebaseUser user = auth.getCurrentUser();
+        if (user == null) {
+            source.setException(new UserNotAuthenticatedException("User is not authenticated"));
+            return source.getTask();
+        }
+
+        user.linkWithCredential(phoneAuthCredential)
+                .addOnSuccessListener(authResult -> {
+                    FirebaseUser linkedUser = authResult.getUser();
+                    String phoneNumber = linkedUser.getPhoneNumber();
+                    updatePhoneNumber(user.getUid(), phoneNumber)
+                            .addOnSuccessListener(aVoid -> {
+                                source.setResult(authResult);
+                            })
+                            .addOnFailureListener(source::setException);
+                })
+                .addOnFailureListener(source::setException);
         return source.getTask();
     }
 

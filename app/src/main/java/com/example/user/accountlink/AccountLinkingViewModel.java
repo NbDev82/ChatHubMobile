@@ -181,7 +181,7 @@ public class AccountLinkingViewModel extends BaseViewModel {
             String idToken = account.getIdToken();
             AuthCredential googleCredential = GoogleAuthProvider.getCredential(idToken, null);
             authService.linkCurrentUserWithCredential(googleCredential)
-                    .addOnSuccessListener(aVoid -> {
+                    .addOnSuccessListener(authResult -> {
                         loadProviders();
                         successToastMessage.postValue("Link google account successfully");
                         isGoogleAdding.postValue(false);
@@ -231,8 +231,8 @@ public class AccountLinkingViewModel extends BaseViewModel {
         PhoneCredentialDialogModel model = new PhoneCredentialDialogModel.Builder()
                 .setVerifyButtonClickListener(phoneAuthCredential -> {
                     isSmsAdding.postValue(true);
-                    authService.linkCurrentUserWithCredential(phoneAuthCredential)
-                            .addOnSuccessListener(aVoid -> {
+                    authService.linkCurrentUserWithPhoneAuthCredential(phoneAuthCredential)
+                            .addOnSuccessListener(authResult -> {
                                 loadProviders();
                                 isSmsAdding.postValue(false);
                                 successToastMessage.postValue("Link phone number successfully");
