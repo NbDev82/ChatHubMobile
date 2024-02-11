@@ -6,6 +6,8 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.example.customcontrol.emailpassworddialog.EmailPasswordDialogModel;
+import com.example.customcontrol.inputdialogfragment.EInputType;
+import com.example.customcontrol.inputdialogfragment.InputDialogModel;
 import com.example.customcontrol.phonecredential.PhoneCredentialDialogModel;
 import com.example.infrastructure.BaseViewModel;
 import com.example.user.AuthService;
@@ -34,6 +36,8 @@ public class AccountLinkingViewModel extends BaseViewModel {
     private final MutableLiveData<Boolean> isSmsAdding = new MutableLiveData<>();
     private final MutableLiveData<EmailPasswordDialogModel> openEmailPasswordDialog = new MutableLiveData<>();
     private final MutableLiveData<PhoneCredentialDialogModel> openPhoneCredentialDialog = new MutableLiveData<>();
+    private final MutableLiveData<InputDialogModel> openInputDialog = new MutableLiveData<>();
+    private final MutableLiveData<String> openGithubLinkingFlow = new MutableLiveData<>();
     private final AuthService authService;
 
     public LiveData<Boolean> getNavigateToSettings() {
@@ -84,6 +88,14 @@ public class AccountLinkingViewModel extends BaseViewModel {
         return openPhoneCredentialDialog;
     }
 
+    public LiveData<InputDialogModel> getOpenInputDialog() {
+        return openInputDialog;
+    }
+
+    public LiveData<String> getOpenGithubLinkingFlow() {
+        return openGithubLinkingFlow;
+    }
+
     public AccountLinkingViewModel(AuthService authService) {
         this.authService = authService;
 
@@ -125,13 +137,13 @@ public class AccountLinkingViewModel extends BaseViewModel {
     }
 
     public void addInAppPassword() {
-        isInAppAdding.postValue(true);
         EmailPasswordDialogModel model = new EmailPasswordDialogModel.Builder()
                 .setTitle("In-app password")
                 .setSubTitle("Enter your information for password setup")
                 .setEmail( authService.getCurrentEmail() )
                 .setPassword("")
                 .setSubmitButtonClickListener((email, password) -> {
+                    isInAppAdding.postValue(true);
                     if (!authService.isCurrentUserEmail(email)) {
                         errorToastMessage.postValue("Your typed email mismatch");
                         isInAppAdding.postValue(false);
@@ -155,7 +167,6 @@ public class AccountLinkingViewModel extends BaseViewModel {
     }
 
     public void addGoogleAccount() {
-        isGoogleAdding.postValue(true);
         openGoogleSignIn();
     }
 
@@ -164,6 +175,7 @@ public class AccountLinkingViewModel extends BaseViewModel {
     }
 
     public void handleGoogleSignInResult(Task<GoogleSignInAccount> completedTask) {
+        isGoogleAdding.postValue(true);
         try {
             GoogleSignInAccount account = completedTask.getResult(ApiException.class);
             String idToken = account.getIdToken();
@@ -187,18 +199,43 @@ public class AccountLinkingViewModel extends BaseViewModel {
     }
 
     public void addGithubAccount() {
-        errorToastMessage.postValue("addGithubAccount without implementation");
+        InputDialogModel model = new InputDialogModel.Builder()
+                .setTitle("Email")
+                .setType(EInputType.EMAIL)
+                .setCurrentContent("")
+                .setSubmitButtonClickListener(email -> {
+                    if (email.isEmpty()) {
+                        errorToastMessage.postValue("Email is required");
+                        return;
+                    }
+                    isGithubAdding.postValue(true);
+                    this.openGithubLinkingFlow.postValue(email);
+                })
+                .build();
+        openInputDialog.postValue(model);
+    }
+
+    public void loginGithubSuccessfully() {
+        isGithubAdding.postValue(false);
+        loadProviders();
+        successToastMessage.postValue("Link Github successfully");
+    }
+
+    public void loginGithubUnSuccessfully(Exception e) {
+        isGithubAdding.postValue(false);
+        errorToastMessage.postValue("Link Github unsuccessfully");
+        Log.e(TAG, "Error during Github linking: " + e.getMessage(), e);
     }
 
     public void addSmsAccount() {
-        isSmsAdding.postValue(true);
         PhoneCredentialDialogModel model = new PhoneCredentialDialogModel.Builder()
                 .setVerifyButtonClickListener(phoneAuthCredential -> {
+                    isSmsAdding.postValue(true);
                     authService.linkCurrentUserWithCredential(phoneAuthCredential)
                             .addOnSuccessListener(aVoid -> {
+                                loadProviders();
                                 isSmsAdding.postValue(false);
                                 successToastMessage.postValue("Link phone number successfully");
-                                loadProviders();
                             })
                             .addOnFailureListener(e -> {
                                 isSmsAdding.postValue(false);

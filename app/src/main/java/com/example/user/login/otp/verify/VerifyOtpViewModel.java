@@ -136,9 +136,7 @@ public class VerifyOtpViewModel extends BaseViewModel {
                 .addOnSuccessListener(aVoid -> {
                     this.isOtpVerifying.postValue(false);
                     successToastMessage.postValue("Verify successfully");
-                    new Handler().postDelayed(() -> {
-                        navigateToHome();
-                    }, 500);
+                    new Handler().postDelayed(this::navigateToHome, 500);
                 })
                 .addOnFailureListener(e -> {
                     this.isOtpVerifying.postValue(false);

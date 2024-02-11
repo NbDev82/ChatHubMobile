@@ -17,6 +17,7 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.EmailAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.GithubAuthProvider;
 import com.google.firebase.auth.OAuthProvider;
 import com.google.firebase.auth.PhoneAuthOptions;
 import com.google.firebase.auth.PhoneAuthProvider;
@@ -466,5 +467,40 @@ public class AuthServiceImpl implements AuthService {
         } else {
             PhoneAuthProvider.verifyPhoneNumber(builder.build());
         }
+    }
+
+    @Override
+    public Task<AuthResult> linkGithubWithCurrentUser(Activity activity, String email) {
+        TaskCompletionSource<AuthResult> source = new TaskCompletionSource<>();
+
+        FirebaseUser currentUser = auth.getCurrentUser();
+        if (currentUser == null) {
+            source.setException(new UserNotAuthenticatedException("User is not authenticated"));
+            return source.getTask();
+        }
+
+        OAuthProvider.Builder provider = OAuthProvider.newBuilder("github.com");
+        provider.addCustomParameter("login", email);
+
+        List<String> scopes =
+                new ArrayList<String>() {
+                    {
+                        add("user:email");
+                    }
+                };
+        provider.setScopes(scopes);
+
+        Task<AuthResult> pendingResultTask = auth.getPendingAuthResult();
+        if (pendingResultTask != null) {
+            pendingResultTask
+                    .addOnSuccessListener(source::setResult)
+                    .addOnFailureListener(source::setException);
+        } else {
+            currentUser
+                    .startActivityForLinkWithProvider(activity, provider.build())
+                    .addOnSuccessListener(source::setResult)
+                    .addOnFailureListener(source::setException);
+        }
+        return source.getTask();
     }
 }

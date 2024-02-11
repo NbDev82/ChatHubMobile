@@ -3,6 +3,7 @@ package com.example.user.accountlink;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
@@ -13,6 +14,8 @@ import androidx.lifecycle.ViewModelProvider;
 import com.example.R;
 import com.example.customcontrol.emailpassworddialog.EmailPasswordDialogFragment;
 import com.example.customcontrol.emailpassworddialog.EmailPasswordDialogModel;
+import com.example.customcontrol.inputdialogfragment.InputDialogFragment;
+import com.example.customcontrol.inputdialogfragment.InputDialogModel;
 import com.example.customcontrol.phonecredential.PhoneCredentialDialogFragment;
 import com.example.customcontrol.phonecredential.PhoneCredentialDialogModel;
 import com.example.databinding.ActivityAccountLinkingBinding;
@@ -31,6 +34,7 @@ import com.google.android.gms.tasks.Task;
 public class AccountLinkingActivity extends AppCompatActivity {
 
     private NavigationManager navigationManager;
+    private AuthService authService;
     private AccountLinkingViewModel viewModel;
 
     @Override
@@ -40,7 +44,7 @@ public class AccountLinkingActivity extends AppCompatActivity {
 
         navigationManager = new NavigationManagerImpl(this);
 
-        AuthService authService = new AuthServiceImpl();
+        authService = new AuthServiceImpl();
         AccountLinkingViewModelFactory factory = new AccountLinkingViewModelFactory(authService);
         viewModel = new ViewModelProvider(this, factory).get(AccountLinkingViewModel.class);
 
@@ -68,6 +72,10 @@ public class AccountLinkingActivity extends AppCompatActivity {
         viewModel.getOpenEmailPasswordDialog().observe(this, this::openEmailPasswordDialog);
 
         viewModel.getOpenPhoneCredentialDialog().observe(this, this::openPhoneCredentialDialog);
+
+        viewModel.getOpenInputDialog().observe(this, this::openCustomInputDialog);
+
+        viewModel.getOpenGithubLinkingFlow().observe(this, this::openGithubSignInFlow);
     }
 
     private void displayOneTapSignInUI() {
@@ -100,5 +108,18 @@ public class AccountLinkingActivity extends AppCompatActivity {
     private void openPhoneCredentialDialog(PhoneCredentialDialogModel model) {
         PhoneCredentialDialogFragment dialog = new PhoneCredentialDialogFragment(model);
         dialog.show(getSupportFragmentManager(), PhoneCredentialDialogFragment.TAG);
+    }
+
+    private void openCustomInputDialog(InputDialogModel inputDialogModel) {
+        InputDialogFragment dialog = new InputDialogFragment(inputDialogModel);
+        dialog.show(getSupportFragmentManager(), InputDialogFragment.TAG);
+    }
+
+    private void openGithubSignInFlow(String email) {
+        authService.linkGithubWithCurrentUser(AccountLinkingActivity.this, email)
+                .addOnSuccessListener(authResult -> {
+                    viewModel.loginGithubSuccessfully();
+                })
+                .addOnFailureListener(viewModel::loginGithubUnSuccessfully);
     }
 }

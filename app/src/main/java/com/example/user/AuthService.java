@@ -68,4 +68,6 @@ public interface AuthService {
                  boolean isResend,
                  PhoneAuthProvider.ForceResendingToken resendingToken,
                  PhoneAuthProvider.OnVerificationStateChangedCallbacks callbacks);
+
+    Task<AuthResult> linkGithubWithCurrentUser(Activity activity, String email);
 }
