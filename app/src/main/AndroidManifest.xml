@@ -15,6 +15,9 @@
         android:theme="@style/Theme.ChatHub"
         tools:targetApi="31">
         <activity
+            android:name=".friend.FriendRequestsActivity"
+            android:exported="false" />
+        <activity
             android:name=".user.login.otp.verify.VerifyOtpActivity"
             android:exported="false" />
         <activity

@@ -16,4 +16,5 @@ public interface NavigationManager {
     void navigateToEmailDetails(EAnimationType animationType);
     void navigateToPhoneNumberInput(EAnimationType animationType);
     void navigateToVerifyOtp(Bundle data, EAnimationType animationType);
+    void navigateToFriendRequests(EAnimationType animationType);
 }

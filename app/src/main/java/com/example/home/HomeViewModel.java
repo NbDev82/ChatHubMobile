@@ -3,6 +3,7 @@ package com.example.home;
 import android.os.Handler;
 import android.util.Log;
 
+import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.example.infrastructure.BaseViewModel;
@@ -15,6 +16,7 @@ public class HomeViewModel extends BaseViewModel {
     private final MutableLiveData<String> email = new MutableLiveData<>("");
     private final MutableLiveData<Boolean> navigateToUserProfile = new MutableLiveData<>();
     private final MutableLiveData<Boolean> navigateToSettings = new MutableLiveData<>();
+    private final MutableLiveData<Boolean> navigateToFriendRequests = new MutableLiveData<>();
     private final MutableLiveData<Boolean> navigateToLogin = new MutableLiveData<>();
 
     public MutableLiveData<String> getEmail() {
@@ -25,11 +27,15 @@ public class HomeViewModel extends BaseViewModel {
         return navigateToUserProfile;
     }
 
-    public MutableLiveData<Boolean> getNavigateToSettings() {
+    public LiveData<Boolean> getNavigateToSettings() {
         return navigateToSettings;
     }
 
-    public MutableLiveData<Boolean> getNavigateToLogin() {
+    public LiveData<Boolean> getNavigateToFriendRequests() {
+        return navigateToFriendRequests;
+    }
+
+    public LiveData<Boolean> getNavigateToLogin() {
         return navigateToLogin;
     }
 
@@ -53,6 +59,10 @@ public class HomeViewModel extends BaseViewModel {
 
     public void navigateToUserProfile() {
         navigateToUserProfile.postValue(true);
+    }
+
+    public void navigateToFriendRequests() {
+        this.navigateToFriendRequests.postValue(true);
     }
 
     public void signOut() {

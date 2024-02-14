@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+        <import type="android.view.View"/>
+
+        <variable
+            name="viewModel"
+            type="com.example.friend.FriendRequestsViewModel" />
+
+        <variable
+            name="friendRequestsAdapter"
+            type="com.example.friend.adapter.FriendRequestsAdapter" />
+    </data>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:background="@color/primary_bg"
+        tools:successToastMessage="@{viewModel.successToastMessage}"
+        tools:errorToastMessage="@{viewModel.errorToastMessage}">
+
+        <androidx.appcompat.widget.Toolbar
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/toolbar_height"
+            android:background="@drawable/gradient_color_primary">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_nav_arrow_left"
+                app:tint="@color/white"
+                android:onClickListener="@{() -> viewModel.navigateToHome()}"
+                android:contentDescription="Back to home"/>
+
+            <TextView
+                android:id="@+id/toolbar_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="Friend requests"
+                android:textColor="@color/white"
+                android:textStyle="bold"
+                android:textSize="@dimen/primary_title_size" />
+        </androidx.appcompat.widget.Toolbar>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Friend Requests"
+                android:textStyle="bold"
+                android:textColor="@color/primary_text"
+                android:textSize="@dimen/primary_sub_title_size"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/_5sdp"
+                android:text="@{String.valueOf(viewModel.friendRequests.size())}"
+                android:textColor="@color/error"
+                android:textSize="@dimen/primary_sub_title_size"
+                tools:text="20"/>
+        </LinearLayout>
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="@dimen/_8sdp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/imageProfile">
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/friendRequestsRv"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:clipToPadding="false"
+                android:orientation="vertical"
+                android:overScrollMode="never"
+                android:padding="@dimen/_5sdp"
+                android:adapter="@{friendRequestsAdapter}"
+                android:visibility="@{viewModel.isRequestsLoading ? View.GONE : View.VISIBLE}"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                tools:visibility="gone" />
+
+            <ProgressBar
+                android:layout_width="@dimen/_25sdp"
+                android:layout_height="@dimen/_25sdp"
+                android:visibility="@{viewModel.isRequestsLoading ? View.VISIBLE : View.GONE}"
+                android:layout_gravity="center" />
+
+        </FrameLayout>
+    </LinearLayout>
+</layout>

@@ -29,6 +29,7 @@ public class Utils {
 
     private static final String TAG = Utils.class.getSimpleName();
     private static final String DATE_PATTERN = "dd/MM/yyyy";
+    private static final int DAYS_IN_MONTH = 30;
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     public static void setStatusBarGradiant(Activity activity) {
@@ -87,5 +88,35 @@ public class Utils {
             return countryCode.concat(localNumber);
         }
         return null;
+    }
+
+    public static String calculateTimeAgo(Date pastDate) {
+        Date currentDate = new Date();
+
+        long timeDifference = currentDate.getTime() - pastDate.getTime();
+
+        long seconds = timeDifference / 1000;
+        long minutes = seconds / 60;
+        long hours = minutes / 60;
+        long days = hours / 24;
+        long weeks = days / 7;
+        long months = days / DAYS_IN_MONTH;
+        long years = days / 365;
+
+        if (years > 0) {
+            return years + "y";
+        } else if (weeks > 0) {
+            return weeks + "w";
+        } if (months > 0) {
+            return months + "mo";
+        } if (days > 0) {
+            return days + "d";
+        } else if (hours > 0) {
+            return hours + "h";
+        } else if (minutes > 0) {
+            return minutes + "m";
+        } else {
+            return "Just now";
+        }
     }
 }

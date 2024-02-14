@@ -9,6 +9,7 @@ import android.os.Bundle;
 import androidx.annotation.AnimRes;
 
 import com.example.R;
+import com.example.friend.FriendRequestsActivity;
 import com.example.home.HomeActivity;
 import com.example.setting.SettingsActivity;
 import com.example.user.accountlink.AccountLinkingActivity;
@@ -94,6 +95,11 @@ public class NavigationManagerImpl implements NavigationManager {
     @Override
     public void navigateToVerifyOtp(Bundle data, EAnimationType animationType) {
         navigateToActivity(VerifyOtpActivity.class, data, animationType);
+    }
+
+    @Override
+    public void navigateToFriendRequests(EAnimationType animationType) {
+        navigateToActivity(FriendRequestsActivity.class, animationType);
     }
 
     private void navigateToActivity(Class<? extends Activity> activityClass, EAnimationType animationType) {

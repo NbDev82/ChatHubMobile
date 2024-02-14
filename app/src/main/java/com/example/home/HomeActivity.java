@@ -52,6 +52,12 @@ public class HomeActivity extends AppCompatActivity {
             }
         });
 
+        viewModel.getNavigateToFriendRequests().observe(this, navigate -> {
+            if (navigate) {
+                navigationManager.navigateToFriendRequests(EAnimationType.FADE_IN);
+            }
+        });
+
         viewModel.getNavigateToLogin().observe(this, navigate -> {
             if (navigate) {
                 navigationManager.navigateToLogin(EAnimationType.FADE_OUT);
