@@ -7,6 +7,8 @@ import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.example.R;
+import com.example.customcontrol.customalertdialog.AlertDialogFragment;
+import com.example.customcontrol.customalertdialog.AlertDialogModel;
 import com.example.databinding.ActivityProfileViewerBinding;
 import com.example.friend.service.FriendRequestService;
 import com.example.friend.service.FriendRequestServiceImpl;
@@ -55,5 +57,12 @@ public class ProfileViewerActivity extends AppCompatActivity {
         viewModel.getNavigateBack().observe(this, navigate -> {
             navigationManager.navigateBack(null, EAnimationType.FADE_OUT);
         });
+
+        viewModel.getOpenCustomAlertDialog().observe(this, this::openCustomAlertDialog);
+    }
+
+    private void openCustomAlertDialog(AlertDialogModel alertDialogModel) {
+        AlertDialogFragment dialog = new AlertDialogFragment(alertDialogModel);
+        dialog.show(getSupportFragmentManager(), AlertDialogFragment.TAG);
     }
 }

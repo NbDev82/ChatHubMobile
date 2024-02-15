@@ -13,6 +13,7 @@ import com.google.android.gms.tasks.TaskCompletionSource;
 import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
@@ -49,9 +50,16 @@ public class FriendRequestServiceImpl implements FriendRequestService {
                 .whereEqualTo(EFriendRequestField.STATUS.getName(), FriendRequest.EStatus.PENDING)
                 .get()
                 .addOnSuccessListener(documentSnapshots -> {
-                    List<FriendRequestView> friendRequestViews =
+                    List<FriendRequest> friendRequests =
                             convertQueryDocumentSnapshotsToFriendRequests(documentSnapshots);
-                    taskCompletionSource.setResult(friendRequestViews);
+
+                    Task<List<FriendRequestView>> conversionTask = convertModelsToModelViews(friendRequests);
+                    conversionTask.addOnSuccessListener(friendRequestViews -> {
+                        taskCompletionSource.setResult(friendRequestViews);
+                    }).addOnFailureListener(e -> {
+                        Log.e(TAG, "Error converting FriendRequests to FriendRequestViews: " + e.getMessage(), e);
+                        taskCompletionSource.setException(e);
+                    });
                 })
                 .addOnFailureListener(e -> {
                     Log.e(TAG, "Error getting friend requests by sender ID: " + e.getMessage(), e);
@@ -61,39 +69,40 @@ public class FriendRequestServiceImpl implements FriendRequestService {
         return taskCompletionSource.getTask();
     }
 
-    private List<FriendRequestView> convertQueryDocumentSnapshotsToFriendRequests(
+    private List<FriendRequest> convertQueryDocumentSnapshotsToFriendRequests(
             QuerySnapshot documentSnapshots
     ) {
-        List<FriendRequestView> friendRequestViews = new ArrayList<>();
+        List<FriendRequest> friendRequests = new ArrayList<>();
         for (QueryDocumentSnapshot queryDocumentSnapshot : documentSnapshots) {
             FriendRequest friendRequest = convertDocumentToModel(queryDocumentSnapshot);
             if (friendRequest != null) {
-                convertModelToModelView(friendRequest)
-                        .addOnSuccessListener(friendRequestView -> {
-                            friendRequestViews.add(friendRequestView);
-                        })
-                        .addOnFailureListener(e -> {
-                            Log.e(TAG, "Error converting FriendRequest to FriendRequestView: " +
-                                    e.getMessage(), e);
-                        });
+                friendRequests.add(friendRequest);
             }
         }
-        return friendRequestViews;
+        return friendRequests;
     }
 
-    private FriendRequest convertDocumentToModel(QueryDocumentSnapshot queryDocumentSnapshot) {
+    private FriendRequest convertDocumentToModel(DocumentSnapshot documentSnapshot) {
         try {
-            String id = queryDocumentSnapshot.getId();
-            String senderId = queryDocumentSnapshot.getString(EFriendRequestField.SENDER_ID.getName());
-            String recipientId = queryDocumentSnapshot.getString(EFriendRequestField.RECIPIENT_ID.getName());
-            String statusStr = queryDocumentSnapshot.getString(EFriendRequestField.STATUS.getName());
+            String id = documentSnapshot.getId();
+            String senderId = documentSnapshot.getString(EFriendRequestField.SENDER_ID.getName());
+            String recipientId = documentSnapshot.getString(EFriendRequestField.RECIPIENT_ID.getName());
+            String statusStr = documentSnapshot.getString(EFriendRequestField.STATUS.getName());
             FriendRequest.EStatus status = FriendRequest.EStatus.valueOf(statusStr);
-            Date createdTime = queryDocumentSnapshot.getDate(EFriendRequestField.CREATED_TIME.getName());
+            Date createdTime = documentSnapshot.getDate(EFriendRequestField.CREATED_TIME.getName());
             return new FriendRequest(id, senderId, recipientId, status, createdTime);
         } catch (Exception e) {
             Log.e(TAG, "Error: " + e.getMessage(), e);
             return null;
         }
+    }
+
+    private Task<List<FriendRequestView>> convertModelsToModelViews(List<FriendRequest> friendRequests) {
+        List<Task<FriendRequestView>> conversionTasks = new ArrayList<>();
+        for (FriendRequest friendRequest : friendRequests) {
+            conversionTasks.add(convertModelToModelView(friendRequest));
+        }
+        return Tasks.whenAllSuccess(conversionTasks);
     }
 
     private Task<FriendRequestView> convertModelToModelView(@NotNull FriendRequest friendRequest) {
@@ -114,7 +123,7 @@ public class FriendRequestServiceImpl implements FriendRequestService {
                     int mutualFriends = getNumberOfMutualFriends(senderId, recipientId);
                     String timeAgo = Utils.calculateTimeAgo(createdTime);
                     FriendRequestView friendRequestView = new FriendRequestView(friendRequestId,
-                            recipientAvatar, recipientName, mutualFriends, timeAgo, status);
+                            recipientId, recipientAvatar, recipientName, mutualFriends, timeAgo, status);
                     taskCompletionSource.setResult(friendRequestView);
                 })
                 .addOnFailureListener(e -> {

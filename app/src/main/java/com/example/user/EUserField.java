@@ -8,8 +8,8 @@ public enum EUserField {
     GENDER("gender"),
     BIRTHDAY("birthday"),
     IMAGE_URL("imageUrl"),
-    IS_ONLINE("isOnline"),
-    IS_DELETED("isDeleted");
+    IS_ONLINE("online"),
+    IS_DELETED("deleted");
 
     private String name;
 

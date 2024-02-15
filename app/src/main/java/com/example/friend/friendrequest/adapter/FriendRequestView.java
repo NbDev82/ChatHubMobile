@@ -6,6 +6,7 @@ import com.example.friend.FriendRequest;
 
 public class FriendRequestView {
     private String id;
+    private String recipientId;
     private Bitmap recipientAvatar;
     private String recipientName;
     private int mutualFriends;
@@ -15,9 +16,10 @@ public class FriendRequestView {
     public FriendRequestView() {
     }
 
-    public FriendRequestView(String id, Bitmap recipientAvatar, String recipientName,
+    public FriendRequestView(String id, String recipientId, Bitmap recipientAvatar, String recipientName,
                              int mutualFriends, String timeAgo, FriendRequest.EStatus status) {
         this.id = id;
+        this.recipientId = recipientId;
         this.recipientAvatar = recipientAvatar;
         this.recipientName = recipientName;
         this.mutualFriends = mutualFriends;
@@ -31,6 +33,14 @@ public class FriendRequestView {
 
     public void setId(String id) {
         this.id = id;
+    }
+
+    public String getRecipientId() {
+        return recipientId;
+    }
+
+    public void setRecipientId(String recipientId) {
+        this.recipientId = recipientId;
     }
 
     public Bitmap getRecipientAvatar() {

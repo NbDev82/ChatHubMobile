@@ -18,6 +18,8 @@ import androidx.appcompat.app.AppCompatDialogFragment;
 import com.example.R;
 import com.google.android.material.button.MaterialButton;
 
+import java.util.function.Consumer;
+
 public class AlertDialogFragment extends AppCompatDialogFragment {
 
     public static final String TAG = AlertDialogFragment.class.getSimpleName();
@@ -47,30 +49,34 @@ public class AlertDialogFragment extends AppCompatDialogFragment {
         Window window = dialog.getWindow();
         window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
 
+        initializeViews(view);
+        setupContents();
+
+        return dialog;
+    }
+
+    private void initializeViews(View view) {
         titleTxv = view.findViewById(R.id.titleTxv);
         messageTxv = view.findViewById(R.id.messageTxv);
         positiveBtn = view.findViewById(R.id.positiveBtn);
         negativeBtn = view.findViewById(R.id.negativeBtn);
+    }
 
+    private void setupContents() {
         titleTxv.setText( model.getTitle() );
         messageTxv.setText( model.getMessage() );
-        positiveBtn.setText( model.getPositiveBtnTitle() );
-        positiveBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                model.getPositiveButtonClickListener().accept(null);
-                dialog.dismiss();
-            }
-        });
-        negativeBtn.setText( model.getNegativeBtnTitle() );
-        negativeBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                model.getNegativeButtonClickListener().accept(null);
-                dialog.dismiss();
-            }
-        });
+        setupButton(positiveBtn, model.getPositiveBtnTitle(), model.getPositiveButtonClickListener());
+        setupButton(negativeBtn, model.getNegativeBtnTitle(), model.getNegativeButtonClickListener());
+    }
 
-        return dialog;
+    private void setupButton(Button button, String title, Consumer<Void> clickListener) {
+        if (title != null && clickListener != null) {
+            button.setVisibility(View.VISIBLE);
+            button.setText(title);
+            button.setOnClickListener(v -> {
+                clickListener.accept(null);
+                dismiss();
+            });
+        }
     }
 }

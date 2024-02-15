@@ -6,6 +6,8 @@ import android.util.Log;
 
 import androidx.annotation.Nullable;
 
+import com.example.friend.EFriendRequestField;
+import com.example.friend.FriendRequest;
 import com.example.infrastructure.Utils;
 import com.example.user.changepassword.UpdatePasswordRequest;
 import com.example.user.login.SignInRequest;
@@ -30,8 +32,10 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -74,11 +78,21 @@ public class AuthServiceImpl implements AuthService {
     }
 
     private Task<Void> addUser(String uid, User user) {
-        DocumentReference documentRef = db
+        DocumentReference userRef = db
                 .collection(EUserField.COLLECTION_NAME.getName())
                 .document(uid);
 
-        return documentRef.set(user);
+        Map<String, Object> data = new HashMap<>();
+        data.put(EUserField.FULL_NAME.getName(), user.getFullName());
+        data.put(EUserField.EMAIL.getName(), user.getEmail());
+        data.put(EUserField.PHONE_NUMBER.getName(), user.getPhoneNumber());
+        data.put(EUserField.GENDER.getName(), user.getGender());
+        data.put(EUserField.BIRTHDAY.getName(), user.getBirthday());
+        data.put(EUserField.IMAGE_URL.getName(), user.getImageUrl());
+        data.put(EUserField.IS_ONLINE.getName(), user.isOnline());
+        data.put(EUserField.IS_DELETED.getName(), user.isDeleted());
+
+        return userRef.set(data);
     }
 
     @Override
@@ -175,18 +189,51 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public Task<User> getUserByUid(String uid) {
+        if (uid == null || uid.isEmpty()) {
+            return Tasks.forException(new IllegalArgumentException("Invalid UID"));
+        }
+
         return db.collection(EUserField.COLLECTION_NAME.getName())
                 .document(uid)
                 .get()
                 .continueWith(task -> {
                     if (task.isSuccessful()) {
                         DocumentSnapshot document = task.getResult();
-                        if (document != null && document.exists()) {
-                            return document.toObject(User.class);
+                        User user = convertDocumentToModel(document);
+                        if (user == null) {
+                            throw new UserNotFoundException("Could not find any user with uid=" + uid);
                         }
+                        return user;
+                    } else {
+                        throw task.getException();
                     }
-                    return null;
                 });
+    }
+
+    private User convertDocumentToModel(DocumentSnapshot documentSnapshot) {
+        try {
+            String id = documentSnapshot.getId();
+            String fullName = documentSnapshot.getString(EUserField.FULL_NAME.getName());
+            String email = documentSnapshot.getString(EUserField.EMAIL.getName());
+            String phoneNumber = documentSnapshot.getString(EUserField.PHONE_NUMBER.getName());
+            String genderStr = documentSnapshot.getString(EUserField.GENDER.getName());
+            EGender gender = EGender.valueOf(genderStr);
+            Date birthday = documentSnapshot.getDate(EUserField.BIRTHDAY.getName());
+            String imageUrl = documentSnapshot.getString(EUserField.IMAGE_URL.getName());
+            boolean isOnline = getBooleanField(documentSnapshot, EUserField.IS_ONLINE);
+            boolean isDeleted = getBooleanField(documentSnapshot, EUserField.IS_DELETED);
+
+            return new User(id, fullName, email, phoneNumber, gender, birthday,
+                    imageUrl, isOnline, isDeleted);
+        } catch (Exception e) {
+            Log.e(TAG, "Error: " + e.getMessage(), e);
+            return null;
+        }
+    }
+
+    private boolean getBooleanField(DocumentSnapshot documentSnapshot, EUserField field) {
+        Object value = documentSnapshot.get(field.getName());
+        return value instanceof Boolean ? (Boolean) value : false;
     }
 
     @Override

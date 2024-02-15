@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.Date;
 
 public class User implements Serializable {
+    private String id;
     private String fullName;
     private String email;
     private String phoneNumber;
@@ -28,6 +29,27 @@ public class User implements Serializable {
         this();
         fullName = "Van A";
         this.email = email;
+    }
+
+    public User(String id, String fullName, String email, String phoneNumber, EGender gender,
+                Date birthday, String imageUrl, boolean isOnline, boolean isDeleted) {
+        this.id = id;
+        this.fullName = fullName;
+        this.email = email;
+        this.phoneNumber = phoneNumber;
+        this.gender = gender;
+        this.birthday = birthday;
+        this.imageUrl = imageUrl;
+        this.isOnline = isOnline;
+        this.isDeleted = isDeleted;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     public String getFullName() {

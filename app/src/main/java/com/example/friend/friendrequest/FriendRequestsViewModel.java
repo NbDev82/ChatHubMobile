@@ -1,6 +1,7 @@
 package com.example.friend.friendrequest;
 
 import android.os.Bundle;
+import android.util.Log;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
@@ -49,42 +50,17 @@ public class FriendRequestsViewModel extends BaseViewModel implements FriendRequ
     }
 
     public void loadFriendRequests() {
-        List<FriendRequestView> views = new ArrayList<>();
-        views.add(new FriendRequestView("123", null, "Van An",
-                10, "3w", FriendRequest.EStatus.PENDING));
-        views.add(new FriendRequestView("1233", null, "Van Bae",
-                11, "3m", FriendRequest.EStatus.PENDING));
-        views.add(new FriendRequestView("1235", null, "Hoang Long",
-                5, "3w", FriendRequest.EStatus.PENDING));
-        views.add(new FriendRequestView("1235", null, "Hoang Long",
-                5, "3w", FriendRequest.EStatus.PENDING));
-        views.add(new FriendRequestView("1235", null, "Hoang Long",
-                5, "3w", FriendRequest.EStatus.PENDING));
-        views.add(new FriendRequestView("1235", null, "Hoang Long",
-                5, "3w", FriendRequest.EStatus.PENDING));
-        views.add(new FriendRequestView("1235", null, "Hoang Long",
-                5, "3w", FriendRequest.EStatus.PENDING));
-        views.add(new FriendRequestView("1235", null, "Hoang Long",
-                5, "3w", FriendRequest.EStatus.PENDING));
-        views.add(new FriendRequestView("1235", null, "Hoang Long",
-                5, "3w", FriendRequest.EStatus.PENDING));
-        views.add(new FriendRequestView("1235", null, "Hoang Long",
-                5, "3w", FriendRequest.EStatus.PENDING));
-        views.add(new FriendRequestView("1235", null, "Hoang Long",
-                5, "3w", FriendRequest.EStatus.PENDING));
-        this.friendRequests.postValue(views);
-
-//        this.isRequestsLoading.postValue(true);
-//        String uid = authService.getCurrentUid();
-//        friendRequestService.getPendingFriendRequestsBySenderId(uid)
-//                .addOnSuccessListener(friendRequests -> {
-//                    this.isRequestsLoading.postValue(false);
-//                    this.friendRequests.postValue(friendRequests);
-//                })
-//                .addOnFailureListener(e -> {
-//                    this.isRequestsLoading.postValue(false);
-//                    Log.e(TAG, "Error: " + e.getMessage(), e);
-//                });
+        this.isRequestsLoading.postValue(true);
+        String uid = authService.getCurrentUid();
+        friendRequestService.getPendingFriendRequestsBySenderId(uid)
+                .addOnSuccessListener(friendRequests -> {
+                    this.isRequestsLoading.postValue(false);
+                    this.friendRequests.postValue(friendRequests);
+                })
+                .addOnFailureListener(e -> {
+                    this.isRequestsLoading.postValue(false);
+                    Log.e(TAG, "Error: " + e.getMessage(), e);
+                });
     }
 
     public void navigateToHome() {
@@ -95,35 +71,33 @@ public class FriendRequestsViewModel extends BaseViewModel implements FriendRequ
     public void onItemClick(int position) {
         FriendRequestView request = this.friendRequests.getValue().get(position);
         Bundle data = new Bundle();
-        data.putString(Utils.EXTRA_SELECTED_USER_ID, request.getId());
+        data.putString(Utils.EXTRA_SELECTED_USER_ID, request.getRecipientId());
         this.navigateToProfileViewer.postValue(data);
     }
 
     @Override
     public void onAcceptClick(int position) {
-        successToastMessage.postValue(String.valueOf(position));
-//        FriendRequestView request = this.friendRequests.getValue().get(position);
-//        friendRequestService
-//                .updateFriendRequestStatus(request.getId(), FriendRequest.EStatus.ACCEPTED)
-//                .addOnSuccessListener(aVoid -> {
-//
-//                })
-//                .addOnFailureListener(e -> {
-//                    Log.e(TAG, "Error: " + e.getMessage(), e);
-//                });
+        FriendRequestView request = this.friendRequests.getValue().get(position);
+        friendRequestService
+                .updateFriendRequestStatus(request.getId(), FriendRequest.EStatus.ACCEPTED)
+                .addOnSuccessListener(aVoid -> {
+
+                })
+                .addOnFailureListener(e -> {
+                    Log.e(TAG, "Error: " + e.getMessage(), e);
+                });
     }
 
     @Override
     public void onRejectClick(int position) {
-        successToastMessage.postValue(String.valueOf(position));
-//        FriendRequestView request = this.friendRequests.getValue().get(position);
-//        friendRequestService
-//                .updateFriendRequestStatus(request.getId(), FriendRequest.EStatus.REJECTED)
-//                .addOnSuccessListener(aVoid -> {
-//
-//                })
-//                .addOnFailureListener(e -> {
-//                    Log.e(TAG, "Error: " + e.getMessage(), e);
-//                });
+        FriendRequestView request = this.friendRequests.getValue().get(position);
+        friendRequestService
+                .updateFriendRequestStatus(request.getId(), FriendRequest.EStatus.REJECTED)
+                .addOnSuccessListener(aVoid -> {
+
+                })
+                .addOnFailureListener(e -> {
+                    Log.e(TAG, "Error: " + e.getMessage(), e);
+                });
     }
 }

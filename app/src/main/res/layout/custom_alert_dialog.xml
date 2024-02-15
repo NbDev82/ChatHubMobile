@@ -46,6 +46,8 @@
                 android:textStyle="bold"
                 android:layout_margin="@dimen/_5sdp"
                 app:cornerRadius="@dimen/_8sdp"
+                android:visibility="gone"
+                tools:visibility="visible"
                 tools:text="Yes"/>
 
             <com.google.android.material.button.MaterialButton
@@ -58,6 +60,8 @@
                 android:layout_margin="@dimen/_5sdp"
                 android:backgroundTint="#a4a4a4"
                 app:cornerRadius="@dimen/_8sdp"
+                android:visibility="gone"
+                tools:visibility="visible"
                 tools:text="No"/>
         </LinearLayout>
 

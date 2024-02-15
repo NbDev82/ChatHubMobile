@@ -7,6 +7,7 @@ import android.util.Log;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
+import com.example.customcontrol.customalertdialog.AlertDialogModel;
 import com.example.friend.FriendRequest;
 import com.example.friend.service.FriendRequestService;
 import com.example.infrastructure.BaseViewModel;
@@ -20,6 +21,7 @@ public class ProfileViewerViewModel extends BaseViewModel {
     private static final String TAG = ProfileViewerViewModel.class.getSimpleName();
 
     private final MutableLiveData<Boolean> navigateBack = new MutableLiveData<>();
+    private final MutableLiveData<AlertDialogModel> openCustomAlertDialog = new MutableLiveData<>();
     private final MutableLiveData<Bitmap> userImageBitmap = new MutableLiveData<>();
     private final MutableLiveData<String> fullName = new MutableLiveData<>();
     private final MutableLiveData<EGender> gender = new MutableLiveData<>();
@@ -33,6 +35,10 @@ public class ProfileViewerViewModel extends BaseViewModel {
 
     public LiveData<Boolean> getNavigateBack() {
         return navigateBack;
+    }
+
+    public LiveData<AlertDialogModel> getOpenCustomAlertDialog() {
+        return openCustomAlertDialog;
     }
 
     public LiveData<Bitmap> getUserImageBitmap() {
@@ -72,16 +78,25 @@ public class ProfileViewerViewModel extends BaseViewModel {
         isUserInitializing.postValue(true);
         authService.getUserByUid(displayedUserId)
                 .addOnSuccessListener(user -> {
-                    if (user != null) {
-                        new Handler().postDelayed(() -> {
-                            isUserInitializing.postValue(false);
-                        }, 500);
-                    }
+                    new Handler().postDelayed(() -> {
+                        isUserInitializing.postValue(false);
+                    }, 200);
                 })
                 .addOnFailureListener(e -> {
+                    openUserNotFoundDialog();
                     Log.e(TAG, "Error: " + e);
-                    isUserInitializing.postValue(true);
                 });
+    }
+
+    public void openUserNotFoundDialog() {
+        AlertDialogModel model = new AlertDialogModel.Builder()
+                .setTitle("User Not Found")
+                .setMessage("The user you are trying to access was not found! Click OK to quit!")
+                .setPositiveButton("Ok", aVoid -> {
+                    navigateBack();
+                })
+                .build();
+        openCustomAlertDialog.postValue(model);
     }
 
     public void navigateBack() {
