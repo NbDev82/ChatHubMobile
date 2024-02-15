@@ -1,4 +1,4 @@
-package com.example.friend;
+package com.example.friend.friendrequest;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.ViewModel;

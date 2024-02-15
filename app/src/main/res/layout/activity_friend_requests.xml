@@ -8,11 +8,11 @@
 
         <variable
             name="viewModel"
-            type="com.example.friend.FriendRequestsViewModel" />
+            type="com.example.friend.friendrequest.FriendRequestsViewModel" />
 
         <variable
             name="friendRequestsAdapter"
-            type="com.example.friend.adapter.FriendRequestsAdapter" />
+            type="com.example.friend.friendrequest.adapter.FriendRequestsAdapter" />
     </data>
 
     <LinearLayout

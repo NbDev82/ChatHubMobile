@@ -1,7 +1,7 @@
 package com.example.friend.service;
 
 import com.example.friend.FriendRequest;
-import com.example.friend.adapter.FriendRequestView;
+import com.example.friend.friendrequest.adapter.FriendRequestView;
 import com.google.android.gms.tasks.Task;
 
 import java.util.List;

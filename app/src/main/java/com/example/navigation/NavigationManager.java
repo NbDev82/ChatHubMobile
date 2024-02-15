@@ -3,6 +3,8 @@ package com.example.navigation;
 import android.os.Bundle;
 
 public interface NavigationManager {
+    int DEFAULT_FLAGS = 0;
+
     void navigateToHome(EAnimationType animationType);
     void navigateToSettings(EAnimationType animationType);
     void navigateToUserProfile(EAnimationType animationType);
@@ -17,4 +19,6 @@ public interface NavigationManager {
     void navigateToPhoneNumberInput(EAnimationType animationType);
     void navigateToVerifyOtp(Bundle data, EAnimationType animationType);
     void navigateToFriendRequests(EAnimationType animationType);
+    void navigateToProfileViewer(Bundle data, EAnimationType animationType);
+    void navigateBack(Bundle data, EAnimationType animationType);
 }

@@ -1,4 +1,4 @@
-package com.example.friend;
+package com.example.friend.friendrequest;
 
 import android.os.Bundle;
 
@@ -8,7 +8,7 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.example.R;
 import com.example.databinding.ActivityFriendRequestsBinding;
-import com.example.friend.adapter.FriendRequestsAdapter;
+import com.example.friend.friendrequest.adapter.FriendRequestsAdapter;
 import com.example.infrastructure.Utils;
 import com.example.navigation.EAnimationType;
 import com.example.navigation.NavigationManager;
@@ -50,6 +50,10 @@ public class FriendRequestsActivity extends AppCompatActivity {
             if (navigate) {
                 navigationManager.navigateToHome(EAnimationType.FADE_OUT);
             }
+        });
+
+        viewModel.getNavigateToProfileViewer().observe(this, data -> {
+            navigationManager.navigateToProfileViewer(data, EAnimationType.FADE_OUT);
         });
 
         viewModel.getFriendRequests().observe(this, newFriendRequests -> {

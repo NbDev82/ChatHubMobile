@@ -5,7 +5,7 @@ import android.util.Log;
 
 import com.example.friend.EFriendRequestField;
 import com.example.friend.FriendRequest;
-import com.example.friend.adapter.FriendRequestView;
+import com.example.friend.friendrequest.adapter.FriendRequestView;
 import com.example.infrastructure.Utils;
 import com.example.user.AuthService;
 import com.google.android.gms.tasks.Task;
@@ -69,7 +69,9 @@ public class FriendRequestServiceImpl implements FriendRequestService {
             FriendRequest friendRequest = convertDocumentToModel(queryDocumentSnapshot);
             if (friendRequest != null) {
                 convertModelToModelView(friendRequest)
-                        .addOnSuccessListener(friendRequestViews::add)
+                        .addOnSuccessListener(friendRequestView -> {
+                            friendRequestViews.add(friendRequestView);
+                        })
                         .addOnFailureListener(e -> {
                             Log.e(TAG, "Error converting FriendRequest to FriendRequestView: " +
                                     e.getMessage(), e);

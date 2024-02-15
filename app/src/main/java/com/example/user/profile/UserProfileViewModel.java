@@ -26,7 +26,7 @@ public class UserProfileViewModel extends BaseViewModel {
     private final MutableLiveData<String> fullName = new MutableLiveData<>();
     private final MutableLiveData<EGender> gender = new MutableLiveData<>();
     private final MutableLiveData<String> birthdayStr = new MutableLiveData<>();
-    private final MutableLiveData<Boolean> navigateToHome = new MutableLiveData<>();
+    private final MutableLiveData<Boolean> navigateBack = new MutableLiveData<>();
     private final MutableLiveData<Boolean> isUserInitializing = new MutableLiveData<>();
     private final MutableLiveData<Boolean> isDataChanged = new MutableLiveData<>();
     private final MutableLiveData<Boolean> isUserUpdating = new MutableLiveData<>();
@@ -71,8 +71,8 @@ public class UserProfileViewModel extends BaseViewModel {
         isDataChanged.postValue(true);
     }
 
-    public LiveData<Boolean> getNavigateToHome() {
-        return navigateToHome;
+    public LiveData<Boolean> getNavigateBack() {
+        return navigateBack;
     }
 
     public MutableLiveData<Boolean> getIsUserInitializing() {
@@ -140,7 +140,7 @@ public class UserProfileViewModel extends BaseViewModel {
     }
 
     public void navigateToHome() {
-        navigateToHome.postValue(true);
+        navigateBack.postValue(true);
     }
 
     public void openImagePicker() {

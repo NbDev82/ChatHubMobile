@@ -1,4 +1,4 @@
-package com.example.friend.adapter;
+package com.example.friend.friendrequest.adapter;
 
 import android.graphics.Bitmap;
 

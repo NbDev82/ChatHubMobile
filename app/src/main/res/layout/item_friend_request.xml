@@ -5,11 +5,15 @@
         <import type="android.view.View"/>
         <variable
             name="request"
-            type="com.example.friend.adapter.FriendRequestView" />
+            type="com.example.friend.friendrequest.adapter.FriendRequestView" />
 
         <variable
             name="listener"
-            type="com.example.friend.adapter.FriendRequestListener" />
+            type="com.example.friend.friendrequest.adapter.FriendRequestListener" />
+
+        <variable
+            name="position"
+            type="int" />
     </data>
 
     <com.google.android.material.card.MaterialCardView
@@ -28,7 +32,7 @@
                 android:id="@+id/avatarFl"
                 android:layout_width="@dimen/_80sdp"
                 android:layout_height="@dimen/_80sdp"
-                android:onClick="@{() -> listener.onItemClick(request)}"
+                android:onClick="@{() -> listener.onItemClick(position)}"
                 android:padding="@dimen/_2sdp">
 
                 <com.makeramen.roundedimageview.RoundedImageView
@@ -106,24 +110,24 @@
                     android:orientation="horizontal">
 
                     <com.google.android.material.button.MaterialButton
-                        android:layout_width="@dimen/_90sdp"
-                        android:layout_height="@dimen/_35sdp"
+                        android:layout_width="@dimen/_85sdp"
+                        android:layout_height="@dimen/_36sdp"
                         android:text="Confirm"
                         android:textColor="@color/white"
                         android:textSize="@dimen/primary_text_size"
                         android:textStyle="bold"
-                        android:onClick="@{() -> listener.onAcceptClick(request)}"
+                        android:onClick="@{() -> listener.onAcceptClick(position)}"
                         app:cornerRadius="@dimen/_8sdp" />
 
                     <com.google.android.material.button.MaterialButton
-                        android:layout_width="@dimen/_90sdp"
-                        android:layout_height="@dimen/_35sdp"
+                        android:layout_width="@dimen/_85sdp"
+                        android:layout_height="@dimen/_36sdp"
                         android:layout_marginStart="@dimen/_15sdp"
                         android:text="Reject"
                         android:textColor="@color/primary_text"
                         android:textSize="@dimen/primary_text_size"
                         android:textStyle="bold"
-                        android:onClick="@{() -> listener.onRejectClick(request)}"
+                        android:onClick="@{() -> listener.onRejectClick(position)}"
                         android:backgroundTint="@color/secondary_button_bg"
                         app:cornerRadius="@dimen/_8sdp" />
                 </LinearLayout>

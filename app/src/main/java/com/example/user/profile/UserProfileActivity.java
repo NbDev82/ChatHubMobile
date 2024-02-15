@@ -65,9 +65,9 @@ public class UserProfileActivity extends AppCompatActivity {
     }
 
     private void setupObservers() {
-        profileViewModel.getNavigateToHome().observe(this, navigate -> {
+        profileViewModel.getNavigateBack().observe(this, navigate -> {
             if (navigate) {
-                navigationManager.navigateToHome(EAnimationType.FADE_IN);
+                navigationManager.navigateBack(null, EAnimationType.FADE_IN);
             }
         });
 

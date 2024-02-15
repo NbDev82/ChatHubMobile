@@ -1,13 +1,11 @@
-package com.example.friend.adapter;
+package com.example.friend.friendrequest.adapter;
 
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
-import androidx.databinding.DataBindingUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.R;
 import com.example.databinding.ItemFriendRequestBinding;
 
 import java.util.List;
@@ -39,7 +37,7 @@ public class FriendRequestsAdapter extends RecyclerView.Adapter<FriendRequestsAd
     @Override
     public void onBindViewHolder(@NonNull FriendRequestViewHolder holder, int position) {
         FriendRequestView request = friendRequests.get(position);
-        holder.bind(request);
+        holder.bind(position, request);
     }
 
     @Override
@@ -55,9 +53,10 @@ public class FriendRequestsAdapter extends RecyclerView.Adapter<FriendRequestsAd
             this.binding = binding;
         }
 
-        public void bind(FriendRequestView request) {
+        public void bind(int position, FriendRequestView request) {
             binding.setRequest(request);
             binding.setListener(listener);
+            binding.setPosition(position);
             binding.executePendingBindings();
         }
     }

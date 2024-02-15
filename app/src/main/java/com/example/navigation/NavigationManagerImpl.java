@@ -6,10 +6,9 @@ import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 
-import androidx.annotation.AnimRes;
-
 import com.example.R;
-import com.example.friend.FriendRequestsActivity;
+import com.example.friend.friendrequest.FriendRequestsActivity;
+import com.example.friend.profileviewer.ProfileViewerActivity;
 import com.example.home.HomeActivity;
 import com.example.setting.SettingsActivity;
 import com.example.user.accountlink.AccountLinkingActivity;
@@ -102,63 +101,79 @@ public class NavigationManagerImpl implements NavigationManager {
         navigateToActivity(FriendRequestsActivity.class, animationType);
     }
 
-    private void navigateToActivity(Class<? extends Activity> activityClass, EAnimationType animationType) {
-        navigateToActivity(activityClass, null, animationType);
+    @Override
+    public void navigateToProfileViewer(Bundle data, EAnimationType animationType) {
+        navigateToActivity(ProfileViewerActivity.class, data, animationType);
     }
 
-    private void navigateToActivity(Class<? extends Activity> activityClass, Bundle data, EAnimationType animationType) {
+    @Override
+    public void navigateBack(Bundle data, EAnimationType animationType) {
+        Intent resultIntent = new Intent();
+        if (data != null) {
+            resultIntent.putExtras(data);
+        }
+        setResultAndFinish(resultIntent, animationType);
+    }
+
+    private void setResultAndFinish(Intent resultIntent, EAnimationType animationType) {
+        if (context instanceof Activity) {
+            Activity activity = (Activity) context;
+            activity.setResult(Activity.RESULT_OK, resultIntent);
+            overridePendingTransitionForAnimation(animationType);
+            activity.finish();
+        }
+    }
+
+    private void overridePendingTransitionForAnimation(EAnimationType animationType) {
+        if (context == null || !(context instanceof Activity)) {
+            return;
+        }
+
+        Activity activity = (Activity) context;
+        int enterAnim, exitAnim;
+
         switch (animationType) {
             case FADE_IN:
-                navigateFadeForward(activityClass, data);
+                enterAnim = R.anim.fade_in;
+                exitAnim = R.anim.fade_out;
                 break;
             case FADE_OUT:
-                navigateFadeBackward(activityClass, data);
+                enterAnim = R.anim.fade_out;
+                exitAnim = R.anim.fade_in;
                 break;
             default:
-                navigateWithoutAnimation(activityClass, data);
+                enterAnim = exitAnim = 0;
                 break;
         }
-    }
 
-    private void navigateFadeForward(Class<? extends Activity> activityClass, Bundle data) {
-        navigateToActivity(activityClass, data, R.anim.fade_in, R.anim.fade_out);
-    }
-
-    private void navigateFadeBackward(Class<? extends Activity> activityClass, Bundle data) {
-        navigateToActivity(activityClass, data, R.anim.fade_out, R.anim.fade_in);
-    }
-
-    private void navigateWithoutAnimation(Class<? extends Activity> activityClass, Bundle data) {
-        Intent intent = new Intent(context, activityClass);
-        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-
-        if (data != null) {
-            intent.putExtras(data);
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+            activity.overridePendingTransition(enterAnim, exitAnim);
+        } else {
+            activity.overrideActivityTransition(Activity.OVERRIDE_TRANSITION_OPEN, enterAnim, exitAnim);
         }
+    }
 
-        context.startActivity(intent);
+    private void navigateToActivity(Class<? extends Activity> activityClass, EAnimationType animationType) {
+        navigateToActivity(activityClass, null, animationType, DEFAULT_FLAGS);
     }
 
     private void navigateToActivity(Class<? extends Activity> activityClass,
-                                        Bundle data,
-                                        @AnimRes int enterAnim,
-                                        @AnimRes int exitAnim) {
-        Intent intent = new Intent(context, activityClass);
-        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                                    Bundle data,
+                                    EAnimationType animationType) {
+        navigateToActivity(activityClass, data, animationType, DEFAULT_FLAGS);
+    }
 
+    private void navigateToActivity(Class<? extends Activity> activityClass,
+                                    Bundle data,
+                                    EAnimationType animationType,
+                                    int flags) {
+
+        Intent intent = new Intent(context, activityClass);
         if (data != null) {
             intent.putExtras(data);
         }
-
-        if (context instanceof Activity) {
-            Activity activity = (Activity) context;
-            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
-                activity.overridePendingTransition(enterAnim, exitAnim);
-            } else {
-                activity.overrideActivityTransition(Activity.OVERRIDE_TRANSITION_OPEN, enterAnim, exitAnim);
-            }
-        }
-
+        intent.setFlags(flags);
+        overridePendingTransitionForAnimation(animationType);
         context.startActivity(intent);
     }
 }
