@@ -14,7 +14,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        android:background="@color/primary_bg"
+        android:background="@color/color_background_primary"
         tools:successToastMessage="@{viewModel.successToastMessage}"
         tools:errorToastMessage="@{viewModel.errorToastMessage}">
 
@@ -27,7 +27,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:src="@drawable/ic_nav_arrow_left"
-                app:tint="@color/white"
+                app:tint="@android:color/white"
                 android:onClickListener="@{() -> viewModel.navigateToSettings()}"
                 android:contentDescription="Back to home"/>
 
@@ -37,7 +37,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:text="Account linking"
-                android:textColor="@color/white"
+                android:textColor="@android:color/white"
                 android:textStyle="bold"
                 android:textSize="@dimen/primary_title_size" />
         </androidx.appcompat.widget.Toolbar>
@@ -68,7 +68,7 @@
                     android:layout_centerVertical="true"
                     android:layout_toEndOf="@id/passIcon"
                     android:text="In-app password"
-                    android:textColor="@color/primary_text"
+                    android:textColor="@color/color_text_primary"
                     android:textSize="@dimen/primary_sub_title_size"/>
 
                     <FrameLayout
@@ -79,16 +79,14 @@
                         android:animateLayoutChanges="true">
 
                         <com.google.android.material.button.MaterialButton
+                            style="@style/ButtonPrimaryHighlight"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
                             android:text="@{viewModel.isInAppPasswordLinked ? `Added` : `Add`}"
-                            android:textColor="@color/white"
-                            android:textSize="@dimen/primary_text_size"
-                            android:textStyle="bold"
                             android:onClick="@{()-> viewModel.addInAppPassword()}"
                             android:enabled="@{!viewModel.isInAppPasswordLinked}"
                             android:visibility="@{viewModel.isInAppAdding ? View.INVISIBLE : View.VISIBLE}"
-                            app:cornerRadius="@dimen/_8sdp"
+                            app:cornerRadius="@dimen/button_primary_corner_radius"
                             tools:text="Add" />
 
                         <ProgressBar
@@ -105,7 +103,7 @@
                     android:layout_marginStart="@dimen/_16sdp"
                     android:layout_toEndOf="@id/passIcon"
                     android:layout_alignParentBottom="true"
-                    android:background="@color/gray" />
+                    android:background="@color/color_primary_gray" />
             </RelativeLayout>
 
             <RelativeLayout
@@ -128,7 +126,7 @@
                     android:layout_centerVertical="true"
                     android:layout_toEndOf="@id/googleIcon"
                     android:text="Google"
-                    android:textColor="@color/primary_text"
+                    android:textColor="@color/color_text_primary"
                     android:textSize="@dimen/primary_sub_title_size"/>
 
                 <FrameLayout
@@ -139,16 +137,14 @@
                     android:animateLayoutChanges="true">
 
                     <com.google.android.material.button.MaterialButton
+                        style="@style/ButtonPrimaryHighlight"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:text="@{viewModel.isGoogleAccountLinked ? `Added` : `Add`}"
-                        android:textColor="@color/white"
-                        android:textSize="@dimen/primary_text_size"
-                        android:textStyle="bold"
                         android:onClick="@{()-> viewModel.addGoogleAccount()}"
                         android:enabled="@{!viewModel.isGoogleAccountLinked}"
                         android:visibility="@{viewModel.isGoogleAdding ? View.INVISIBLE : View.VISIBLE}"
-                        app:cornerRadius="@dimen/_8sdp"
+                        app:cornerRadius="@dimen/button_primary_corner_radius"
                         tools:text="Added"
                         tools:enabled="false" />
 
@@ -166,7 +162,7 @@
                     android:layout_marginStart="@dimen/_16sdp"
                     android:layout_toEndOf="@id/googleIcon"
                     android:layout_alignParentBottom="true"
-                    android:background="@color/gray" />
+                    android:background="@color/color_primary_gray" />
             </RelativeLayout>
 
             <RelativeLayout
@@ -189,7 +185,7 @@
                     android:layout_centerVertical="true"
                     android:layout_toEndOf="@id/githubIcon"
                     android:text="Github"
-                    android:textColor="@color/primary_text"
+                    android:textColor="@color/color_text_primary"
                     android:textSize="@dimen/primary_sub_title_size"/>
 
                 <FrameLayout
@@ -200,16 +196,14 @@
                     android:animateLayoutChanges="true">
 
                     <com.google.android.material.button.MaterialButton
+                        style="@style/ButtonPrimaryHighlight"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:text="@{viewModel.isGithubAccountLinked ? `Added` : `Add`}"
-                        android:textColor="@color/white"
-                        android:textSize="@dimen/primary_text_size"
-                        android:textStyle="bold"
                         android:onClick="@{()-> viewModel.addGithubAccount()}"
                         android:enabled="@{!viewModel.isGithubAccountLinked}"
                         android:visibility="@{viewModel.isGithubAdding ? View.INVISIBLE : View.VISIBLE}"
-                        app:cornerRadius="@dimen/_8sdp"
+                        app:cornerRadius="@dimen/button_primary_corner_radius"
                         tools:text="Add" />
 
                     <ProgressBar
@@ -226,7 +220,7 @@
                     android:layout_marginStart="@dimen/_16sdp"
                     android:layout_toEndOf="@id/githubIcon"
                     android:layout_alignParentBottom="true"
-                    android:background="@color/gray" />
+                    android:background="@color/color_primary_gray" />
             </RelativeLayout>
 
             <RelativeLayout
@@ -249,7 +243,7 @@
                     android:layout_centerVertical="true"
                     android:layout_toEndOf="@id/smsIcon"
                     android:text="SMS"
-                    android:textColor="@color/primary_text"
+                    android:textColor="@color/color_text_primary"
                     android:textSize="@dimen/primary_sub_title_size"/>
 
                 <FrameLayout
@@ -260,16 +254,14 @@
                     android:animateLayoutChanges="true">
 
                     <com.google.android.material.button.MaterialButton
+                        style="@style/ButtonPrimaryHighlight"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:text="@{viewModel.isSmsAccountLinked ? `Added` : `Add`}"
-                        android:textColor="@color/white"
-                        android:textSize="@dimen/primary_text_size"
-                        android:textStyle="bold"
                         android:onClick="@{()-> viewModel.addSmsAccount()}"
                         android:enabled="@{!viewModel.isSmsAccountLinked}"
                         android:visibility="@{viewModel.isSmsAdding ? View.INVISIBLE : View.VISIBLE}"
-                        app:cornerRadius="@dimen/_8sdp"
+                        app:cornerRadius="@dimen/button_primary_corner_radius"
                         tools:text="Added"
                         tools:enabled="false" />
 
@@ -287,7 +279,7 @@
                     android:layout_marginStart="@dimen/_16sdp"
                     android:layout_toEndOf="@id/smsIcon"
                     android:layout_alignParentBottom="true"
-                    android:background="@color/gray" />
+                    android:background="@color/color_primary_gray" />
             </RelativeLayout>
 
 
@@ -298,7 +290,7 @@
                 android:layout_marginTop="@dimen/_20sdp"
                 android:paddingHorizontal="@dimen/profile_item_padding_horizontal"
                 android:text="@string/account_linking_note"
-                android:textColor="@color/error"
+                android:textColor="@color/color_error"
                 android:textSize="@dimen/primary_text_size" />
         </LinearLayout>
     </LinearLayout>

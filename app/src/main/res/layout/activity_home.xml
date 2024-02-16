@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools">
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
         <variable
@@ -13,7 +14,7 @@
         android:layout_height="match_parent"
         android:layout_gravity="center"
         android:padding="@dimen/_8sdp"
-        android:background="@color/primary_bg"
+        android:background="@color/color_background_primary"
         android:orientation="vertical"
         tools:successToastMessage="@{viewModel.successToastMessage}"
         tools:errorToastMessage="@{viewModel.errorToastMessage}">
@@ -49,35 +50,43 @@
         </RelativeLayout>
 
         <Button
+            style="@style/ButtonPrimaryHighlight"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/_60sdp"
             android:layout_gravity="center"
             android:text="My profile"
-            android:onClick="@{() -> viewModel.navigateToUserProfile()}" />
+            android:onClick="@{() -> viewModel.navigateToUserProfile()}"
+            app:cornerRadius="@dimen/button_primary_corner_radius" />
 
         <Button
+            style="@style/ButtonPrimaryHighlight"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/_10sdp"
             android:layout_gravity="center"
             android:text="Settings"
-            android:onClick="@{() -> viewModel.navigateToSettings()}" />
+            android:onClick="@{() -> viewModel.navigateToSettings()}"
+            app:cornerRadius="@dimen/button_primary_corner_radius" />
 
         <Button
+            style="@style/ButtonPrimaryHighlight"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/_10sdp"
             android:layout_gravity="center"
             android:text="Friend requests"
-            android:onClick="@{() -> viewModel.navigateToFriendRequests()}" />
+            android:onClick="@{() -> viewModel.navigateToFriendRequests()}"
+            app:cornerRadius="@dimen/button_primary_corner_radius" />
 
         <Button
+            style="@style/ButtonPrimaryHighlight"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/_10sdp"
             android:layout_gravity="center"
             android:text="Sign out"
-            android:onClick="@{() -> viewModel.signOut()}" />
+            android:onClick="@{() -> viewModel.signOut()}"
+            app:cornerRadius="@dimen/button_primary_corner_radius" />
     </LinearLayout>
 </layout>

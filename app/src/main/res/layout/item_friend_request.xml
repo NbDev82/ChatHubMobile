@@ -19,7 +19,7 @@
     <com.google.android.material.card.MaterialCardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:cardBackgroundColor="@color/primary_bg"
+        app:cardBackgroundColor="@color/color_background_primary"
         app:strokeWidth="0dp"
         app:cardCornerRadius="0dp">
 
@@ -49,7 +49,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:text="None"
-                    android:textColor="@color/secondary_text"
+                    android:textColor="@color/color_text_secondary"
                     android:textSize="@dimen/_10ssp"
                     android:visibility="@{request.recipientAvatar == null ? View.VISIBLE : View.GONE}"
                     tools:ignore="InvalidId" />
@@ -72,7 +72,7 @@
                     android:ellipsize="end"
                     android:maxLines="1"
                     android:text="@{request.recipientName}"
-                    android:textColor="@color/primary_text"
+                    android:textColor="@color/color_text_primary"
                     android:textSize="@dimen/primary_sub_title_size"
                     tools:text="Van A" />
 
@@ -84,7 +84,7 @@
                     android:layout_alignParentTop="true"
                     android:maxLines="1"
                     android:text="@{request.timeAgo}"
-                    android:textColor="@color/secondary_text"
+                    android:textColor="@color/color_text_secondary"
                     android:textSize="@dimen/primary_text_size"
                     tools:text="1w"/>
 
@@ -97,7 +97,7 @@
                     android:layout_above="@id/buttonGroupLl"
                     android:ellipsize="marquee"
                     android:text="@{String.valueOf(request.mutualFriends + ` mutualFriend`)}"
-                    android:textColor="@color/secondary_text"
+                    android:textColor="@color/color_text_secondary"
                     android:textSize="@dimen/primary_text_size"
                     tools:text="1 mutual friend"/>
 
@@ -110,26 +110,21 @@
                     android:orientation="horizontal">
 
                     <com.google.android.material.button.MaterialButton
+                        style="@style/ButtonPrimaryHighlight"
                         android:layout_width="@dimen/_85sdp"
                         android:layout_height="@dimen/_36sdp"
                         android:text="Confirm"
-                        android:textColor="@color/white"
-                        android:textSize="@dimen/primary_text_size"
-                        android:textStyle="bold"
                         android:onClick="@{() -> listener.onAcceptClick(position)}"
-                        app:cornerRadius="@dimen/_8sdp" />
+                        app:cornerRadius="@dimen/button_primary_corner_radius" />
 
                     <com.google.android.material.button.MaterialButton
+                        style="@style/ButtonPrimaryNeutral"
                         android:layout_width="@dimen/_85sdp"
                         android:layout_height="@dimen/_36sdp"
                         android:layout_marginStart="@dimen/_15sdp"
                         android:text="Reject"
-                        android:textColor="@color/primary_text"
-                        android:textSize="@dimen/primary_text_size"
-                        android:textStyle="bold"
                         android:onClick="@{() -> listener.onRejectClick(position)}"
-                        android:backgroundTint="@color/secondary_button_bg"
-                        app:cornerRadius="@dimen/_8sdp" />
+                        app:cornerRadius="@dimen/button_primary_corner_radius" />
                 </LinearLayout>
             </RelativeLayout>
         </LinearLayout>

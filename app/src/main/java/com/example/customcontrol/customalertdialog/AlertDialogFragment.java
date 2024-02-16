@@ -70,11 +70,13 @@ public class AlertDialogFragment extends AppCompatDialogFragment {
     }
 
     private void setupButton(Button button, String title, Consumer<Void> clickListener) {
-        if (title != null && clickListener != null) {
+        if (title != null) {
             button.setVisibility(View.VISIBLE);
             button.setText(title);
             button.setOnClickListener(v -> {
-                clickListener.accept(null);
+                if (clickListener != null) {
+                    clickListener.accept(null);
+                }
                 dismiss();
             });
         }

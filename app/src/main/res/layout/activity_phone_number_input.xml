@@ -14,7 +14,7 @@
         android:id="@+id/mainRL"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/primary_bg"
+        android:background="@color/color_background_primary"
         android:paddingHorizontal="@dimen/profile_item_padding_horizontal"
         tools:successToastMessage="@{viewModel.successToastMessage}"
         tools:errorToastMessage="@{viewModel.errorToastMessage}">
@@ -47,7 +47,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/_5sdp"
-                android:textColor="@color/primary_text"
+                android:textColor="@color/color_text_primary"
                 android:text="We will send you an One Time Password on this mobile number"
                 android:textSize="@dimen/primary_text_size" />
         </LinearLayout>
@@ -114,16 +114,14 @@
             android:animateLayoutChanges="true">
 
             <com.google.android.material.button.MaterialButton
+                style="@style/ButtonPrimaryHighlight"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/_45sdp"
                 android:text="Next"
-                android:textColor="@color/white"
-                android:textSize="@dimen/primary_text_size"
-                android:textStyle="bold"
                 android:onClick="@{()-> viewModel.verifyPhoneNumberAndNavigate()}"
                 android:enabled="@{viewModel.phoneNumberError == null}"
                 android:visibility="@{viewModel.isPhoneVerifying ? View.INVISIBLE : View.VISIBLE}"
-                app:cornerRadius="@dimen/_8sdp" />
+                app:cornerRadius="@dimen/button_primary_corner_radius" />
 
             <ProgressBar
                 android:layout_width="@dimen/_25sdp"
@@ -144,7 +142,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Do you have an account?"
-                android:textColor="@color/primary_text"/>
+                android:textColor="@color/color_text_primary"/>
 
             <TextView
                 android:layout_width="wrap_content"
@@ -152,7 +150,7 @@
                 android:layout_marginStart="@dimen/_5sdp"
                 android:onClick="@{() -> viewModel.navigateToSignUp()}"
                 android:text="Sign up"
-                android:textColor="@color/link_blue"/>
+                android:textColor="@color/color_primary_link_blue"/>
         </LinearLayout>
 
     </RelativeLayout>

@@ -138,33 +138,30 @@ public class FriendRequestServiceImpl implements FriendRequestService {
         return 0;
     }
 
-    private Task<Boolean> hasFriendship(String firstUserId, String secondUserId) {
+    @Override
+    public Task<FriendRequest.EStatus> getFriendRequestStatus(String senderId, String recipientId) {
         CollectionReference friendRequestsRef = getFriendRequestsRef();
 
-        Query firstUserQuery = friendRequestsRef
-                .whereEqualTo(EFriendRequestField.SENDER_ID.getName(), firstUserId)
-                .whereEqualTo(EFriendRequestField.RECIPIENT_ID.getName(), secondUserId)
-                .whereEqualTo(EFriendRequestField.STATUS.getName(), FriendRequest.EStatus.ACCEPTED);
+        Query query = friendRequestsRef
+                .whereEqualTo(EFriendRequestField.SENDER_ID.getName(), senderId)
+                .whereEqualTo(EFriendRequestField.RECIPIENT_ID.getName(), recipientId);
 
-        Query secondUserQuery = friendRequestsRef
-                .whereEqualTo(EFriendRequestField.SENDER_ID.getName(), secondUserId)
-                .whereEqualTo(EFriendRequestField.RECIPIENT_ID.getName(), firstUserId)
-                .whereEqualTo(EFriendRequestField.STATUS.getName(), FriendRequest.EStatus.ACCEPTED);
-
-        return Tasks.whenAllSuccess(firstUserQuery.get(), secondUserQuery.get())
-                .continueWith(task -> {
-                    if (task.isSuccessful()) {
-                        QuerySnapshot firstUserResult = (QuerySnapshot) task.getResult().get(0);
-                        QuerySnapshot secondUserResult = (QuerySnapshot) task.getResult().get(1);
-
-                        return !firstUserResult.isEmpty() || !secondUserResult.isEmpty();
-                    } else {
-                        Exception exception = task.getException();
-                        Log.e(TAG, "Error checking if users are friends: " +
-                                exception.getMessage(), exception);
-                        return false;
-                    }
-                });
+        return query.get().continueWith(task -> {
+            if (task.isSuccessful()) {
+                QuerySnapshot querySnapshot = task.getResult();
+                if (querySnapshot != null && !querySnapshot.isEmpty()) {
+                    DocumentSnapshot documentSnapshot = querySnapshot.getDocuments().get(0);
+                    FriendRequest.EStatus status = documentSnapshot.toObject(FriendRequest.EStatus.class);
+                    return status != null ? status : FriendRequest.EStatus.NONE;
+                } else {
+                    return FriendRequest.EStatus.NONE;
+                }
+            } else {
+                Exception exception = task.getException();
+                Log.e(TAG, "Error getting friend request status: " + exception.getMessage(), exception);
+                return FriendRequest.EStatus.NONE;
+            }
+        });
     }
 
     @Override

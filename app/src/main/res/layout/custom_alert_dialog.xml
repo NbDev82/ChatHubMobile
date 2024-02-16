@@ -26,7 +26,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/_10sdp"
-            android:textColor="@color/primary_text"
+            android:textColor="@color/color_text_primary"
             android:textSize="@dimen/primary_text_size"
             tools:text="Login failed!"/>
 
@@ -38,28 +38,23 @@
             android:orientation="horizontal">
 
             <com.google.android.material.button.MaterialButton
+                style="@style/ButtonPrimaryHighlight"
                 android:id="@+id/positiveBtn"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textColor="@color/white"
-                android:textSize="@dimen/primary_text_size"
-                android:textStyle="bold"
                 android:layout_margin="@dimen/_5sdp"
-                app:cornerRadius="@dimen/_8sdp"
                 android:visibility="gone"
+                app:cornerRadius="@dimen/button_primary_corner_radius"
                 tools:visibility="visible"
                 tools:text="Yes"/>
 
             <com.google.android.material.button.MaterialButton
+                style="@style/ButtonPrimaryNeutral"
                 android:id="@+id/negativeBtn"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textColor="@color/white"
-                android:textSize="@dimen/primary_text_size"
-                android:textStyle="bold"
                 android:layout_margin="@dimen/_5sdp"
-                android:backgroundTint="#a4a4a4"
-                app:cornerRadius="@dimen/_8sdp"
+                app:cornerRadius="@dimen/button_primary_corner_radius"
                 android:visibility="gone"
                 tools:visibility="visible"
                 tools:text="No"/>

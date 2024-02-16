@@ -14,7 +14,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        android:background="@color/primary_bg"
+        android:background="@color/color_background_primary"
         tools:successToastMessage="@{viewModel.successToastMessage}"
         tools:errorToastMessage="@{viewModel.errorToastMessage}">
 
@@ -27,7 +27,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:src="@drawable/ic_nav_arrow_left"
-                app:tint="@color/white"
+                app:tint="@android:color/white"
                 android:onClickListener="@{() -> viewModel.navigateToSettings()}"
                 android:contentDescription="Back to home"/>
 
@@ -37,7 +37,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:text="Email details"
-                android:textColor="@color/white"
+                android:textColor="@android:color/white"
                 android:textStyle="bold"
                 android:textSize="@dimen/primary_title_size" />
         </androidx.appcompat.widget.Toolbar>
@@ -82,16 +82,14 @@
                     android:animateLayoutChanges="true">
 
                     <com.google.android.material.button.MaterialButton
+                        style="@style/ButtonPrimaryHighlight"
                         android:layout_width="match_parent"
                         android:layout_height="@dimen/_45sdp"
                         android:text="Verify"
-                        android:textColor="@color/white"
-                        android:textSize="@dimen/primary_text_size"
-                        android:textStyle="bold"
                         android:onClick="@{()-> viewModel.sendEmailVerification()}"
                         android:enabled="@{!viewModel.isEmailVerified}"
                         android:visibility="@{viewModel.isVerifyingEmail ? View.INVISIBLE : View.VISIBLE}"
-                        app:cornerRadius="@dimen/_8sdp" />
+                        app:cornerRadius="@dimen/button_primary_corner_radius" />
 
 
                     <ProgressBar
@@ -108,10 +106,10 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/_10sdp"
                     android:text="@{viewModel.isEmailVerified ? @string/email_verified_note : @string/email_is_not_verified_note}"
-                    android:textColor="@{viewModel.isEmailVerified ? @color/success : @color/error}"
+                    android:textColor="@{viewModel.isEmailVerified ? @color/color_success : @color/color_error}"
                     android:textSize="@dimen/primary_text_size"
                     tools:text="@string/email_verified_note"
-                    tools:textColor="@color/success" />
+                    tools:textColor="@color/color_success" />
             </LinearLayout>
 
         </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>

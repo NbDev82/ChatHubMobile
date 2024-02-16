@@ -13,7 +13,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        android:background="@color/primary_bg"
+        android:background="@color/color_background_primary"
         tools:successToastMessage="@{viewModel.successToastMessage}"
         tools:errorToastMessage="@{viewModel.errorToastMessage}">
 
@@ -26,7 +26,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:src="@drawable/ic_nav_arrow_left"
-                app:tint="@color/white"
+                app:tint="@android:color/white"
                 android:onClickListener="@{() -> viewModel.navigateToHome()}"
                 android:contentDescription="Back to home"/>
 
@@ -35,7 +35,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:text="Settings"
-                android:textColor="@color/white"
+                android:textColor="@android:color/white"
                 android:textStyle="bold"
                 android:textSize="@dimen/primary_title_size" />
         </androidx.appcompat.widget.Toolbar>
@@ -43,39 +43,39 @@
         <ScrollView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@color/secondary_bg">
+            android:background="@color/color_background_secondary">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@color/secondary_bg"
+                android:background="@color/color_background_secondary"
                 android:orientation="vertical">
 
                 <LinearLayout
                     android:id="@+id/accountLL"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:background="@color/white"
+                    android:background="@android:color/white"
                     android:orientation="vertical">
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textColor="@color/primary_sub_title"
+                        android:textColor="@color/color_text_primary_sub_title"
                         android:layout_margin="@dimen/settings_sub_title_margin"
                         android:text="Account"/>
 
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:background="@color/primary_bg"
+                        android:background="@color/color_background_primary"
                         android:layout_marginHorizontal="@dimen/profile_item_padding_horizontal">
 
                         <com.google.android.material.card.MaterialCardView
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:onClick="@{() -> viewModel.navigateToUserProfile()}"
-                            app:cardBackgroundColor="@color/primary_bg"
+                            app:cardBackgroundColor="@color/color_background_primary"
                             app:cardCornerRadius="@dimen/_10sdp">
 
                             <RelativeLayout
@@ -156,7 +156,7 @@
                             android:layout_centerVertical="true"
                             android:layout_toEndOf="@id/phoneIcon"
                             android:text="Phone number"
-                            android:textColor="@color/secondary_text"
+                            android:textColor="@color/color_text_secondary"
                             android:textSize="@dimen/primary_sub_title_size" />
 
                         <TextView
@@ -169,7 +169,7 @@
                             android:layout_toStartOf="@id/editPhoneIcon"
                             android:text="@{viewModel.phoneNumber.isEmpty() ? `(None)` : viewModel.phoneNumber}"
                             android:gravity="end"
-                            android:textColor="@color/primary_text"
+                            android:textColor="@color/color_text_primary"
                             android:textSize="@dimen/primary_text_size"
                             android:maxLines="1"
                             android:ellipsize="end"
@@ -189,7 +189,7 @@
                             android:layout_marginStart="@dimen/_16sdp"
                             android:layout_toEndOf="@id/phoneIcon"
                             android:layout_alignParentBottom="true"
-                            android:background="@color/gray" />
+                            android:background="@color/color_primary_gray" />
                     </RelativeLayout>
 
                     <RelativeLayout
@@ -215,7 +215,7 @@
                             android:layout_centerVertical="true"
                             android:layout_toEndOf="@id/emailIcon"
                             android:text="Email"
-                            android:textColor="@color/secondary_text"
+                            android:textColor="@color/color_text_secondary"
                             android:textSize="@dimen/primary_sub_title_size" />
 
                         <TextView
@@ -228,7 +228,7 @@
                             android:layout_toStartOf="@id/editNameIcon"
                             android:text="@{viewModel.email.isEmpty() ? `(None)` : viewModel.email}"
                             android:gravity="end"
-                            android:textColor="@color/primary_text"
+                            android:textColor="@color/color_text_primary"
                             android:textSize="@dimen/primary_text_size"
                             android:maxLines="1"
                             android:ellipsize="end"
@@ -248,7 +248,7 @@
                             android:layout_marginStart="@dimen/_16sdp"
                             android:layout_toEndOf="@id/emailIcon"
                             android:layout_alignParentBottom="true"
-                            android:background="@color/gray" />
+                            android:background="@color/color_primary_gray" />
                     </RelativeLayout>
 
                     <RelativeLayout
@@ -274,7 +274,7 @@
                             android:layout_centerVertical="true"
                             android:layout_toEndOf="@id/linkingIcon"
                             android:text="Linking"
-                            android:textColor="@color/secondary_text"
+                            android:textColor="@color/color_text_secondary"
                             android:textSize="@dimen/primary_sub_title_size" />
 
                         <ImageView
@@ -290,7 +290,7 @@
                             android:layout_marginStart="@dimen/_16sdp"
                             android:layout_toEndOf="@id/linkingIcon"
                             android:layout_alignParentBottom="true"
-                            android:background="@color/gray" />
+                            android:background="@color/color_primary_gray" />
                     </RelativeLayout>
 
                     <RelativeLayout
@@ -316,7 +316,7 @@
                             android:layout_centerVertical="true"
                             android:layout_toEndOf="@id/qrCodeIcon"
                             android:text="My QR code"
-                            android:textColor="@color/secondary_text"
+                            android:textColor="@color/color_text_secondary"
                             android:textSize="@dimen/primary_sub_title_size" />
 
                         <ImageView
@@ -334,13 +334,13 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/settings_section_distance"
-                    android:background="@color/white"
+                    android:background="@android:color/white"
                     android:orientation="vertical">
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textColor="@color/primary_sub_title"
+                        android:textColor="@color/color_text_primary_sub_title"
                         android:layout_margin="@dimen/settings_sub_title_margin"
                         android:text="Security"/>
 
@@ -367,7 +367,7 @@
                             android:layout_centerVertical="true"
                             android:layout_toEndOf="@id/lockIcon"
                             android:text="Lock my app"
-                            android:textColor="@color/secondary_text"
+                            android:textColor="@color/color_text_secondary"
                             android:textSize="@dimen/primary_sub_title_size" />
 
                         <ImageView
@@ -385,13 +385,13 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/settings_section_distance"
-                    android:background="@color/white"
+                    android:background="@android:color/white"
                     android:orientation="vertical">
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textColor="@color/primary_sub_title"
+                        android:textColor="@color/color_text_primary_sub_title"
                         android:layout_margin="@dimen/settings_sub_title_margin"
                         android:text="Login"/>
 
@@ -418,7 +418,7 @@
                             android:layout_centerVertical="true"
                             android:layout_toEndOf="@id/passwordIcon"
                             android:text="Password"
-                            android:textColor="@color/secondary_text"
+                            android:textColor="@color/color_text_secondary"
                             android:textSize="@dimen/primary_sub_title_size" />
 
                         <ImageView
@@ -435,14 +435,14 @@
                     android:id="@+id/deleteAccountLL"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:background="@color/white"
+                    android:background="@android:color/white"
                     android:layout_marginTop="@dimen/settings_section_distance">
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textStyle="bold"
-                        android:textColor="@color/error"
+                        android:textColor="@color/color_error"
                         android:layout_margin="@dimen/settings_sub_title_margin"
                         android:text="Delete account"/>
 

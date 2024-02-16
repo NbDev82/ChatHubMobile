@@ -1,8 +1,11 @@
 package com.example.friend.profileviewer;
 
 import android.os.Bundle;
+import android.view.ViewGroup;
+import android.widget.LinearLayout;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.databinding.BindingAdapter;
 import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.ViewModelProvider;
 
@@ -18,6 +21,7 @@ import com.example.navigation.NavigationManager;
 import com.example.navigation.NavigationManagerImpl;
 import com.example.user.AuthService;
 import com.example.user.AuthServiceImpl;
+import com.google.android.material.button.MaterialButton;
 
 public class ProfileViewerActivity extends AppCompatActivity {
 
@@ -50,6 +54,7 @@ public class ProfileViewerActivity extends AppCompatActivity {
             String selectedUser = extras.getString(Utils.EXTRA_SELECTED_USER_ID, "");
             viewModel.setDisplayedUserId(selectedUser);
             viewModel.fetchUserInformation();
+            viewModel.checkFriendRequestStatus();
         }
     }
 

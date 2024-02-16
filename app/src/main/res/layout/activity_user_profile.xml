@@ -14,7 +14,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        android:background="@color/primary_bg"
+        android:background="@color/color_background_primary"
         tools:successToastMessage="@{viewModel.successToastMessage}"
         tools:errorToastMessage="@{viewModel.errorToastMessage}">
 
@@ -27,7 +27,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:src="@drawable/ic_nav_arrow_left"
-                app:tint="@color/white"
+                app:tint="@android:color/white"
                 android:onClickListener="@{() -> viewModel.navigateToHome()}"
                 android:contentDescription="Back to home"/>
 
@@ -37,7 +37,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:text="Personal profile"
-                android:textColor="@color/white"
+                android:textColor="@android:color/white"
                 android:textStyle="bold"
                 android:textSize="@dimen/primary_title_size" />
         </androidx.appcompat.widget.Toolbar>
@@ -86,7 +86,7 @@
                         android:layout_gravity="center"
                         android:text="Add image"
                         android:visibility="@{viewModel.imageBitmap == null ? View.VISIBLE : View.GONE}"
-                        android:textColor="@color/secondary_text"
+                        android:textColor="@color/color_text_secondary"
                         android:textSize="@dimen/_10ssp"
                         tools:ignore="InvalidId" />
 
@@ -116,7 +116,7 @@
                         android:layout_centerVertical="true"
                         android:layout_toEndOf="@id/nameIcon"
                         android:text="Full name"
-                        android:textColor="@color/secondary_text"
+                        android:textColor="@color/color_text_secondary"
                         android:textSize="@dimen/primary_sub_title_size"/>
 
                     <TextView
@@ -129,7 +129,7 @@
                         android:layout_toStartOf="@id/editNameIcon"
                         android:text="@{viewModel.fullName.isEmpty() ? `(None)` : viewModel.fullName}"
                         android:gravity="end"
-                        android:textColor="@color/primary_text"
+                        android:textColor="@color/color_text_primary"
                         android:textSize="@dimen/primary_text_size"
                         android:maxLines="1"
                         android:ellipsize="end"
@@ -149,7 +149,7 @@
                         android:layout_marginStart="@dimen/_16sdp"
                         android:layout_toEndOf="@id/nameIcon"
                         android:layout_alignParentBottom="true"
-                        android:background="@color/gray" />
+                        android:background="@color/color_primary_gray" />
                 </RelativeLayout>
 
                 <RelativeLayout
@@ -176,7 +176,7 @@
                         android:layout_centerVertical="true"
                         android:layout_toEndOf="@id/birthdayIcon"
                         android:text="Birthday"
-                        android:textColor="@color/secondary_text"
+                        android:textColor="@color/color_text_secondary"
                         android:textSize="@dimen/primary_sub_title_size"/>
 
                     <TextView
@@ -189,7 +189,7 @@
                         android:layout_toStartOf="@id/editBirthdayIcon"
                         android:gravity="end"
                         android:text="@{viewModel.birthdayStr}"
-                        android:textColor="@color/primary_text"
+                        android:textColor="@color/color_text_primary"
                         android:textSize="@dimen/primary_text_size"
                         android:maxLines="1"
                         android:ellipsize="end"
@@ -209,7 +209,7 @@
                         android:layout_marginStart="@dimen/_16sdp"
                         android:layout_toEndOf="@id/birthdayIcon"
                         android:layout_alignParentBottom="true"
-                        android:background="@color/gray" />
+                        android:background="@color/color_primary_gray" />
                 </RelativeLayout>
 
                 <RelativeLayout
@@ -236,7 +236,7 @@
                         android:layout_centerVertical="true"
                         android:layout_toEndOf="@id/genderIcon"
                         android:text="Gender"
-                        android:textColor="@color/secondary_text"
+                        android:textColor="@color/color_text_secondary"
                         android:textSize="@dimen/primary_sub_title_size"/>
 
                     <TextView
@@ -249,7 +249,7 @@
                         android:layout_toStartOf="@id/editGenderIcon"
                         android:gravity="end"
                         android:text="@{viewModel.gender.getDisplay()}"
-                        android:textColor="@color/primary_text"
+                        android:textColor="@color/color_text_primary"
                         android:textSize="@dimen/primary_text_size"
                         android:maxLines="1"
                         android:ellipsize="end"
@@ -269,7 +269,7 @@
                         android:layout_marginStart="@dimen/_16sdp"
                         android:layout_toEndOf="@id/genderIcon"
                         android:layout_alignParentBottom="true"
-                        android:background="@color/gray" />
+                        android:background="@color/color_primary_gray" />
                 </RelativeLayout>
 
                 <TextView
@@ -281,7 +281,7 @@
                     android:drawablePadding="@dimen/_5sdp"
                     android:gravity="center_vertical"
                     android:text="Update your changes."
-                    android:textColor="@color/error"
+                    android:textColor="@color/color_error"
                     android:layout_gravity="center_vertical"
                     android:visibility="@{viewModel.isDataChanged ? View.VISIBLE : View.INVISIBLE}" />
 
@@ -294,17 +294,15 @@
                     android:animateLayoutChanges="true">
 
                     <com.google.android.material.button.MaterialButton
+                        style="@style/ButtonPrimaryHighlight"
                         android:layout_width="match_parent"
                         android:layout_height="@dimen/_50sdp"
                         android:layout_marginTop="@dimen/_16sdp"
                         android:text="Update"
-                        android:textColor="@color/white"
-                        android:textSize="@dimen/primary_text_size"
-                        android:textStyle="bold"
                         android:onClick="@{()-> viewModel.openUpdateDialog()}"
                         android:enabled="@{viewModel.isDataChanged}"
                         android:visibility="@{viewModel.isUserUpdating ? View.INVISIBLE : View.VISIBLE}"
-                        app:cornerRadius="@dimen/_8sdp" />
+                        app:cornerRadius="@dimen/button_primary_corner_radius" />
 
 
                     <ProgressBar

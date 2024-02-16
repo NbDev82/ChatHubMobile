@@ -14,7 +14,7 @@
         android:id="@+id/mainRL"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/primary_bg"
+        android:background="@color/color_background_primary"
         android:paddingHorizontal="@dimen/profile_item_padding_horizontal"
         tools:successToastMessage="@{viewModel.successToastMessage}"
         tools:errorToastMessage="@{viewModel.errorToastMessage}">
@@ -47,7 +47,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/_5sdp"
-                android:textColor="@color/primary_text"
+                android:textColor="@color/color_text_primary"
                 android:text="Enter the OTP sent to"
                 android:textSize="@dimen/primary_text_size" />
 
@@ -55,7 +55,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textStyle="bold"
-                android:textColor="@color/primary_text"
+                android:textColor="@color/color_text_primary"
                 android:text="@{viewModel.phoneNumber}"
                 android:textSize="@dimen/primary_text_size"
                 tools:text="+84-123912049"/>
@@ -95,7 +95,7 @@
             android:enabled="@{viewModel.resendContentStatus}"
             android:onClick="@{() -> viewModel.resendOtp()}"
             android:text="@{viewModel.resendContent}"
-            android:textColor="@color/primary_text"
+            android:textColor="@color/color_text_primary"
             android:textSize="@dimen/primary_text_size"
             tools:text="Resend OTP in 30 sec" />
 
@@ -108,16 +108,14 @@
             android:animateLayoutChanges="true">
 
             <com.google.android.material.button.MaterialButton
+                style="@style/ButtonPrimaryHighlight"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/_45sdp"
                 android:text="Verify"
-                android:textColor="@color/white"
-                android:textSize="@dimen/primary_text_size"
-                android:textStyle="bold"
                 android:onClick="@{()-> viewModel.verifyOtp()}"
                 android:enabled="@{viewModel.otpError == null}"
                 android:visibility="@{viewModel.isOtpVerifying ? View.INVISIBLE : View.VISIBLE}"
-                app:cornerRadius="@dimen/_8sdp" />
+                app:cornerRadius="@dimen/button_primary_corner_radius" />
 
 
             <ProgressBar
@@ -139,7 +137,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Do you have an account?"
-                android:textColor="@color/primary_text"/>
+                android:textColor="@color/color_text_primary"/>
 
             <TextView
                 android:layout_width="wrap_content"
@@ -147,7 +145,7 @@
                 android:layout_marginStart="@dimen/_5sdp"
                 android:onClick="@{() -> viewModel.navigateToSignUp()}"
                 android:text="Sign up"
-                android:textColor="@color/link_blue"/>
+                android:textColor="@color/color_primary_link_blue"/>
         </LinearLayout>
 
     </RelativeLayout>

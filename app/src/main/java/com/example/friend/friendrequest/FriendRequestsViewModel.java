@@ -27,8 +27,8 @@ public class FriendRequestsViewModel extends BaseViewModel implements FriendRequ
     private final MutableLiveData<Bundle> navigateToProfileViewer = new MutableLiveData<>();
     private final MutableLiveData<List<FriendRequestView>> friendRequests = new MutableLiveData<>(new ArrayList<>());
     private final MutableLiveData<Boolean> isRequestsLoading = new MutableLiveData<>();
-    private final AuthService authService = new AuthServiceImpl();
-    private final FriendRequestService friendRequestService = new FriendRequestServiceImpl(authService);
+    private final AuthService authService;
+    private final FriendRequestService friendRequestService;
 
     public MutableLiveData<Boolean> getNavigateToHome() {
         return navigateToHome;
@@ -46,7 +46,10 @@ public class FriendRequestsViewModel extends BaseViewModel implements FriendRequ
         return isRequestsLoading;
     }
 
-    public FriendRequestsViewModel() {
+    public FriendRequestsViewModel(AuthService authService,
+                                   FriendRequestService friendRequestService) {
+        this.authService = authService;
+        this.friendRequestService = friendRequestService;
     }
 
     public void loadFriendRequests() {

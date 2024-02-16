@@ -13,7 +13,7 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/primary_bg"
+        android:background="@color/color_background_primary"
         tools:successToastMessage="@{viewModel.successToastMessage}"
         tools:errorToastMessage="@{viewModel.errorToastMessage}">
 
@@ -35,7 +35,7 @@
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/opensans_condensed_bold"
                 android:text="Chat Hub"
-                android:textColor="@color/primary_title"
+                android:textColor="@color/color_text_primary_title"
                 android:textSize="@dimen/primary_app_title_size"
                 android:textStyle="bold" />
         </LinearLayout>
@@ -47,7 +47,7 @@
             android:layout_centerInParent="true"
             android:layout_marginHorizontal="@dimen/_25sdp"
             app:cardCornerRadius="@dimen/card_corner_radius"
-            app:cardBackgroundColor="@color/primary_bg"
+            app:cardBackgroundColor="@color/color_background_primary"
             app:cardElevation="@dimen/_6sdp">
 
             <LinearLayout
@@ -61,7 +61,7 @@
                     android:layout_height="wrap_content"
                     android:text="Sign up"
                     android:textAlignment="center"
-                    android:textColor="@color/secondary_title"
+                    android:textColor="@color/color_text_secondary_title"
                     android:textSize="@dimen/primary_title_size" />
 
                 <com.google.android.material.textfield.TextInputLayout
@@ -131,15 +131,13 @@
                     android:animateLayoutChanges="true">
 
                     <com.google.android.material.button.MaterialButton
+                        style="@style/ButtonPrimaryHighlight"
                         android:layout_width="match_parent"
                         android:layout_height="@dimen/_40sdp"
                         android:onClick="@{()-> viewModel.signUp()}"
                         android:text="Sign up"
-                        android:textColor="@color/white"
-                        android:textSize="@dimen/primary_text_size"
-                        android:textStyle="bold"
                         android:visibility="@{viewModel.isSigningUp ? View.INVISIBLE : View.VISIBLE}"
-                        app:cornerRadius="@dimen/_16sdp" />
+                        app:cornerRadius="@dimen/button_primary_corner_radius" />
 
                     <ProgressBar
                         android:layout_width="@dimen/_25sdp"
@@ -164,7 +162,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Already have an account?"
-                android:textColor="@color/primary_text"/>
+                android:textColor="@color/color_text_primary"/>
 
             <TextView
                 android:layout_width="wrap_content"
@@ -172,7 +170,7 @@
                 android:layout_marginStart="@dimen/_5sdp"
                 android:onClick="@{() -> viewModel.navigateToLogin()}"
                 android:text="Log in"
-                android:textColor="@color/link_blue"/>
+                android:textColor="@color/color_primary_link_blue"/>
         </LinearLayout>
 
     </RelativeLayout>

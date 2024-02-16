@@ -9,7 +9,7 @@
             android:id="@+id/nameIcon"
             android:layout_width="@dimen/_32sdp"
             android:layout_height="@dimen/_32sdp"
-            android:background="@color/input_bg"
+            android:background="@color/color_input_background"
             android:layout_marginStart="@dimen/default_icon_margin"
             android:layout_marginTop="@dimen/default_icon_margin"
             android:layout_marginEnd="@dimen/default_icon_margin"
@@ -22,12 +22,12 @@
             android:layout_marginStart="@dimen/_16sdp"
             android:layout_centerVertical="true"
             android:layout_toEndOf="@id/nameIcon"
-            android:background="@color/input_bg" />
+            android:background="@color/color_input_background" />
 
         <TextView
             android:layout_width="@dimen/sub_title_width"
             android:layout_height="@dimen/sub_title_height"
-            android:background="@color/input_bg"
+            android:background="@color/color_input_background"
             android:layout_marginStart="@dimen/_20sdp"
             android:layout_marginEnd="@dimen/_5sdp"
             android:layout_centerVertical="true"
@@ -38,7 +38,7 @@
             android:id="@+id/editNameIcon"
             android:layout_width="@dimen/_12sdp"
             android:layout_height="@dimen/_12sdp"
-            android:background="@color/input_bg"
+            android:background="@color/color_input_background"
             android:layout_centerVertical="true"
             android:layout_alignParentEnd="true" />
 
@@ -48,5 +48,5 @@
             android:layout_marginStart="@dimen/_16sdp"
             android:layout_toEndOf="@id/nameIcon"
             android:layout_alignParentBottom="true"
-            android:background="@color/gray" />
+            android:background="@color/color_primary_gray" />
 </RelativeLayout>

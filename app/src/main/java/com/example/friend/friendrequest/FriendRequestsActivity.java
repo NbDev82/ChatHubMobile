@@ -9,10 +9,14 @@ import androidx.lifecycle.ViewModelProvider;
 import com.example.R;
 import com.example.databinding.ActivityFriendRequestsBinding;
 import com.example.friend.friendrequest.adapter.FriendRequestsAdapter;
+import com.example.friend.service.FriendRequestService;
+import com.example.friend.service.FriendRequestServiceImpl;
 import com.example.infrastructure.Utils;
 import com.example.navigation.EAnimationType;
 import com.example.navigation.NavigationManager;
 import com.example.navigation.NavigationManagerImpl;
+import com.example.user.AuthService;
+import com.example.user.AuthServiceImpl;
 
 import java.util.ArrayList;
 
@@ -29,7 +33,9 @@ public class FriendRequestsActivity extends AppCompatActivity {
 
         navigationManager = new NavigationManagerImpl(this);
 
-        FriendRequestsViewModelFactory factory = new FriendRequestsViewModelFactory();
+        AuthService authService = new AuthServiceImpl();
+        FriendRequestService friendRequestService = new FriendRequestServiceImpl(authService);
+        FriendRequestsViewModelFactory factory = new FriendRequestsViewModelFactory(authService, friendRequestService);
         viewModel = new ViewModelProvider(this, factory).get(FriendRequestsViewModel.class);
 
         friendRequestsAdapter = new FriendRequestsAdapter(new ArrayList<>(), viewModel);

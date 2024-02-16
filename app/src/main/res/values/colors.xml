@@ -1,30 +1,52 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="black">#FF000000</color>
-    <color name="white">#FFFFFFFF</color>
+    <!-- Background Colors -->
+    <color name="color_github_background">#0d1117</color>
 
-    <color name="github_background">#0d1117</color>
+    <!-- Primary Colors -->
+    <color name="color_primary_light_blue">#0086fe</color>
+    <color name="color_primary_link_blue">#1aa0de</color>
+    <color name="color_primary_gray">#C0C0C0</color>
+    <color name="color_primary_light_gray">#F5F5F5</color>
 
-    <color name="primary_light_blue">#0086fe</color>
-    <color name="link_blue">#1aa0de</color>
-    <color name="gray">#C0C0C0</color>
-    <color name="light_gray">#F5F5F5</color>
+    <!-- Background Colors -->
+    <color name="color_background_primary">#ffffff</color>
+    <color name="color_background_secondary">#f3f4f7</color>
 
-    <color name="primary_bg">#ffffff</color>
-    <color name="secondary_bg">#f3f4f7</color>
+    <!-- Text Colors -->
+    <color name="color_text_primary_title">#FFFFFFFF</color>
+    <color name="color_text_secondary_title">#0086fe</color>
+    <color name="color_text_primary_sub_title">#0045a3</color>
+    <color name="color_text_primary">#1c1c1c</color>
+    <color name="color_text_secondary">#757575</color>
 
-    <color name="secondary_button_bg">#e4e6eb</color>
+    <!-- Input Colors -->
+    <color name="color_input_background">#ececec</color>
 
-    <color name="primary_title">#FFFFFFFF</color>
-    <color name="secondary_title">#0086fe</color>
-    <color name="primary_sub_title">#0045a3</color>
+    <!-- Icon Colors -->
+    <color name="color_icon_background">#20ffffff</color>
 
-    <color name="primary_text">#1c1c1c</color>
-    <color name="secondary_text">#757575</color>
-    <color name="input_bg">#ececec</color>
-    <color name="icon_bg">#20ffffff</color>
-    <color name="success">#33b864</color>
-    <color name="error">#dc1f17</color>
+    <!-- Success and Error Colors -->
+    <color name="color_success">#33b864</color>
+    <color name="color_error">#dc1f17</color>
 
-    <color name="toast_background">#252627</color>
+    <!-- Toast Colors -->
+    <color name="color_toast_background">#252627</color>
+
+    <!-- Button Colors -->
+    <!-- Primary Highlight Button -->
+    <color name="color_button_primary_highlight_bg">#0086fe</color>
+    <color name="color_button_primary_highlight_text">#ffffff</color>
+    <!-- Secondary Highlight Button -->
+    <color name="color_button_secondary_highlight_bg">#d6e9ff</color>
+    <color name="color_button_secondary_highlight_text">#216af5</color>
+    <!-- Primary Danger Button -->
+    <color name="color_button_primary_danger_bg">#dc1f19</color>
+    <color name="color_button_primary_danger_text">#ffffff</color>
+    <!-- Secondary Danger Button -->
+    <color name="color_button_secondary_danger_bg">#fdd8d7</color>
+    <color name="color_button_secondary_danger_text">#dc1f19</color>
+    <!-- Primary Neutral Button -->
+    <color name="color_button_primary_neutral_bg">#e9ebed</color>
+    <color name="color_button_primary_neutral_text">#141415</color>
 </resources>

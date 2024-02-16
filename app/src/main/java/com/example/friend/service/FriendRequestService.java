@@ -8,6 +8,7 @@ import java.util.List;
 
 public interface FriendRequestService {
     Task<List<FriendRequestView>> getPendingFriendRequestsBySenderId(String uid);
+    Task<FriendRequest.EStatus> getFriendRequestStatus(String senderId, String recipientId);
     Task<Void> addFriendRequest(FriendRequest request);
     Task<Void> updateFriendRequestStatus(String friendRequestId, FriendRequest.EStatus status);
 }

@@ -13,7 +13,7 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/github_background"
+        android:background="@color/color_github_background"
         android:padding="@dimen/_20sdp"
         tools:successToastMessage="@{viewModel.successToastMessage}"
         tools:errorToastMessage="@{viewModel.errorToastMessage}">
@@ -24,7 +24,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
-            app:cardBackgroundColor="@color/light_gray">
+            app:cardBackgroundColor="@color/color_primary_light_gray">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -53,7 +53,7 @@
                     <com.google.android.material.textfield.TextInputEditText
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:backgroundTint="@color/white"
+                        android:backgroundTint="@android:color/white"
                         android:inputType="textEmailAddress"
                         android:maxLines="1"
                         android:text="@={viewModel.email}"
@@ -68,7 +68,7 @@
                     android:layout_marginTop="@dimen/_8sdp"
                     android:onClick="@{() -> viewModel.navigateToLogin()}"
                     android:text="How about other methods?"
-                    android:textColor="@color/link_blue" />
+                    android:textColor="@color/color_primary_link_blue" />
 
 
                 <FrameLayout
@@ -78,15 +78,13 @@
                     android:animateLayoutChanges="true">
 
                     <com.google.android.material.button.MaterialButton
+                        style="@style/ButtonPrimaryHighlight"
                         android:layout_width="match_parent"
                         android:layout_height="@dimen/_40sdp"
                         android:onClick="@{()-> viewModel.onGithubLoginBtnClick()}"
                         android:text="Login"
-                        android:textColor="@color/white"
-                        android:textSize="@dimen/primary_text_size"
-                        android:textStyle="bold"
                         android:visibility="@{viewModel.isLogging ? View.INVISIBLE : View.VISIBLE}"
-                        app:cornerRadius="@dimen/_16sdp" />
+                        app:cornerRadius="@dimen/button_primary_corner_radius" />
 
                     <ProgressBar
                         android:layout_width="@dimen/_25sdp"
