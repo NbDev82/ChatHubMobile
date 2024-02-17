@@ -27,6 +27,7 @@ public class Utils {
     public static final String KEY_PREFERENCE_NAME = "chatAppPreference";
     public static long OTP_TIME_OUT_SECONDS = 60L;
     public static final String EXTRA_SELECTED_USER_ID = "selectedUserId";
+    public static final String EXTRA_SELECTED_FRIEND_REQUEST_ID = "selectedFriendRequestId";
 
     private static final String TAG = Utils.class.getSimpleName();
     private static final String DATE_PATTERN = "dd/MM/yyyy";

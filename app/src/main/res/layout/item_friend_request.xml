@@ -40,7 +40,7 @@
                     android:layout_height="match_parent"
                     android:background="@drawable/background_image"
                     android:scaleType="centerCrop"
-                    app:imageBitmap="@{request.recipientAvatar}"
+                    app:imageBitmap="@{request.senderAvatar}"
                     app:riv_oval="true" />
 
                 <TextView
@@ -51,7 +51,7 @@
                     android:text="None"
                     android:textColor="@color/color_text_secondary"
                     android:textSize="@dimen/_10ssp"
-                    android:visibility="@{request.recipientAvatar == null ? View.VISIBLE : View.GONE}"
+                    android:visibility="@{request.senderAvatar == null ? View.VISIBLE : View.GONE}"
                     tools:ignore="InvalidId" />
 
             </FrameLayout>
@@ -71,7 +71,7 @@
                     android:layout_toStartOf="@id/timeAgoTxv"
                     android:ellipsize="end"
                     android:maxLines="1"
-                    android:text="@{request.recipientName}"
+                    android:text="@{request.senderName}"
                     android:textColor="@color/color_text_primary"
                     android:textSize="@dimen/primary_sub_title_size"
                     tools:text="Van A" />
@@ -94,38 +94,57 @@
                     android:layout_height="wrap_content"
                     android:layout_alignParentStart="true"
                     android:layout_below="@id/nameTxv"
-                    android:layout_above="@id/buttonGroupLl"
+                    android:layout_above="@id/buttonGroupFl"
                     android:ellipsize="marquee"
-                    android:text="@{String.valueOf(request.mutualFriends + ` mutualFriend`)}"
+                    android:text="@{request.mutualFriends > 0 ? String.valueOf(request.mutualFriends + ` mutualFriend`) : ``}"
                     android:textColor="@color/color_text_secondary"
                     android:textSize="@dimen/primary_text_size"
                     tools:text="1 mutual friend"/>
 
-                <LinearLayout
-                    android:id="@+id/buttonGroupLl"
-                    android:layout_width="wrap_content"
+                <FrameLayout
+                    android:id="@+id/buttonGroupFl"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_centerHorizontal="true"
                     android:layout_alignParentBottom="true"
-                    android:orientation="horizontal">
+                    android:animateLayoutChanges="true">
 
-                    <com.google.android.material.button.MaterialButton
-                        style="@style/ButtonPrimaryHighlight"
-                        android:layout_width="@dimen/_85sdp"
-                        android:layout_height="@dimen/_36sdp"
-                        android:text="Confirm"
-                        android:onClick="@{() -> listener.onAcceptClick(position)}"
-                        app:cornerRadius="@dimen/button_primary_corner_radius" />
+                    <LinearLayout
+                        android:id="@+id/buttonGroupLl"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:weightSum="2"
+                        android:orientation="horizontal">
 
-                    <com.google.android.material.button.MaterialButton
-                        style="@style/ButtonPrimaryNeutral"
-                        android:layout_width="@dimen/_85sdp"
-                        android:layout_height="@dimen/_36sdp"
-                        android:layout_marginStart="@dimen/_15sdp"
-                        android:text="Reject"
-                        android:onClick="@{() -> listener.onRejectClick(position)}"
-                        app:cornerRadius="@dimen/button_primary_corner_radius" />
-                </LinearLayout>
+                        <com.google.android.material.button.MaterialButton
+                            style="@style/ButtonPrimaryHighlight"
+                            android:layout_width="0dp"
+                            android:layout_height="@dimen/_36sdp"
+                            android:layout_weight="1"
+                            android:text="Confirm"
+                            android:onClick="@{() -> listener.onAcceptClick(position)}"
+                            android:visibility="@{request.isLoading ? View.GONE : View.VISIBLE}"
+                            app:cornerRadius="@dimen/button_primary_corner_radius" />
+
+                        <com.google.android.material.button.MaterialButton
+                            style="@style/ButtonPrimaryNeutral"
+                            android:layout_width="0dp"
+                            android:layout_height="@dimen/_36sdp"
+                            android:layout_weight="1"
+                            android:layout_marginStart="@dimen/_15sdp"
+                            android:text="Reject"
+                            android:onClick="@{() -> listener.onRejectClick(position)}"
+                            android:visibility="@{request.isLoading ? View.GONE : View.VISIBLE}"
+                            app:cornerRadius="@dimen/button_primary_corner_radius" />
+
+                    </LinearLayout>
+
+                    <ProgressBar
+                        android:layout_width="@dimen/_25sdp"
+                        android:layout_height="@dimen/_25sdp"
+                        android:layout_gravity="center"
+                        android:visibility="@{request.isLoading ? View.VISIBLE : View.GONE}"
+                        tools:visibility="gone"/>
+                </FrameLayout>
             </RelativeLayout>
         </LinearLayout>
     </com.google.android.material.card.MaterialCardView>

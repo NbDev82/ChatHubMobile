@@ -1,6 +1,7 @@
 package com.example.friend.friendrequest;
 
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 
 import androidx.lifecycle.LiveData;
@@ -10,11 +11,9 @@ import com.example.friend.FriendRequest;
 import com.example.friend.friendrequest.adapter.FriendRequestListener;
 import com.example.friend.friendrequest.adapter.FriendRequestView;
 import com.example.friend.service.FriendRequestService;
-import com.example.friend.service.FriendRequestServiceImpl;
 import com.example.infrastructure.BaseViewModel;
 import com.example.infrastructure.Utils;
 import com.example.user.AuthService;
-import com.example.user.AuthServiceImpl;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -55,7 +54,7 @@ public class FriendRequestsViewModel extends BaseViewModel implements FriendRequ
     public void loadFriendRequests() {
         this.isRequestsLoading.postValue(true);
         String uid = authService.getCurrentUid();
-        friendRequestService.getPendingFriendRequestsBySenderId(uid)
+        friendRequestService.getPendingFriendRequestsByRecipientId(uid)
                 .addOnSuccessListener(friendRequests -> {
                     this.isRequestsLoading.postValue(false);
                     this.friendRequests.postValue(friendRequests);
@@ -74,32 +73,53 @@ public class FriendRequestsViewModel extends BaseViewModel implements FriendRequ
     public void onItemClick(int position) {
         FriendRequestView request = this.friendRequests.getValue().get(position);
         Bundle data = new Bundle();
-        data.putString(Utils.EXTRA_SELECTED_USER_ID, request.getRecipientId());
+        data.putString(Utils.EXTRA_SELECTED_USER_ID, request.getSenderId());
+        data.putString(Utils.EXTRA_SELECTED_FRIEND_REQUEST_ID, request.getSenderId());
         this.navigateToProfileViewer.postValue(data);
     }
 
     @Override
     public void onAcceptClick(int position) {
-        FriendRequestView request = this.friendRequests.getValue().get(position);
+        List<FriendRequestView> friendRequestViews = this.friendRequests.getValue();
+        FriendRequestView request = friendRequestViews.get(position);
+        request.setLoading(true);
+        this.friendRequests.postValue(friendRequestViews);
         friendRequestService
                 .updateFriendRequestStatus(request.getId(), FriendRequest.EStatus.ACCEPTED)
                 .addOnSuccessListener(aVoid -> {
-
+                    new Handler().postDelayed(() -> {
+                        request.setLoading(false);
+                        friendRequestViews.remove(position);
+                        this.friendRequests.postValue(friendRequestViews);
+                        successToastMessage.postValue("Accept successfully");
+                    }, 200);
                 })
                 .addOnFailureListener(e -> {
+                    errorToastMessage.postValue("Accept unsuccessfully");
+                    request.setLoading(false);
                     Log.e(TAG, "Error: " + e.getMessage(), e);
                 });
     }
 
     @Override
     public void onRejectClick(int position) {
-        FriendRequestView request = this.friendRequests.getValue().get(position);
+        List<FriendRequestView> friendRequestViews = this.friendRequests.getValue();
+        FriendRequestView request = friendRequestViews.get(position);
+        request.setLoading(true);
+        this.friendRequests.postValue(friendRequestViews);
         friendRequestService
                 .updateFriendRequestStatus(request.getId(), FriendRequest.EStatus.REJECTED)
                 .addOnSuccessListener(aVoid -> {
-
+                    new Handler().postDelayed(() -> {
+                        request.setLoading(false);
+                        friendRequestViews.remove(position);
+                        this.friendRequests.postValue(friendRequestViews);
+                        successToastMessage.postValue("Reject successfully");
+                    }, 200);
                 })
                 .addOnFailureListener(e -> {
+                    errorToastMessage.postValue("Reject unsuccessfully");
+                    request.setLoading(false);
                     Log.e(TAG, "Error: " + e.getMessage(), e);
                 });
     }

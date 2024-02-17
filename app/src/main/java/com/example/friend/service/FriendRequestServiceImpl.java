@@ -69,6 +69,36 @@ public class FriendRequestServiceImpl implements FriendRequestService {
         return taskCompletionSource.getTask();
     }
 
+    @Override
+    public Task<List<FriendRequestView>> getPendingFriendRequestsByRecipientId(String recipientId) {
+        CollectionReference friendRequestsRef = getFriendRequestsRef();
+
+        TaskCompletionSource<List<FriendRequestView>> taskCompletionSource = new TaskCompletionSource<>();
+
+        friendRequestsRef
+                .whereEqualTo(EFriendRequestField.RECIPIENT_ID.getName(), recipientId)
+                .whereEqualTo(EFriendRequestField.STATUS.getName(), FriendRequest.EStatus.PENDING)
+                .get()
+                .addOnSuccessListener(documentSnapshots -> {
+                    List<FriendRequest> friendRequests =
+                            convertQueryDocumentSnapshotsToFriendRequests(documentSnapshots);
+
+                    Task<List<FriendRequestView>> conversionTask = convertModelsToModelViews(friendRequests);
+                    conversionTask.addOnSuccessListener(friendRequestViews -> {
+                        taskCompletionSource.setResult(friendRequestViews);
+                    }).addOnFailureListener(e -> {
+                        Log.e(TAG, "Error converting FriendRequests to FriendRequestViews: " + e.getMessage(), e);
+                        taskCompletionSource.setException(e);
+                    });
+                })
+                .addOnFailureListener(e -> {
+                    Log.e(TAG, "Error getting friend requests by sender ID: " + e.getMessage(), e);
+                    taskCompletionSource.setException(e);
+                });
+
+        return taskCompletionSource.getTask();
+    }
+
     private List<FriendRequest> convertQueryDocumentSnapshotsToFriendRequests(
             QuerySnapshot documentSnapshots
     ) {
@@ -114,16 +144,16 @@ public class FriendRequestServiceImpl implements FriendRequestService {
 
         TaskCompletionSource<FriendRequestView> taskCompletionSource = new TaskCompletionSource<>();
 
-        authService.getUserByUid(recipientId)
+        authService.getUserByUid(senderId)
                 .addOnSuccessListener(user -> {
-                    String recipientAvatarStr = user.getImageUrl();
-                    String recipientName = user.getFullName();
+                    String senderAvatarStr = user.getImageUrl();
+                    String senderName = user.getFullName();
 
-                    Bitmap recipientAvatar = Utils.decodeImage(recipientAvatarStr);
+                    Bitmap senderAvatar = Utils.decodeImage(senderAvatarStr);
                     int mutualFriends = getNumberOfMutualFriends(senderId, recipientId);
                     String timeAgo = Utils.calculateTimeAgo(createdTime);
                     FriendRequestView friendRequestView = new FriendRequestView(friendRequestId,
-                            recipientId, recipientAvatar, recipientName, mutualFriends, timeAgo, status);
+                            senderId, senderAvatar, senderName, mutualFriends, timeAgo, status, false);
                     taskCompletionSource.setResult(friendRequestView);
                 })
                 .addOnFailureListener(e -> {
@@ -151,8 +181,8 @@ public class FriendRequestServiceImpl implements FriendRequestService {
                 QuerySnapshot querySnapshot = task.getResult();
                 if (querySnapshot != null && !querySnapshot.isEmpty()) {
                     DocumentSnapshot documentSnapshot = querySnapshot.getDocuments().get(0);
-                    FriendRequest.EStatus status = documentSnapshot.toObject(FriendRequest.EStatus.class);
-                    return status != null ? status : FriendRequest.EStatus.NONE;
+                    String statusStr = documentSnapshot.getString(EFriendRequestField.STATUS.getName());
+                    return FriendRequest.EStatus.valueOf(statusStr);
                 } else {
                     return FriendRequest.EStatus.NONE;
                 }
@@ -186,6 +216,28 @@ public class FriendRequestServiceImpl implements FriendRequestService {
 
         return friendRequestRef
                 .update(EFriendRequestField.STATUS.getName(), status);
+    }
+
+    @Override
+    public Task<FriendRequest> getFriendRequest(String senderId, String recipientId) {
+        CollectionReference friendRequestsRef = getFriendRequestsRef();
+        return friendRequestsRef
+                .whereEqualTo(EFriendRequestField.SENDER_ID.getName(), senderId)
+                .whereEqualTo(EFriendRequestField.RECIPIENT_ID.getName(), recipientId)
+                .limit(1)
+                .get()
+                .continueWith(task -> {
+                    if (task.isSuccessful()) {
+                        List<DocumentSnapshot> documentSnapshots = task.getResult().getDocuments();
+                        if (documentSnapshots.isEmpty()) {
+                            return null;
+                        }
+                        DocumentSnapshot documentSnapshot = documentSnapshots.get(0);
+                        return convertDocumentToModel(documentSnapshot);
+                    } else {
+                        throw task.getException();
+                    }
+                });
     }
 
     private CollectionReference getFriendRequestsRef() {

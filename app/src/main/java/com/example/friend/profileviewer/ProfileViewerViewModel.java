@@ -24,17 +24,17 @@ public class ProfileViewerViewModel extends BaseViewModel {
 
     private final MutableLiveData<Boolean> navigateBack = new MutableLiveData<>();
     private final MutableLiveData<AlertDialogModel> openCustomAlertDialog = new MutableLiveData<>();
-    private final MutableLiveData<Boolean> isFriend = new MutableLiveData<>();
     private final MutableLiveData<Bitmap> userImageBitmap = new MutableLiveData<>();
     private final MutableLiveData<String> fullName = new MutableLiveData<>();
     private final MutableLiveData<EGender> gender = new MutableLiveData<>();
     private final MutableLiveData<String> birthdayStr = new MutableLiveData<>();
     private final MutableLiveData<Boolean> isUserInitializing = new MutableLiveData<>();
-    private final MutableLiveData<Boolean> isSentFriendRequest = new MutableLiveData<>();
-    private final MutableLiveData<Boolean> isSendingFriendRequest = new MutableLiveData<>();
+    private final MutableLiveData<Boolean> isLoading = new MutableLiveData<>();
+    private final MutableLiveData<EFriendshipStatus> friendshipStatus = new MutableLiveData<>(EFriendshipStatus.NOT_FOUND);
     private final AuthService authService;
     private final FriendRequestService friendRequestService;
     private String displayedUserId = "";
+    private String friendRequestId = "";
 
     public LiveData<Boolean> getNavigateBack() {
         return navigateBack;
@@ -42,10 +42,6 @@ public class ProfileViewerViewModel extends BaseViewModel {
 
     public LiveData<AlertDialogModel> getOpenCustomAlertDialog() {
         return openCustomAlertDialog;
-    }
-
-    public LiveData<Boolean> getIsFriend() {
-        return isFriend;
     }
 
     public LiveData<Bitmap> getUserImageBitmap() {
@@ -68,12 +64,12 @@ public class ProfileViewerViewModel extends BaseViewModel {
         return isUserInitializing;
     }
 
-    public LiveData<Boolean> getIsSentFriendRequest() {
-        return isSentFriendRequest;
+    public LiveData<Boolean> getIsLoading() {
+        return isLoading;
     }
 
-    public LiveData<Boolean> getIsSendingFriendRequest() {
-        return isSendingFriendRequest;
+    public LiveData<EFriendshipStatus> getFriendshipStatus() {
+        return friendshipStatus;
     }
 
     public ProfileViewerViewModel(AuthService authService, FriendRequestService friendRequestService) {
@@ -117,15 +113,35 @@ public class ProfileViewerViewModel extends BaseViewModel {
     }
 
     public void checkFriendRequestStatus() {
-        friendRequestService.getFriendRequestStatus(authService.getCurrentUid(), displayedUserId)
-                .addOnSuccessListener(friendStatus -> {
-                    if (friendStatus == FriendRequest.EStatus.ACCEPTED) {
-
-                    }
-                })
-                .addOnFailureListener(e -> {
-                    Log.e(TAG, "Error: " + e.getMessage(), e);
-                });
+        String currentUserId = authService.getCurrentUid();
+//        friendRequestService.getFriendRequest(displayedUserId, currentUserId)
+//                .addOnSuccessListener(friendRequest -> {
+//                    if (friendRequest == null) {
+//                        friendshipStatus.postValue(EFriendshipStatus.NOT_FRIEND);
+//                        return;
+//                    }
+//                    FriendRequest.EStatus friendStatus = friendRequest.getStatus();
+//                    switch (friendStatus) {
+//                        case ACCEPTED:
+//                            friendshipStatus.postValue(EFriendshipStatus.FRIEND);
+//                            break;
+//                        case PENDING:
+//                            friendshipStatus.postValue(EFriendshipStatus.RECEIVED_REQUEST);
+//                            break;
+//                        case REJECTED:
+//                            friendshipStatus.postValue(EFriendshipStatus.NOT_FRIEND);
+//                            break;
+//                        default:
+//                            friendshipStatus.postValue(EFriendshipStatus.NOT_FOUND);
+//                            break;
+//                    }
+//                    Log.i(TAG, "Update status: " + friendStatus);
+//                    Log.i(TAG, "Update status: " + friendshipStatus.getValue().toString());
+//                })
+//                .addOnFailureListener(e -> {
+//                    friendshipStatus.postValue(EFriendshipStatus.NOT_FOUND);
+//                    Log.e(TAG, "Error: " + e.getMessage(), e);
+//                });
     }
 
     public void navigateBack() {
@@ -136,15 +152,27 @@ public class ProfileViewerViewModel extends BaseViewModel {
         this.displayedUserId = displayedUserId;
     }
 
+    public void setFriendRequestId(String friendRequestId) {
+        this.friendRequestId = friendRequestId;
+    }
+
     public void navigateToChat() {
         errorToastMessage.postValue("Not implement navigateToChat()");
     }
 
     public void sendFriendRequest() {
-        String loggedUserId = authService.getCurrentUid();
-        FriendRequest friendRequest =
-                new FriendRequest(loggedUserId, displayedUserId, FriendRequest.EStatus.PENDING, new Date());
-        friendRequestService.addFriendRequest(friendRequest);
+        AlertDialogModel model = new AlertDialogModel.Builder()
+                .setTitle("Send Friend Request")
+                .setMessage("Are you sure you want to send a friend request?")
+                .setPositiveButton("Ok", aVoid -> {
+                    String loggedUserId = authService.getCurrentUid();
+                    FriendRequest friendRequest =
+                            new FriendRequest(loggedUserId, displayedUserId, FriendRequest.EStatus.PENDING, new Date());
+                    friendRequestService.addFriendRequest(friendRequest);
+                })
+                .setNegativeButton("Cancel", null)
+                .build();
+        openCustomAlertDialog.postValue(model);
     }
 
     public void recallRequest() {
@@ -152,6 +180,60 @@ public class ProfileViewerViewModel extends BaseViewModel {
                 .setTitle("Recall Friend Request")
                 .setMessage("Are you sure you want to recall this friend request?")
                 .setPositiveButton("Recall", aVoid -> {
+
+                })
+                .setNegativeButton("Cancel", null)
+                .build();
+        openCustomAlertDialog.postValue(model);
+    }
+
+    public void acceptFriendRequest() {
+        isLoading.postValue(true);
+        friendRequestService
+                .updateFriendRequestStatus(friendRequestId, FriendRequest.EStatus.ACCEPTED)
+                .addOnSuccessListener(aVoid -> {
+                    successToastMessage.postValue("Accept successfully");
+                    isLoading.postValue(false);
+                })
+                .addOnFailureListener(e -> {
+                    errorToastMessage.postValue("Accept unsuccessfully");
+                    Log.e(TAG, "Error: " + e.getMessage(), e);
+                    isLoading.postValue(false);
+                });
+    }
+
+    public void rejectFriendRequest() {
+        isLoading.postValue(true);
+        friendRequestService
+                .updateFriendRequestStatus(friendRequestId, FriendRequest.EStatus.REJECTED)
+                .addOnSuccessListener(aVoid -> {
+                    successToastMessage.postValue("Reject successfully");
+                    isLoading.postValue(false);
+                })
+                .addOnFailureListener(e -> {
+                    errorToastMessage.postValue("Reject unsuccessfully");
+                    Log.e(TAG, "Error: " + e.getMessage(), e);
+                    isLoading.postValue(false);
+                });
+    }
+
+    public void unfriend() {
+        AlertDialogModel model = new AlertDialogModel.Builder()
+                .setTitle("Unfriend")
+                .setMessage("Are you sure you want to unfriend?")
+                .setPositiveButton("Ok", aVoid -> {
+                    isLoading.postValue(true);
+                    friendRequestService
+                            .updateFriendRequestStatus(friendRequestId, FriendRequest.EStatus.NONE)
+                            .addOnSuccessListener(aUpdateVoid -> {
+                                successToastMessage.postValue("Unfriend successfully");
+                                isLoading.postValue(false);
+                            })
+                            .addOnFailureListener(e -> {
+                                errorToastMessage.postValue("Unfriend unsuccessfully");
+                                Log.e(TAG, "Error: " + e.getMessage(), e);
+                                isLoading.postValue(false);
+                            });
                 })
                 .setNegativeButton("Cancel", null)
                 .build();

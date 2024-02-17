@@ -6,25 +6,28 @@ import com.example.friend.FriendRequest;
 
 public class FriendRequestView {
     private String id;
-    private String recipientId;
-    private Bitmap recipientAvatar;
-    private String recipientName;
+    private String senderId;
+    private Bitmap senderAvatar;
+    private String senderName;
     private int mutualFriends;
     private String timeAgo;
     private FriendRequest.EStatus status;
+    private boolean isLoading;
 
     public FriendRequestView() {
     }
 
-    public FriendRequestView(String id, String recipientId, Bitmap recipientAvatar, String recipientName,
-                             int mutualFriends, String timeAgo, FriendRequest.EStatus status) {
+    public FriendRequestView(String id, String senderId, Bitmap senderAvatar,
+                             String senderName, int mutualFriends, String timeAgo,
+                             FriendRequest.EStatus status, boolean isLoading) {
         this.id = id;
-        this.recipientId = recipientId;
-        this.recipientAvatar = recipientAvatar;
-        this.recipientName = recipientName;
+        this.senderId = senderId;
+        this.senderAvatar = senderAvatar;
+        this.senderName = senderName;
         this.mutualFriends = mutualFriends;
         this.timeAgo = timeAgo;
         this.status = status;
+        this.isLoading = isLoading;
     }
 
     public String getId() {
@@ -35,28 +38,28 @@ public class FriendRequestView {
         this.id = id;
     }
 
-    public String getRecipientId() {
-        return recipientId;
+    public String getSenderId() {
+        return senderId;
     }
 
-    public void setRecipientId(String recipientId) {
-        this.recipientId = recipientId;
+    public void setSenderId(String senderId) {
+        this.senderId = senderId;
     }
 
-    public Bitmap getRecipientAvatar() {
-        return recipientAvatar;
+    public Bitmap getSenderAvatar() {
+        return senderAvatar;
     }
 
-    public void setRecipientAvatar(Bitmap recipientAvatar) {
-        this.recipientAvatar = recipientAvatar;
+    public void setSenderAvatar(Bitmap senderAvatar) {
+        this.senderAvatar = senderAvatar;
     }
 
-    public String getRecipientName() {
-        return recipientName;
+    public String getSenderName() {
+        return senderName;
     }
 
-    public void setRecipientName(String recipientName) {
-        this.recipientName = recipientName;
+    public void setSenderName(String senderName) {
+        this.senderName = senderName;
     }
 
     public int getMutualFriends() {
@@ -81,5 +84,13 @@ public class FriendRequestView {
 
     public void setStatus(FriendRequest.EStatus status) {
         this.status = status;
+    }
+
+    public boolean isLoading() {
+        return isLoading;
+    }
+
+    public void setLoading(boolean loading) {
+        isLoading = loading;
     }
 }

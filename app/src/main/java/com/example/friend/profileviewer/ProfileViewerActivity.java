@@ -51,8 +51,10 @@ public class ProfileViewerActivity extends AppCompatActivity {
 
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
-            String selectedUser = extras.getString(Utils.EXTRA_SELECTED_USER_ID, "");
-            viewModel.setDisplayedUserId(selectedUser);
+            String selectedUserId = extras.getString(Utils.EXTRA_SELECTED_USER_ID, "");
+            String selectedFriendRequestId = extras.getString(Utils.EXTRA_SELECTED_FRIEND_REQUEST_ID, "");
+            viewModel.setDisplayedUserId(selectedUserId);
+            viewModel.setFriendRequestId(selectedFriendRequestId);
             viewModel.fetchUserInformation();
             viewModel.checkFriendRequestStatus();
         }

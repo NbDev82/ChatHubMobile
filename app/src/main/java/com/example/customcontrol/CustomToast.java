@@ -11,10 +11,13 @@ import android.widget.Toast;
 import androidx.core.content.res.ResourcesCompat;
 
 import com.example.R;
+import com.google.android.material.snackbar.BaseTransientBottomBar;
 
 import java.util.function.Consumer;
 
 public class CustomToast {
+
+    private static final int SHORT_MESSAGE_LENGTH_THRESHOLD = 20;
 
     public static void showSuccessToast(Activity activity, String message) {
         CustomToast.showToastMessage(activity, message, icon -> {
@@ -35,10 +38,12 @@ public class CustomToast {
     public static void showToastMessage(Activity activity,
                                          String message,
                                          Consumer<ImageView> customIcon) {
-        showToastMessage(activity, customIcon, messageTxv -> messageTxv.setText(message));
+        int duration = getDurationByMessageLength(message);
+        showToastMessage(activity, duration, customIcon, messageTxv -> messageTxv.setText(message));
     }
 
     public static void showToastMessage(Activity activity,
+                                        @BaseTransientBottomBar.Duration int duration,
                                          Consumer<ImageView> customIcon,
                                          Consumer<TextView> customMessage) {
         LayoutInflater inflater = activity.getLayoutInflater();
@@ -53,9 +58,21 @@ public class CustomToast {
 
         Toast toast = new Toast(activity.getApplication());
         toast.setView(layout);
-        toast.setDuration(Toast.LENGTH_LONG);
+        toast.setDuration(duration);
         toast.setGravity(Gravity.BOTTOM | Gravity.CENTER_HORIZONTAL, 0, 100);
         toast.setMargin(0, 0.05f);
         toast.show();
+    }
+
+    private static @BaseTransientBottomBar.Duration int getDurationByMessageLength(String message) {
+        if (isShortMessage(message)) {
+            return Toast.LENGTH_SHORT;
+        } else {
+            return Toast.LENGTH_LONG;
+        }
+    }
+
+    private static boolean isShortMessage(String message) {
+        return message.length() <= SHORT_MESSAGE_LENGTH_THRESHOLD;
     }
 }
