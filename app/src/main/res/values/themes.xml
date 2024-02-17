@@ -48,6 +48,16 @@
         <item name="iconGravity">textStart</item>
     </style>
 
+    <style name="ButtonTertiaryHighlight">
+        <item name="android:textSize">@dimen/primary_text_size</item>
+        <item name="android:textColor">@color/color_button_tertiary_highlight_text</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:backgroundTint">@color/color_button_tertiary_highlight_bg</item>
+        <item name="iconTint">@color/color_button_tertiary_highlight_text</item>
+        <item name="iconSize">@dimen/_20sdp</item>
+        <item name="iconGravity">textStart</item>
+    </style>
+
 
     <style name="ButtonPrimaryDanger">
         <item name="android:textSize">@dimen/primary_text_size</item>

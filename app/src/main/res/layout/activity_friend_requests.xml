@@ -21,7 +21,8 @@
         android:orientation="vertical"
         android:background="@color/color_background_primary"
         tools:successToastMessage="@{viewModel.successToastMessage}"
-        tools:errorToastMessage="@{viewModel.errorToastMessage}">
+        tools:errorToastMessage="@{viewModel.errorToastMessage}"
+        app:customSnackbar="@{viewModel.snackbarModel}">
 
         <androidx.appcompat.widget.Toolbar
             android:layout_width="match_parent"

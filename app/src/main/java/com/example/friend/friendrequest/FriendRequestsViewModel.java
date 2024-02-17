@@ -7,6 +7,7 @@ import android.util.Log;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
+import com.example.customcontrol.snackbar.SnackbarModel;
 import com.example.friend.FriendRequest;
 import com.example.friend.friendrequest.adapter.FriendRequestListener;
 import com.example.friend.friendrequest.adapter.FriendRequestView;
@@ -14,6 +15,7 @@ import com.example.friend.service.FriendRequestService;
 import com.example.infrastructure.BaseViewModel;
 import com.example.infrastructure.Utils;
 import com.example.user.AuthService;
+import com.google.android.material.snackbar.Snackbar;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,6 +28,7 @@ public class FriendRequestsViewModel extends BaseViewModel implements FriendRequ
     private final MutableLiveData<Bundle> navigateToProfileViewer = new MutableLiveData<>();
     private final MutableLiveData<List<FriendRequestView>> friendRequests = new MutableLiveData<>(new ArrayList<>());
     private final MutableLiveData<Boolean> isRequestsLoading = new MutableLiveData<>();
+    private MutableLiveData<SnackbarModel> snackbarModel = new MutableLiveData<>();
     private final AuthService authService;
     private final FriendRequestService friendRequestService;
 
@@ -43,6 +46,10 @@ public class FriendRequestsViewModel extends BaseViewModel implements FriendRequ
 
     public LiveData<Boolean> getIsRequestsLoading() {
         return isRequestsLoading;
+    }
+
+    public LiveData<SnackbarModel> getSnackbarModel() {
+        return snackbarModel;
     }
 
     public FriendRequestsViewModel(AuthService authService,
@@ -80,47 +87,49 @@ public class FriendRequestsViewModel extends BaseViewModel implements FriendRequ
 
     @Override
     public void onAcceptClick(int position) {
-        List<FriendRequestView> friendRequestViews = this.friendRequests.getValue();
-        FriendRequestView request = friendRequestViews.get(position);
-        request.setLoading(true);
-        this.friendRequests.postValue(friendRequestViews);
-        friendRequestService
-                .updateFriendRequestStatus(request.getId(), FriendRequest.EStatus.ACCEPTED)
-                .addOnSuccessListener(aVoid -> {
-                    new Handler().postDelayed(() -> {
-                        request.setLoading(false);
-                        friendRequestViews.remove(position);
-                        this.friendRequests.postValue(friendRequestViews);
-                        successToastMessage.postValue("Accept successfully");
-                    }, 200);
-                })
-                .addOnFailureListener(e -> {
-                    errorToastMessage.postValue("Accept unsuccessfully");
-                    request.setLoading(false);
-                    Log.e(TAG, "Error: " + e.getMessage(), e);
-                });
+        updateFriendRequestStatus(position, FriendRequest.EStatus.ACCEPTED,
+                "Friend request accepted");
     }
 
     @Override
     public void onRejectClick(int position) {
+        updateFriendRequestStatus(position, FriendRequest.EStatus.REJECTED,
+                "Friend request rejected");
+    }
+
+    private void updateFriendRequestStatus(int position, FriendRequest.EStatus status, String message) {
         List<FriendRequestView> friendRequestViews = this.friendRequests.getValue();
         FriendRequestView request = friendRequestViews.get(position);
         request.setLoading(true);
         this.friendRequests.postValue(friendRequestViews);
-        friendRequestService
-                .updateFriendRequestStatus(request.getId(), FriendRequest.EStatus.REJECTED)
-                .addOnSuccessListener(aVoid -> {
-                    new Handler().postDelayed(() -> {
-                        request.setLoading(false);
-                        friendRequestViews.remove(position);
-                        this.friendRequests.postValue(friendRequestViews);
-                        successToastMessage.postValue("Reject successfully");
-                    }, 200);
+
+        new Handler().postDelayed(() -> {
+            request.setLoading(false);
+            friendRequestViews.remove(position);
+            this.friendRequests.postValue(friendRequestViews);
+        }, 200);
+
+        SnackbarModel model = new SnackbarModel.Builder()
+                .duration(7000)
+                .message(message)
+                .actionText("Undo")
+                .customAction(aSnackbarVoid -> {
+                    friendRequestViews.add(position, request);
+                    this.friendRequests.postValue(friendRequestViews);
                 })
-                .addOnFailureListener(e -> {
-                    errorToastMessage.postValue("Reject unsuccessfully");
-                    request.setLoading(false);
-                    Log.e(TAG, "Error: " + e.getMessage(), e);
-                });
+                .onDismissedAction(dismissEvent -> {
+                    if (dismissEvent == Snackbar.Callback.DISMISS_EVENT_ACTION) {
+                        return;
+                    }
+
+                    friendRequestService
+                            .updateFriendRequestStatus(request.getId(), status)
+                            .addOnSuccessListener(aVoid -> {})
+                            .addOnFailureListener(e -> {
+                                Log.e(TAG, "Error: " + e.getMessage(), e);
+                            });
+                })
+                .build();
+        snackbarModel.postValue(model);
     }
 }

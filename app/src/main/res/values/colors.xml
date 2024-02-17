@@ -40,6 +40,9 @@
     <!-- Secondary Highlight Button -->
     <color name="color_button_secondary_highlight_bg">#d6e9ff</color>
     <color name="color_button_secondary_highlight_text">#216af5</color>
+    <!-- Tertiary Highlight Button -->
+    <color name="color_button_tertiary_highlight_bg">@android:color/transparent</color>
+    <color name="color_button_tertiary_highlight_text">#216af5</color>
     <!-- Primary Danger Button -->
     <color name="color_button_primary_danger_bg">#dc1f19</color>
     <color name="color_button_primary_danger_text">#ffffff</color>
