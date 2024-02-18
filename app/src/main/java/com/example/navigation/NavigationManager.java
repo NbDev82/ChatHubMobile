@@ -21,4 +21,5 @@ public interface NavigationManager {
     void navigateToFriendRequests(EAnimationType animationType);
     void navigateToProfileViewer(Bundle data, EAnimationType animationType);
     void navigateBack(Bundle data, EAnimationType animationType);
+    void navigateToFriends(EAnimationType animationType);
 }

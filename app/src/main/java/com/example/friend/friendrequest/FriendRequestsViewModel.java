@@ -9,8 +9,8 @@ import androidx.lifecycle.MutableLiveData;
 
 import com.example.customcontrol.snackbar.SnackbarModel;
 import com.example.friend.FriendRequest;
+import com.example.friend.FriendRequestView;
 import com.example.friend.friendrequest.adapter.FriendRequestListener;
-import com.example.friend.friendrequest.adapter.FriendRequestView;
 import com.example.friend.service.FriendRequestService;
 import com.example.infrastructure.BaseViewModel;
 import com.example.infrastructure.Utils;
@@ -25,6 +25,7 @@ public class FriendRequestsViewModel extends BaseViewModel implements FriendRequ
     private static final String TAG = FriendRequestsViewModel.class.getSimpleName();
 
     private final MutableLiveData<Boolean> navigateToHome = new MutableLiveData<>();
+    private final MutableLiveData<Boolean> navigateToFriends = new MutableLiveData<>();
     private final MutableLiveData<Bundle> navigateToProfileViewer = new MutableLiveData<>();
     private final MutableLiveData<List<FriendRequestView>> friendRequests = new MutableLiveData<>(new ArrayList<>());
     private final MutableLiveData<Boolean> isRequestsLoading = new MutableLiveData<>();
@@ -32,8 +33,12 @@ public class FriendRequestsViewModel extends BaseViewModel implements FriendRequ
     private final AuthService authService;
     private final FriendRequestService friendRequestService;
 
-    public MutableLiveData<Boolean> getNavigateToHome() {
+    public LiveData<Boolean> getNavigateToHome() {
         return navigateToHome;
+    }
+
+    public LiveData<Boolean> getNavigateToFriends() {
+        return navigateToFriends;
     }
 
     public LiveData<Bundle> getNavigateToProfileViewer() {
@@ -76,12 +81,20 @@ public class FriendRequestsViewModel extends BaseViewModel implements FriendRequ
         this.navigateToHome.postValue(true);
     }
 
+    public void navigateToSuggestionFriends() {
+        errorToastMessage.postValue("Not implement navigateToSuggestionFriends() method");
+    }
+
+    public void navigateToFriends() {
+        this.navigateToFriends.postValue(true);
+    }
+
     @Override
     public void onItemClick(int position) {
         FriendRequestView request = this.friendRequests.getValue().get(position);
         Bundle data = new Bundle();
-        data.putString(Utils.EXTRA_SELECTED_USER_ID, request.getSenderId());
-        data.putString(Utils.EXTRA_SELECTED_FRIEND_REQUEST_ID, request.getSenderId());
+        data.putString(Utils.EXTRA_SELECTED_USER_ID, request.getFriendRequest().getSenderId());
+        data.putString(Utils.EXTRA_SELECTED_FRIEND_REQUEST_ID, request.getFriendRequest().getSenderId());
         this.navigateToProfileViewer.postValue(data);
     }
 
@@ -123,7 +136,7 @@ public class FriendRequestsViewModel extends BaseViewModel implements FriendRequ
                     }
 
                     friendRequestService
-                            .updateFriendRequestStatus(request.getId(), status)
+                            .updateFriendRequestStatus(request.getFriendRequest().getId(), status)
                             .addOnSuccessListener(aVoid -> {})
                             .addOnFailureListener(e -> {
                                 Log.e(TAG, "Error: " + e.getMessage(), e);

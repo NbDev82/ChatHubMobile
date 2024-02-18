@@ -5,7 +5,7 @@ import android.util.Log;
 
 import com.example.friend.EFriendRequestField;
 import com.example.friend.FriendRequest;
-import com.example.friend.friendrequest.adapter.FriendRequestView;
+import com.example.friend.FriendRequestView;
 import com.example.infrastructure.Utils;
 import com.example.user.AuthService;
 import com.google.android.gms.tasks.Task;
@@ -136,24 +136,19 @@ public class FriendRequestServiceImpl implements FriendRequestService {
     }
 
     private Task<FriendRequestView> convertModelToModelView(@NotNull FriendRequest friendRequest) {
-        String friendRequestId = friendRequest.getId();
         String senderId = friendRequest.getSenderId();
         String recipientId = friendRequest.getRecipientId();
-        FriendRequest.EStatus status = friendRequest.getStatus();
-        Date createdTime = friendRequest.getCreatedTime();
 
         TaskCompletionSource<FriendRequestView> taskCompletionSource = new TaskCompletionSource<>();
 
         authService.getUserByUid(senderId)
                 .addOnSuccessListener(user -> {
-                    String senderAvatarStr = user.getImageUrl();
+                    String senderImgUrl = user.getImageUrl();
                     String senderName = user.getFullName();
 
-                    Bitmap senderAvatar = Utils.decodeImage(senderAvatarStr);
                     int mutualFriends = getNumberOfMutualFriends(senderId, recipientId);
-                    String timeAgo = Utils.calculateTimeAgo(createdTime);
-                    FriendRequestView friendRequestView = new FriendRequestView(friendRequestId,
-                            senderId, senderAvatar, senderName, mutualFriends, timeAgo, status, false);
+                    FriendRequestView friendRequestView = new FriendRequestView(friendRequest,
+                            senderImgUrl, senderName, mutualFriends, false);
                     taskCompletionSource.setResult(friendRequestView);
                 })
                 .addOnFailureListener(e -> {

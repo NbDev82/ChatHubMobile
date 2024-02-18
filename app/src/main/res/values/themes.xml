@@ -36,7 +36,7 @@
         <item name="iconTint">@color/color_button_primary_highlight_text</item>
         <item name="iconSize">@dimen/_20sdp</item>
         <item name="iconGravity">textStart</item>
-    </style>>
+    </style>
 
     <style name="ButtonSecondaryHighlight">
         <item name="android:textSize">@dimen/primary_text_size</item>

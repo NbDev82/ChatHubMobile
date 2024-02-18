@@ -1,7 +1,9 @@
 package com.example.customcontrol;
 
 import android.app.Activity;
+import android.graphics.Bitmap;
 import android.view.View;
+import android.widget.TextView;
 
 import androidx.core.content.res.ResourcesCompat;
 import androidx.databinding.BindingAdapter;
@@ -9,6 +11,10 @@ import androidx.databinding.BindingAdapter;
 import com.example.R;
 import com.example.customcontrol.snackbar.CustomSnackbar;
 import com.example.customcontrol.snackbar.SnackbarModel;
+import com.example.infrastructure.Utils;
+import com.makeramen.roundedimageview.RoundedImageView;
+
+import java.util.Date;
 
 public class CustomBindingAdapters {
     @BindingAdapter({"successToastMessage"})
@@ -33,5 +39,17 @@ public class CustomBindingAdapters {
             Activity activity = (Activity) view.getContext();
             CustomSnackbar.show(activity, model);
         }
+    }
+
+    @BindingAdapter("imageBase64")
+    public static void setImageBase64(RoundedImageView imageView, String base64String) {
+        Bitmap bitmap = Utils.decodeImage(base64String);;
+        imageView.setImageBitmap(bitmap);
+    }
+
+    @BindingAdapter("timeAgo")
+    public static void setTimeAgo(TextView textView, Date date) {
+        String timeAgo = Utils.calculateTimeAgo(date);
+        textView.setText(timeAgo);
     }
 }

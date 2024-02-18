@@ -7,15 +7,16 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.databinding.ItemFriendRequestBinding;
+import com.example.friend.FriendRequestView;
 
 import java.util.List;
 
-public class FriendRequestsAdapter extends RecyclerView.Adapter<FriendRequestsAdapter.FriendRequestViewHolder> {
+public class FriendRequestAdapter extends RecyclerView.Adapter<FriendRequestAdapter.FriendRequestViewHolder> {
 
     private List<FriendRequestView> friendRequests;
     private FriendRequestListener listener;
 
-    public FriendRequestsAdapter(List<FriendRequestView> friendRequests, FriendRequestListener listener) {
+    public FriendRequestAdapter(List<FriendRequestView> friendRequests, FriendRequestListener listener) {
         this.friendRequests = friendRequests;
         this.listener = listener;
     }
@@ -54,7 +55,7 @@ public class FriendRequestsAdapter extends RecyclerView.Adapter<FriendRequestsAd
         }
 
         public void bind(int position, FriendRequestView request) {
-            binding.setRequest(request);
+            binding.setRequestView(request);
             binding.setListener(listener);
             binding.setPosition(position);
             binding.executePendingBindings();

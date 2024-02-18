@@ -8,7 +8,7 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.example.R;
 import com.example.databinding.ActivityFriendRequestsBinding;
-import com.example.friend.friendrequest.adapter.FriendRequestsAdapter;
+import com.example.friend.friendrequest.adapter.FriendRequestAdapter;
 import com.example.friend.service.FriendRequestService;
 import com.example.friend.service.FriendRequestServiceImpl;
 import com.example.infrastructure.Utils;
@@ -24,7 +24,7 @@ public class FriendRequestsActivity extends AppCompatActivity {
 
     private NavigationManager navigationManager;
     private FriendRequestsViewModel viewModel;
-    private FriendRequestsAdapter friendRequestsAdapter;
+    private FriendRequestAdapter friendRequestsAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,12 +38,12 @@ public class FriendRequestsActivity extends AppCompatActivity {
         FriendRequestsViewModelFactory factory = new FriendRequestsViewModelFactory(authService, friendRequestService);
         viewModel = new ViewModelProvider(this, factory).get(FriendRequestsViewModel.class);
 
-        friendRequestsAdapter = new FriendRequestsAdapter(new ArrayList<>(), viewModel);
+        friendRequestsAdapter = new FriendRequestAdapter(new ArrayList<>(), viewModel);
 
         ActivityFriendRequestsBinding binding =
                 DataBindingUtil.setContentView(this, R.layout.activity_friend_requests);
         binding.setViewModel(viewModel);
-        binding.setFriendRequestsAdapter(friendRequestsAdapter);
+        binding.setFriendRequestAdapter(friendRequestsAdapter);
         binding.setLifecycleOwner(this);
 
         setupObservers();
@@ -55,6 +55,12 @@ public class FriendRequestsActivity extends AppCompatActivity {
         viewModel.getNavigateToHome().observe(this, navigate -> {
             if (navigate) {
                 navigationManager.navigateToHome(EAnimationType.FADE_OUT);
+            }
+        });
+
+        viewModel.getNavigateToFriends().observe(this, navigate -> {
+            if (navigate) {
+                navigationManager.navigateToFriends(EAnimationType.FADE_IN);
             }
         });
 

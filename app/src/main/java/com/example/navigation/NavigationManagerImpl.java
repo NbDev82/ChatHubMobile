@@ -8,6 +8,7 @@ import android.os.Bundle;
 
 import com.example.R;
 import com.example.friend.friendrequest.FriendRequestsActivity;
+import com.example.friend.myfriend.FriendsActivity;
 import com.example.friend.profileviewer.ProfileViewerActivity;
 import com.example.home.HomeActivity;
 import com.example.setting.SettingsActivity;
@@ -113,6 +114,11 @@ public class NavigationManagerImpl implements NavigationManager {
             resultIntent.putExtras(data);
         }
         setResultAndFinish(resultIntent, animationType);
+    }
+
+    @Override
+    public void navigateToFriends(EAnimationType animationType) {
+        navigateToActivity(FriendsActivity.class, animationType);
     }
 
     private void setResultAndFinish(Intent resultIntent, EAnimationType animationType) {

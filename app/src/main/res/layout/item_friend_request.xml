@@ -4,8 +4,8 @@
     <data>
         <import type="android.view.View"/>
         <variable
-            name="request"
-            type="com.example.friend.friendrequest.adapter.FriendRequestView" />
+            name="requestView"
+            type="com.example.friend.FriendRequestView" />
 
         <variable
             name="listener"
@@ -40,7 +40,7 @@
                     android:layout_height="match_parent"
                     android:background="@drawable/background_image"
                     android:scaleType="centerCrop"
-                    app:imageBitmap="@{request.senderAvatar}"
+                    app:imageBase64="@{requestView.imageUrl}"
                     app:riv_oval="true" />
 
                 <TextView
@@ -51,7 +51,7 @@
                     android:text="None"
                     android:textColor="@color/color_text_secondary"
                     android:textSize="@dimen/_10ssp"
-                    android:visibility="@{request.senderAvatar == null ? View.VISIBLE : View.GONE}"
+                    android:visibility="@{requestView.imageUrl == null ? View.VISIBLE : View.GONE}"
                     tools:ignore="InvalidId" />
 
             </FrameLayout>
@@ -71,7 +71,7 @@
                     android:layout_toStartOf="@id/timeAgoTxv"
                     android:ellipsize="end"
                     android:maxLines="1"
-                    android:text="@{request.senderName}"
+                    android:text="@{requestView.displayName}"
                     android:textColor="@color/color_text_primary"
                     android:textSize="@dimen/primary_sub_title_size"
                     tools:text="Van A" />
@@ -83,7 +83,7 @@
                     android:layout_alignParentEnd="true"
                     android:layout_alignParentTop="true"
                     android:maxLines="1"
-                    android:text="@{request.timeAgo}"
+                    app:timeAgo="@{requestView.friendRequest.createdTime}"
                     android:textColor="@color/color_text_secondary"
                     android:textSize="@dimen/primary_text_size"
                     tools:text="1w"/>
@@ -96,7 +96,7 @@
                     android:layout_below="@id/nameTxv"
                     android:layout_above="@id/buttonGroupFl"
                     android:ellipsize="marquee"
-                    android:text="@{request.mutualFriends > 0 ? String.valueOf(request.mutualFriends + ` mutualFriend`) : ``}"
+                    android:text="@{requestView.mutualFriends > 0 ? String.valueOf(requestView.mutualFriends + ` mutualFriend`) : ``}"
                     android:textColor="@color/color_text_secondary"
                     android:textSize="@dimen/primary_text_size"
                     tools:text="1 mutual friend"/>
@@ -122,7 +122,7 @@
                             android:layout_weight="1"
                             android:text="Confirm"
                             android:onClick="@{() -> listener.onAcceptClick(position)}"
-                            android:visibility="@{request.isLoading ? View.GONE : View.VISIBLE}"
+                            android:visibility="@{requestView.isLoading ? View.GONE : View.VISIBLE}"
                             app:cornerRadius="@dimen/button_primary_corner_radius" />
 
                         <com.google.android.material.button.MaterialButton
@@ -133,7 +133,7 @@
                             android:layout_marginStart="@dimen/_15sdp"
                             android:text="Reject"
                             android:onClick="@{() -> listener.onRejectClick(position)}"
-                            android:visibility="@{request.isLoading ? View.GONE : View.VISIBLE}"
+                            android:visibility="@{requestView.isLoading ? View.GONE : View.VISIBLE}"
                             app:cornerRadius="@dimen/button_primary_corner_radius" />
 
                     </LinearLayout>
@@ -142,7 +142,7 @@
                         android:layout_width="@dimen/_25sdp"
                         android:layout_height="@dimen/_25sdp"
                         android:layout_gravity="center"
-                        android:visibility="@{request.isLoading ? View.VISIBLE : View.GONE}"
+                        android:visibility="@{requestView.isLoading ? View.VISIBLE : View.GONE}"
                         tools:visibility="gone"/>
                 </FrameLayout>
             </RelativeLayout>
