@@ -8,11 +8,9 @@ import androidx.lifecycle.MutableLiveData;
 
 import com.example.infrastructure.BaseViewModel;
 import com.example.infrastructure.Utils;
-import com.example.user.AuthService;
+import com.example.user.authservice.AuthService;
 import com.example.user.EUserField;
 import com.example.user.Validator;
-
-import org.jetbrains.annotations.Nullable;
 
 public class PhoneNumberInputViewModel extends BaseViewModel {
 

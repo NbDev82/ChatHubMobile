@@ -8,7 +8,7 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.example.infrastructure.BaseViewModel;
-import com.example.user.AuthService;
+import com.example.user.authservice.AuthService;
 
 public class SignUpViewModel extends BaseViewModel {
 

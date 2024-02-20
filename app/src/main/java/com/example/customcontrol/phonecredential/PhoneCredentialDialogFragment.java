@@ -23,10 +23,9 @@ import androidx.fragment.app.DialogFragment;
 
 import com.example.R;
 import com.example.customcontrol.CustomToast;
-import com.example.customcontrol.emailpassworddialog.EmailPasswordDialogFragment;
 import com.example.infrastructure.Utils;
-import com.example.user.AuthService;
-import com.example.user.AuthServiceImpl;
+import com.example.user.authservice.AuthService;
+import com.example.user.authservice.AuthServiceImpl;
 import com.example.user.Validator;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
@@ -34,8 +33,6 @@ import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.FirebaseException;
 import com.google.firebase.auth.PhoneAuthCredential;
 import com.google.firebase.auth.PhoneAuthProvider;
-
-import okhttp3.internal.Util;
 
 public class PhoneCredentialDialogFragment extends DialogFragment {
     public static final String TAG = PhoneCredentialDialogFragment.class.getSimpleName();

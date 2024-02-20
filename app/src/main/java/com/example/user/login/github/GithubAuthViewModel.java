@@ -9,9 +9,7 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.example.infrastructure.BaseViewModel;
-import com.example.user.AuthService;
-import com.google.firebase.auth.AuthCredential;
-import com.google.firebase.auth.GithubAuthCredential;
+import com.example.user.authservice.AuthService;
 
 import java.lang.ref.WeakReference;
 

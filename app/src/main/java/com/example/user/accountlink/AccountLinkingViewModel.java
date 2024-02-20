@@ -10,7 +10,7 @@ import com.example.customcontrol.inputdialogfragment.EInputType;
 import com.example.customcontrol.inputdialogfragment.InputDialogModel;
 import com.example.customcontrol.phonecredential.PhoneCredentialDialogModel;
 import com.example.infrastructure.BaseViewModel;
-import com.example.user.AuthService;
+import com.example.user.authservice.AuthService;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.Task;

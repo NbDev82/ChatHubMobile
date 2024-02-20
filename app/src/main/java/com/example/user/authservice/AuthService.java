@@ -1,9 +1,10 @@
-package com.example.user;
+package com.example.user.authservice;
 
 import android.app.Activity;
 
 import androidx.annotation.Nullable;
 
+import com.example.user.User;
 import com.example.user.changepassword.UpdatePasswordRequest;
 import com.example.user.login.SignInRequest;
 import com.example.user.signup.SignUpRequest;

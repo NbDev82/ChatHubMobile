@@ -4,8 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 
-import com.example.user.AuthService;
-import com.example.user.changepassword.ChangePasswordViewModel;
+import com.example.user.authservice.AuthService;
 
 public class AccountLinkingViewModelFactory implements ViewModelProvider.Factory {
 

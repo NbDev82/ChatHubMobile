@@ -4,8 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 
-import com.example.user.AuthService;
-import com.example.user.accountlink.AccountLinkingViewModel;
+import com.example.user.authservice.AuthService;
 
 public class EmailDetailsViewModelFactory implements ViewModelProvider.Factory {
 

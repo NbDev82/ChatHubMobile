@@ -1,11 +1,8 @@
 package com.example.friend.profileviewer;
 
 import android.os.Bundle;
-import android.view.ViewGroup;
-import android.widget.LinearLayout;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.databinding.BindingAdapter;
 import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.ViewModelProvider;
 
@@ -19,9 +16,8 @@ import com.example.infrastructure.Utils;
 import com.example.navigation.EAnimationType;
 import com.example.navigation.NavigationManager;
 import com.example.navigation.NavigationManagerImpl;
-import com.example.user.AuthService;
-import com.example.user.AuthServiceImpl;
-import com.google.android.material.button.MaterialButton;
+import com.example.user.authservice.AuthService;
+import com.example.user.authservice.AuthServiceImpl;
 
 public class ProfileViewerActivity extends AppCompatActivity {
 

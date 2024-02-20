@@ -12,7 +12,7 @@ import com.example.friend.FriendRequest;
 import com.example.friend.service.FriendRequestService;
 import com.example.infrastructure.BaseViewModel;
 import com.example.infrastructure.Utils;
-import com.example.user.AuthService;
+import com.example.user.authservice.AuthService;
 import com.example.user.EGender;
 import com.example.user.User;
 

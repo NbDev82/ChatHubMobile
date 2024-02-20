@@ -11,7 +11,7 @@ import com.example.customcontrol.customalertdialog.AlertDialogModel;
 import com.example.customcontrol.inputdialogfragment.InputDialogModel;
 import com.example.infrastructure.BaseViewModel;
 import com.example.infrastructure.Utils;
-import com.example.user.AuthService;
+import com.example.user.authservice.AuthService;
 import com.example.user.EGender;
 import com.example.user.User;
 

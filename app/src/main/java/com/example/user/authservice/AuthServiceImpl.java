@@ -1,4 +1,4 @@
-package com.example.user;
+package com.example.user.authservice;
 
 import android.app.Activity;
 import android.text.TextUtils;
@@ -6,12 +6,15 @@ import android.util.Log;
 
 import androidx.annotation.Nullable;
 
-import com.example.friend.EFriendRequestField;
-import com.example.friend.FriendRequest;
 import com.example.infrastructure.Utils;
+import com.example.user.EGender;
+import com.example.user.EUserField;
+import com.example.user.EmailMismatchException;
+import com.example.user.User;
+import com.example.user.UserNotAuthenticatedException;
+import com.example.user.UserNotFoundException;
 import com.example.user.changepassword.UpdatePasswordRequest;
 import com.example.user.login.SignInRequest;
-import com.example.user.login.otp.verify.VerifyOtpViewModel;
 import com.example.user.signup.SignUpRequest;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.TaskCompletionSource;
@@ -21,7 +24,6 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.EmailAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.auth.GithubAuthProvider;
 import com.google.firebase.auth.OAuthProvider;
 import com.google.firebase.auth.PhoneAuthCredential;
 import com.google.firebase.auth.PhoneAuthOptions;
@@ -32,7 +34,6 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -602,5 +603,9 @@ public class AuthServiceImpl implements AuthService {
                     .addOnFailureListener(source::setException);
         }
         return source.getTask();
+    }
+
+    private CollectionReference getUsersRef() {
+        return db.collection(EUserField.COLLECTION_NAME.getName());
     }
 }

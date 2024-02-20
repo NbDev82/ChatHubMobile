@@ -6,7 +6,7 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 
-import com.example.user.AuthService;
+import com.example.user.authservice.AuthService;
 
 public class GithubAuthViewModelFactory implements ViewModelProvider.Factory {
 

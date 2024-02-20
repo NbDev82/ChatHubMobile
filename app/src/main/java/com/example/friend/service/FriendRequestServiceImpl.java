@@ -1,13 +1,11 @@
 package com.example.friend.service;
 
-import android.graphics.Bitmap;
 import android.util.Log;
 
 import com.example.friend.EFriendRequestField;
 import com.example.friend.FriendRequest;
 import com.example.friend.FriendRequestView;
-import com.example.infrastructure.Utils;
-import com.example.user.AuthService;
+import com.example.user.authservice.AuthService;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.TaskCompletionSource;
 import com.google.android.gms.tasks.Tasks;
@@ -229,6 +227,46 @@ public class FriendRequestServiceImpl implements FriendRequestService {
                         }
                         DocumentSnapshot documentSnapshot = documentSnapshots.get(0);
                         return convertDocumentToModel(documentSnapshot);
+                    } else {
+                        throw task.getException();
+                    }
+                });
+    }
+
+    @Override
+    public Task<List<FriendRequestView>> getAcceptedFriendRequests(String userId) {
+        CollectionReference friendRequestsRef = getFriendRequestsRef();
+
+        Query senderQuery = friendRequestsRef
+                .whereEqualTo(EFriendRequestField.SENDER_ID.getName(), userId)
+                .whereEqualTo(EFriendRequestField.STATUS.getName(), FriendRequest.EStatus.ACCEPTED);
+        Query recipientQuery = friendRequestsRef
+                .whereEqualTo(EFriendRequestField.RECIPIENT_ID.getName(), userId)
+                .whereEqualTo(EFriendRequestField.STATUS.getName(), FriendRequest.EStatus.ACCEPTED);
+
+        Task<QuerySnapshot> senderTask = senderQuery.get();
+        Task<QuerySnapshot> recipientTask = recipientQuery.get();
+
+        return Tasks.whenAllSuccess(senderTask, recipientTask)
+                .continueWith(task -> {
+                    if (task.isSuccessful()) {
+                        List<FriendRequestView> acceptedRequests = new ArrayList<>();
+                        for (Object object : task.getResult()) {
+                            if (object instanceof QuerySnapshot) {
+                                QuerySnapshot querySnapshot = (QuerySnapshot) object;
+                                for (QueryDocumentSnapshot document : querySnapshot) {
+                                    FriendRequest friendRequest = convertDocumentToModel(document);
+                                    convertModelToModelView(friendRequest)
+                                            .addOnSuccessListener(friendRequestView -> {
+                                                acceptedRequests.add(friendRequestView);
+                                            })
+                                            .addOnFailureListener(e -> {
+
+                                            });
+                                }
+                            }
+                        }
+                        return acceptedRequests;
                     } else {
                         throw task.getException();
                     }

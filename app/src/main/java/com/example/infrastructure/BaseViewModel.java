@@ -3,7 +3,7 @@ package com.example.infrastructure;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-import com.example.user.AuthService;
+import com.example.user.authservice.AuthService;
 
 public abstract class BaseViewModel extends ViewModel {
 

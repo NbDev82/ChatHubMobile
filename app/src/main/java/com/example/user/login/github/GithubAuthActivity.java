@@ -11,8 +11,8 @@ import com.example.databinding.ActivityGithubAuthBinding;
 import com.example.navigation.EAnimationType;
 import com.example.navigation.NavigationManager;
 import com.example.navigation.NavigationManagerImpl;
-import com.example.user.AuthService;
-import com.example.user.AuthServiceImpl;
+import com.example.user.authservice.AuthService;
+import com.example.user.authservice.AuthServiceImpl;
 
 public class GithubAuthActivity extends AppCompatActivity {
 

@@ -8,11 +8,11 @@
 
         <variable
             name="viewModel"
-            type="com.example.friend.friendrequest.FriendRequestsViewModel" />
+            type="com.example.friend.friendsuggestion.FriendSuggestionsViewModel" />
 
         <variable
-            name="friendRequestAdapter"
-            type="com.example.friend.friendrequest.adapter.FriendRequestAdapter" />
+            name="suggestionAdapter"
+            type="com.example.friend.friendsuggestion.adapter.FriendSuggestionAdapter" />
     </data>
 
     <LinearLayout
@@ -34,7 +34,7 @@
                 android:layout_height="wrap_content"
                 android:src="@drawable/ic_nav_arrow_left"
                 app:tint="@android:color/white"
-                android:onClickListener="@{() -> viewModel.navigateToHome()}"
+                android:onClickListener="@{() -> viewModel.navigateBack()}"
                 android:contentDescription="Back to home"/>
 
             <TextView
@@ -42,70 +42,24 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:text="Friend requests"
+                android:text="Friend suggestions"
                 android:textColor="@android:color/white"
                 android:textStyle="bold"
                 android:textSize="@dimen/primary_title_size" />
         </androidx.appcompat.widget.Toolbar>
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/_10sdp"
-            android:layout_marginStart="@dimen/_5sdp"
-            android:text="Friends"
-            android:textStyle="bold"
-            android:textColor="@color/color_text_primary"
-            android:textSize="@dimen/primary_sub_title_size"/>
-
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/_5sdp"
-            android:layout_marginStart="@dimen/_5sdp"
-            android:orientation="horizontal">
-
-            <com.google.android.material.button.MaterialButton
-                style="@style/ButtonPrimaryNeutral"
-                android:layout_width="wrap_content"
-                android:layout_height="@dimen/_36sdp"
-                android:text="Suggestions"
-                android:onClick="@{() -> viewModel.navigateToFriendSuggestions()}"
-                app:cornerRadius="@dimen/button_primary_corner_radius" />
-
-            <com.google.android.material.button.MaterialButton
-                style="@style/ButtonPrimaryNeutral"
-                android:layout_width="wrap_content"
-                android:layout_height="@dimen/_36sdp"
-                android:layout_marginStart="@dimen/_10sdp"
-                android:text="Your friends"
-                android:onClick="@{() -> viewModel.navigateToFriends()}"
-                app:cornerRadius="@dimen/button_primary_corner_radius" />
-        </LinearLayout>
-
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/_10sdp"
-            android:layout_marginStart="@dimen/_5sdp"
             android:orientation="horizontal">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Friend Requests"
+                android:text="Suggestions"
                 android:textStyle="bold"
                 android:textColor="@color/color_text_primary"
                 android:textSize="@dimen/primary_sub_title_size"/>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/_5sdp"
-                android:text="@{String.valueOf(viewModel.friendRequests.size())}"
-                android:textColor="@color/color_error"
-                android:textSize="@dimen/primary_sub_title_size"
-                tools:text="20"/>
         </LinearLayout>
 
         <FrameLayout
@@ -123,15 +77,15 @@
                 android:orientation="vertical"
                 android:overScrollMode="never"
                 android:padding="@dimen/_5sdp"
-                android:adapter="@{friendRequestAdapter}"
-                android:visibility="@{viewModel.isRequestsLoading ? View.GONE : View.VISIBLE}"
+                android:adapter="@{suggestionAdapter}"
+                android:visibility="@{viewModel.isSuggestionLoading ? View.GONE : View.VISIBLE}"
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                 tools:visibility="gone" />
 
             <ProgressBar
                 android:layout_width="@dimen/_25sdp"
                 android:layout_height="@dimen/_25sdp"
-                android:visibility="@{viewModel.isRequestsLoading ? View.VISIBLE : View.GONE}"
+                android:visibility="@{viewModel.isSuggestionLoading ? View.VISIBLE : View.GONE}"
                 android:layout_gravity="center" />
 
         </FrameLayout>

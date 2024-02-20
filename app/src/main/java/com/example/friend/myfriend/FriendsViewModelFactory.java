@@ -4,9 +4,8 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 
-import com.example.friend.friendrequest.FriendRequestsViewModel;
 import com.example.friend.service.FriendRequestService;
-import com.example.user.AuthService;
+import com.example.user.authservice.AuthService;
 
 public class FriendsViewModelFactory implements ViewModelProvider.Factory {
 

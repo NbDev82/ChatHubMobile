@@ -13,4 +13,5 @@ public interface FriendRequestService {
     Task<Void> addFriendRequest(FriendRequest request);
     Task<Void> updateFriendRequestStatus(String friendRequestId, FriendRequest.EStatus status);
     Task<FriendRequest> getFriendRequest(String senderId, String recipientId);
+    Task<List<FriendRequestView>> getAcceptedFriendRequests(String userId);
 }

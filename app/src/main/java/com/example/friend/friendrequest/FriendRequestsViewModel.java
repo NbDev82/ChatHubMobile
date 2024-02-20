@@ -14,7 +14,7 @@ import com.example.friend.friendrequest.adapter.FriendRequestListener;
 import com.example.friend.service.FriendRequestService;
 import com.example.infrastructure.BaseViewModel;
 import com.example.infrastructure.Utils;
-import com.example.user.AuthService;
+import com.example.user.authservice.AuthService;
 import com.google.android.material.snackbar.Snackbar;
 
 import java.util.ArrayList;
@@ -26,6 +26,7 @@ public class FriendRequestsViewModel extends BaseViewModel implements FriendRequ
 
     private final MutableLiveData<Boolean> navigateToHome = new MutableLiveData<>();
     private final MutableLiveData<Boolean> navigateToFriends = new MutableLiveData<>();
+    private final MutableLiveData<Boolean> navigateToFriendSuggestions = new MutableLiveData<>();
     private final MutableLiveData<Bundle> navigateToProfileViewer = new MutableLiveData<>();
     private final MutableLiveData<List<FriendRequestView>> friendRequests = new MutableLiveData<>(new ArrayList<>());
     private final MutableLiveData<Boolean> isRequestsLoading = new MutableLiveData<>();
@@ -39,6 +40,10 @@ public class FriendRequestsViewModel extends BaseViewModel implements FriendRequ
 
     public LiveData<Boolean> getNavigateToFriends() {
         return navigateToFriends;
+    }
+
+    public LiveData<Boolean> getNavigateToFriendSuggestions() {
+        return navigateToFriendSuggestions;
     }
 
     public LiveData<Bundle> getNavigateToProfileViewer() {
@@ -81,8 +86,8 @@ public class FriendRequestsViewModel extends BaseViewModel implements FriendRequ
         this.navigateToHome.postValue(true);
     }
 
-    public void navigateToSuggestionFriends() {
-        errorToastMessage.postValue("Not implement navigateToSuggestionFriends() method");
+    public void navigateToFriendSuggestions() {
+        this.navigateToFriendSuggestions.postValue(true);
     }
 
     public void navigateToFriends() {

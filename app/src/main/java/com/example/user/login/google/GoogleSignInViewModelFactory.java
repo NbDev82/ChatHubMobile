@@ -3,7 +3,7 @@ package com.example.user.login.google;
 import androidx.annotation.NonNull;
 import androidx.lifecycle.ViewModel;
 
-import com.example.user.AuthService;
+import com.example.user.authservice.AuthService;
 import com.example.user.login.LoginViewModelFactory;
 
 public class GoogleSignInViewModelFactory extends LoginViewModelFactory {

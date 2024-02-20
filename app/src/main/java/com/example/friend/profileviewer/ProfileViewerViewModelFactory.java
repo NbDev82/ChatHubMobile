@@ -5,7 +5,7 @@ import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.example.friend.service.FriendRequestService;
-import com.example.user.AuthService;
+import com.example.user.authservice.AuthService;
 
 public class ProfileViewerViewModelFactory implements ViewModelProvider.Factory {
 

@@ -8,7 +8,7 @@ import com.example.friend.FriendRequestView;
 import com.example.friend.myfriend.adapter.FriendListener;
 import com.example.friend.service.FriendRequestService;
 import com.example.infrastructure.BaseViewModel;
-import com.example.user.AuthService;
+import com.example.user.authservice.AuthService;
 
 import java.util.ArrayList;
 import java.util.List;

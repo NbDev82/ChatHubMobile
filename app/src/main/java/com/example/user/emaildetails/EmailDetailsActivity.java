@@ -7,16 +7,13 @@ import androidx.lifecycle.ViewModelProvider;
 import android.os.Bundle;
 
 import com.example.R;
-import com.example.databinding.ActivityAccountLinkingBinding;
 import com.example.databinding.ActivityEmailDetailsBinding;
 import com.example.infrastructure.Utils;
 import com.example.navigation.EAnimationType;
 import com.example.navigation.NavigationManager;
 import com.example.navigation.NavigationManagerImpl;
-import com.example.user.AuthService;
-import com.example.user.AuthServiceImpl;
-import com.example.user.accountlink.AccountLinkingViewModel;
-import com.example.user.accountlink.AccountLinkingViewModelFactory;
+import com.example.user.authservice.AuthService;
+import com.example.user.authservice.AuthServiceImpl;
 
 public class EmailDetailsActivity extends AppCompatActivity {
 
