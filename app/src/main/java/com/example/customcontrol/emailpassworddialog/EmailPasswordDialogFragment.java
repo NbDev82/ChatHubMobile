@@ -27,13 +27,13 @@ public class EmailPasswordDialogFragment extends AppCompatDialogFragment {
     public static final String TAG = EmailPasswordDialogFragment.class.getSimpleName();
 
     private final EmailPasswordDialogModel model;
-    private TextView titleTxv;
-    private TextView subTitleTxv;
-    private TextInputLayout emailTIL;
-    private TextInputEditText emailEdt;
-    private TextInputLayout passwordTIL;
-    private TextInputEditText passwordEdt;
-    private MaterialButton submitBtn;
+    private TextView txvTitle;
+    private TextView txvSubTitle;
+    private TextInputLayout tilEmail;
+    private TextInputEditText edtEmail;
+    private TextInputLayout tilPassword;
+    private TextInputEditText edtPassword;
+    private MaterialButton btnSubmit;
 
     public EmailPasswordDialogFragment(EmailPasswordDialogModel model) {
         super();
@@ -53,18 +53,18 @@ public class EmailPasswordDialogFragment extends AppCompatDialogFragment {
         Window window = dialog.getWindow();
         window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
 
-        titleTxv = view.findViewById(R.id.titleTxv);
-        subTitleTxv = view.findViewById(R.id.subTitleTxv);
-        emailTIL = view.findViewById(R.id.emailTIL);
-        emailEdt = view.findViewById(R.id.emailEdt);
-        passwordTIL = view.findViewById(R.id.passwordTIL);
-        passwordEdt = view.findViewById(R.id.passwordEdt);
-        submitBtn = view.findViewById(R.id.submitBtn);
+        txvTitle = view.findViewById(R.id.txv_title);
+        txvSubTitle = view.findViewById(R.id.txv_sub_title);
+        tilEmail = view.findViewById(R.id.til_email);
+        edtEmail = view.findViewById(R.id.edit_email);
+        tilPassword = view.findViewById(R.id.til_password);
+        edtPassword = view.findViewById(R.id.edt_password);
+        btnSubmit = view.findViewById(R.id.btn_submit);
 
-        titleTxv.setText(model.getTitle());
-        subTitleTxv.setText(model.getSubTitle());
-        emailEdt.setText(model.getEmail());
-        emailEdt.addTextChangedListener(new TextWatcher() {
+        txvTitle.setText(model.getTitle());
+        txvSubTitle.setText(model.getSubTitle());
+        edtEmail.setText(model.getEmail());
+        edtEmail.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
@@ -75,10 +75,10 @@ public class EmailPasswordDialogFragment extends AppCompatDialogFragment {
                 String email = s.toString();
                 String error = Validator.validateEmail(email);
                 if (error != null) {
-                    emailTIL.setError(error);
+                    tilEmail.setError(error);
                     return;
                 }
-                emailTIL.setError(null);
+                tilEmail.setError(null);
 
                 Log.i(TAG, "onTextChanged (email): " + email);
             }
@@ -89,8 +89,8 @@ public class EmailPasswordDialogFragment extends AppCompatDialogFragment {
             }
         });
 
-        passwordEdt.setText(model.getPassword());
-        passwordEdt.addTextChangedListener(new TextWatcher() {
+        edtPassword.setText(model.getPassword());
+        edtPassword.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
@@ -101,10 +101,10 @@ public class EmailPasswordDialogFragment extends AppCompatDialogFragment {
                 String password = s.toString();
                 String error = Validator.validatePassword(password);
                 if (error != null) {
-                    passwordTIL.setError(error);
+                    tilPassword.setError(error);
                     return;
                 }
-                passwordTIL.setError(null);
+                tilPassword.setError(null);
 
                 Log.i(TAG, "onTextChanged (password): " + password);
             }
@@ -115,11 +115,11 @@ public class EmailPasswordDialogFragment extends AppCompatDialogFragment {
             }
         });
 
-        submitBtn.setOnClickListener(new View.OnClickListener() {
+        btnSubmit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                CharSequence emailText = emailEdt.getText();
-                CharSequence passwordText = passwordEdt.getText();
+                CharSequence emailText = edtEmail.getText();
+                CharSequence passwordText = edtPassword.getText();
 
                 String email = emailText != null ? emailText.toString() : "";
                 String password = passwordText != null ? passwordText.toString() : "";

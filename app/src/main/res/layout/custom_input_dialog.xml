@@ -14,7 +14,7 @@
         android:orientation="vertical">
 
         <TextView
-            android:id="@+id/titleTxv"
+            android:id="@+id/txv_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textStyle="bold"
@@ -22,7 +22,7 @@
             tools:text="Text"/>
 
         <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/textTil"
+            android:id="@+id/til_text"
             style="@style/CustomTextInputLayoutPrimary"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -30,7 +30,7 @@
             android:hint="Enter your text" >
 
             <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/textEdt"
+                android:id="@+id/edt_text"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:maxLines="1"/>
@@ -39,7 +39,7 @@
 
         <com.google.android.material.button.MaterialButton
             style="@style/ButtonPrimaryHighlight"
-            android:id="@+id/submitTextBtn"
+            android:id="@+id/btn_submit"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="end"

@@ -53,8 +53,8 @@ public class CustomToast {
         ImageView icon = layout.findViewById(R.id.icon);
         customIcon.accept(icon);
 
-        TextView messageTxv = layout.findViewById(R.id.messageTxv);
-        customMessage.accept(messageTxv);
+        TextView txvMessage = layout.findViewById(R.id.txv_message);
+        customMessage.accept(txvMessage);
 
         Toast toast = new Toast(activity.getApplication());
         toast.setView(layout);

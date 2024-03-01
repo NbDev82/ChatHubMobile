@@ -35,7 +35,7 @@
             android:layout_marginTop="@dimen/_10sdp"
             android:layout_marginLeft="@dimen/_10sdp">
             <TextView
-                android:id="@+id/emailTitleTxt"
+                android:id="@+id/txv_email_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Email: "
@@ -46,7 +46,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@{viewModel.email}"
-                android:layout_toEndOf="@id/emailTitleTxt" />
+                android:layout_toEndOf="@id/txv_email_title" />
         </RelativeLayout>
 
         <Button

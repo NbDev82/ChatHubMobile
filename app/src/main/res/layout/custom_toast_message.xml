@@ -22,7 +22,7 @@
             android:background="@drawable/ic_info_circle" />
 
         <TextView
-            android:id="@+id/messageTxv"
+            android:id="@+id/txv_message"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/_10sdp"

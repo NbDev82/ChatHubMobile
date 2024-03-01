@@ -29,7 +29,7 @@
             android:orientation="horizontal">
 
             <FrameLayout
-                android:id="@+id/avatarFl"
+                android:id="@+id/fl_avatar"
                 android:layout_width="@dimen/_50sdp"
                 android:layout_height="@dimen/_50sdp"
                 android:onClick="@{() -> listener.onItemClick(position)}"
@@ -44,7 +44,7 @@
                     app:riv_oval="true" />
 
                 <TextView
-                    android:id="@+id/textAddImage"
+                    android:id="@+id/txv_img_desc"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
@@ -62,12 +62,12 @@
                 >
 
                 <TextView
-                    android:id="@+id/nameTxv"
+                    android:id="@+id/txv_name"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_alignParentStart="true"
                     android:layout_alignParentTop="true"
-                    android:layout_toStartOf="@id/moreIcon"
+                    android:layout_toStartOf="@id/icon_more"
                     android:ellipsize="end"
                     android:maxLines="1"
                     android:text="@{request.displayName}"
@@ -79,7 +79,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentStart="true"
-                    android:layout_below="@id/nameTxv"
+                    android:layout_below="@id/txv_name"
                     android:ellipsize="marquee"
                     android:text="@{request.mutualFriends > 0 ? String.valueOf(request.mutualFriends + ` mutualFriend`) : ``}"
                     android:textColor="@color/color_text_secondary"
@@ -87,7 +87,7 @@
                     tools:text="1 mutual friend"/>
 
                 <ImageView
-                    android:id="@+id/moreIcon"
+                    android:id="@+id/icon_more"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"

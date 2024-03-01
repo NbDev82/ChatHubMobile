@@ -25,10 +25,10 @@ public class AlertDialogFragment extends AppCompatDialogFragment {
     public static final String TAG = AlertDialogFragment.class.getSimpleName();
 
     private final AlertDialogModel model;
-    private TextView titleTxv;
-    private TextView messageTxv;
-    private MaterialButton positiveBtn;
-    private MaterialButton negativeBtn;
+    private TextView txvTitle;
+    private TextView txvMessage;
+    private MaterialButton btnPositive;
+    private MaterialButton btnNegative;
 
     public AlertDialogFragment(AlertDialogModel model) {
         super();
@@ -56,17 +56,17 @@ public class AlertDialogFragment extends AppCompatDialogFragment {
     }
 
     private void initializeViews(View view) {
-        titleTxv = view.findViewById(R.id.titleTxv);
-        messageTxv = view.findViewById(R.id.messageTxv);
-        positiveBtn = view.findViewById(R.id.positiveBtn);
-        negativeBtn = view.findViewById(R.id.negativeBtn);
+        txvTitle = view.findViewById(R.id.txv_title);
+        txvMessage = view.findViewById(R.id.txv_message);
+        btnPositive = view.findViewById(R.id.btn_positive);
+        btnNegative = view.findViewById(R.id.btn_negative);
     }
 
     private void setupContents() {
-        titleTxv.setText( model.getTitle() );
-        messageTxv.setText( model.getMessage() );
-        setupButton(positiveBtn, model.getPositiveBtnTitle(), model.getPositiveButtonClickListener());
-        setupButton(negativeBtn, model.getNegativeBtnTitle(), model.getNegativeButtonClickListener());
+        txvTitle.setText( model.getTitle() );
+        txvMessage.setText( model.getMessage() );
+        setupButton(btnPositive, model.getPositiveBtnTitle(), model.getPositiveButtonClickListener());
+        setupButton(btnNegative, model.getNegativeBtnTitle(), model.getNegativeButtonClickListener());
     }
 
     private void setupButton(Button button, String title, Consumer<Void> clickListener) {

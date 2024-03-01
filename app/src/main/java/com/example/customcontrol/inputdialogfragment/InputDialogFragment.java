@@ -26,10 +26,10 @@ public class InputDialogFragment extends AppCompatDialogFragment {
     public static final String TAG = InputDialogFragment.class.getSimpleName();
 
     private final InputDialogModel model;
-    private TextView titleTxv;
-    private TextInputLayout textTil;
-    private TextInputEditText textEdt;
-    private MaterialButton submitTextBtn;
+    private TextView txvTitle;
+    private TextInputLayout tilText;
+    private TextInputEditText edtText;
+    private MaterialButton btnSubmit;
 
     public InputDialogFragment(InputDialogModel model) {
         super();
@@ -56,27 +56,27 @@ public class InputDialogFragment extends AppCompatDialogFragment {
     }
 
     private void initializeViews(View view) {
-        titleTxv = view.findViewById(R.id.titleTxv);
-        textTil = view.findViewById(R.id.textTil);
-        textEdt = view.findViewById(R.id.textEdt);
-        submitTextBtn = view.findViewById(R.id.submitTextBtn);
+        txvTitle = view.findViewById(R.id.txv_title);
+        tilText = view.findViewById(R.id.til_text);
+        edtText = view.findViewById(R.id.edt_text);
+        btnSubmit = view.findViewById(R.id.btn_submit);
 
-        titleTxv.setText( model.getTitle() );
-        textEdt.setText( model.getCurContent() );
+        txvTitle.setText( model.getTitle() );
+        edtText.setText( model.getCurContent() );
 
         switch (model.getType()) {
             case EMAIL:
-                textTil.setStartIconDrawable(R.drawable.ic_mail);
-                textEdt.setInputType(InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS);
+                tilText.setStartIconDrawable(R.drawable.ic_mail);
+                edtText.setInputType(InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS);
                 break;
         }
     }
 
     private void setupEvents() {
-        submitTextBtn.setOnClickListener(new View.OnClickListener() {
+        btnSubmit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                CharSequence text = textEdt.getText();
+                CharSequence text = edtText.getText();
                 String textValue = text != null ? text.toString() : "";
                 model.getSubmitButtonClickListener().accept(textValue);
                 dismiss();

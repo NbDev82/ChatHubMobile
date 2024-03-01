@@ -52,7 +52,7 @@
                 android:orientation="vertical">
 
                 <LinearLayout
-                    android:id="@+id/accountLL"
+                    android:id="@+id/ll_account"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="@android:color/white"
@@ -85,7 +85,7 @@
                                 android:layout_marginHorizontal="@dimen/_8sdp">
 
                                 <com.makeramen.roundedimageview.RoundedImageView
-                                    android:id="@+id/imageProfile"
+                                    android:id="@+id/img_profile"
                                     android:layout_width="@dimen/settings_item_height"
                                     android:layout_height="@dimen/settings_item_height"
                                     android:background="@drawable/background_image"
@@ -98,8 +98,8 @@
                                     android:layout_height="wrap_content"
                                     android:layout_centerInParent="true"
                                     android:layout_marginHorizontal="@dimen/_20sdp"
-                                    android:layout_toStartOf="@id/editProfileIcon"
-                                    android:layout_toEndOf="@id/imageProfile"
+                                    android:layout_toStartOf="@id/icon_edit_profile"
+                                    android:layout_toEndOf="@id/img_profile"
                                     android:orientation="vertical">
 
                                     <TextView
@@ -120,7 +120,7 @@
                                 </LinearLayout>
 
                                 <ImageView
-                                    android:id="@+id/editProfileIcon"
+                                    android:id="@+id/icon_edit_profile"
                                     android:layout_width="@dimen/_12sdp"
                                     android:layout_height="@dimen/_12sdp"
                                     android:layout_centerVertical="true"
@@ -142,19 +142,19 @@
                         android:onClick="@{() -> viewModel.navigateToChangePhoneNumber()}">
 
                         <ImageView
-                            android:id="@+id/phoneIcon"
+                            android:id="@+id/icon_phone"
                             android:layout_width="@dimen/profile_icon_size"
                             android:layout_height="@dimen/profile_icon_size"
                             android:layout_centerVertical="true"
                             android:src="@drawable/ic_phone" />
 
                         <TextView
-                            android:id="@+id/phoneTitleTxv"
+                            android:id="@+id/txv_phone_title"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginStart="@dimen/_16sdp"
                             android:layout_centerVertical="true"
-                            android:layout_toEndOf="@id/phoneIcon"
+                            android:layout_toEndOf="@id/icon_phone"
                             android:text="Phone number"
                             android:textColor="@color/color_text_secondary"
                             android:textSize="@dimen/primary_sub_title_size" />
@@ -165,8 +165,8 @@
                             android:layout_marginStart="@dimen/_20sdp"
                             android:layout_marginEnd="@dimen/_5sdp"
                             android:layout_centerVertical="true"
-                            android:layout_toEndOf="@id/phoneTitleTxv"
-                            android:layout_toStartOf="@id/editPhoneIcon"
+                            android:layout_toEndOf="@id/txv_phone_title"
+                            android:layout_toStartOf="@id/icon_edit_phone"
                             android:text="@{viewModel.phoneNumber.isEmpty() ? `(None)` : viewModel.phoneNumber}"
                             android:gravity="end"
                             android:textColor="@color/color_text_primary"
@@ -176,7 +176,7 @@
                             tools:text="09123819238"/>
 
                         <ImageView
-                            android:id="@+id/editPhoneIcon"
+                            android:id="@+id/icon_edit_phone"
                             android:layout_width="@dimen/_12sdp"
                             android:layout_height="@dimen/_12sdp"
                             android:layout_centerVertical="true"
@@ -187,7 +187,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="0.5dp"
                             android:layout_marginStart="@dimen/_16sdp"
-                            android:layout_toEndOf="@id/phoneIcon"
+                            android:layout_toEndOf="@id/icon_phone"
                             android:layout_alignParentBottom="true"
                             android:background="@color/color_primary_gray" />
                     </RelativeLayout>
@@ -201,19 +201,19 @@
                         android:onClick="@{() -> viewModel.navigateToChangeEmail()}">
 
                         <ImageView
-                            android:id="@+id/emailIcon"
+                            android:id="@+id/icon_email"
                             android:layout_width="@dimen/profile_icon_size"
                             android:layout_height="@dimen/profile_icon_size"
                             android:layout_centerVertical="true"
                             android:src="@drawable/ic_mail" />
 
                         <TextView
-                            android:id="@+id/emailTitleTxv"
+                            android:id="@+id/txv_email_title"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginStart="@dimen/_16sdp"
                             android:layout_centerVertical="true"
-                            android:layout_toEndOf="@id/emailIcon"
+                            android:layout_toEndOf="@id/icon_email"
                             android:text="Email"
                             android:textColor="@color/color_text_secondary"
                             android:textSize="@dimen/primary_sub_title_size" />
@@ -224,8 +224,8 @@
                             android:layout_marginStart="@dimen/_20sdp"
                             android:layout_marginEnd="@dimen/_5sdp"
                             android:layout_centerVertical="true"
-                            android:layout_toEndOf="@id/emailTitleTxv"
-                            android:layout_toStartOf="@id/editNameIcon"
+                            android:layout_toEndOf="@id/txv_email_title"
+                            android:layout_toStartOf="@id/icon_edit_name"
                             android:text="@{viewModel.email.isEmpty() ? `(None)` : viewModel.email}"
                             android:gravity="end"
                             android:textColor="@color/color_text_primary"
@@ -235,7 +235,7 @@
                             tools:text="info.abc@gmail.com"/>
 
                         <ImageView
-                            android:id="@+id/editNameIcon"
+                            android:id="@+id/icon_edit_name"
                             android:layout_width="@dimen/_12sdp"
                             android:layout_height="@dimen/_12sdp"
                             android:layout_centerVertical="true"
@@ -246,7 +246,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="0.5dp"
                             android:layout_marginStart="@dimen/_16sdp"
-                            android:layout_toEndOf="@id/emailIcon"
+                            android:layout_toEndOf="@id/icon_email"
                             android:layout_alignParentBottom="true"
                             android:background="@color/color_primary_gray" />
                     </RelativeLayout>
@@ -260,19 +260,19 @@
                         android:onClick="@{() -> viewModel.navigateToAccountLinking()}">
 
                         <ImageView
-                            android:id="@+id/linkingIcon"
+                            android:id="@+id/icon_linking"
                             android:layout_width="@dimen/profile_icon_size"
                             android:layout_height="@dimen/profile_icon_size"
                             android:layout_centerVertical="true"
                             android:src="@drawable/ic_link" />
 
                         <TextView
-                            android:id="@+id/linkingTitleTxv"
+                            android:id="@+id/icon_linking_title"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginStart="@dimen/_16sdp"
                             android:layout_centerVertical="true"
-                            android:layout_toEndOf="@id/linkingIcon"
+                            android:layout_toEndOf="@id/icon_linking"
                             android:text="Linking"
                             android:textColor="@color/color_text_secondary"
                             android:textSize="@dimen/primary_sub_title_size" />
@@ -288,7 +288,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="0.5dp"
                             android:layout_marginStart="@dimen/_16sdp"
-                            android:layout_toEndOf="@id/linkingIcon"
+                            android:layout_toEndOf="@id/icon_linking"
                             android:layout_alignParentBottom="true"
                             android:background="@color/color_primary_gray" />
                     </RelativeLayout>
@@ -302,19 +302,19 @@
                         android:onClick="@{() -> viewModel.navigateToMyQrCode()}">
 
                         <ImageView
-                            android:id="@+id/qrCodeIcon"
+                            android:id="@+id/icon_qr_code"
                             android:layout_width="@dimen/profile_icon_size"
                             android:layout_height="@dimen/profile_icon_size"
                             android:layout_centerVertical="true"
                             android:src="@drawable/ic_qr_code" />
 
                         <TextView
-                            android:id="@+id/qrCodeTitleTxv"
+                            android:id="@+id/txv_qr_code_title"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginStart="@dimen/_16sdp"
                             android:layout_centerVertical="true"
-                            android:layout_toEndOf="@id/qrCodeIcon"
+                            android:layout_toEndOf="@id/icon_qr_code"
                             android:text="My QR code"
                             android:textColor="@color/color_text_secondary"
                             android:textSize="@dimen/primary_sub_title_size" />
@@ -330,7 +330,7 @@
                 </LinearLayout>
 
                 <LinearLayout
-                    android:id="@+id/securityLL"
+                    android:id="@+id/ll_security"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/settings_section_distance"
@@ -353,19 +353,19 @@
                         android:onClick="@{() -> viewModel.navigateToLockMyApp()}">
 
                         <ImageView
-                            android:id="@+id/lockIcon"
+                            android:id="@+id/icon_lock"
                             android:layout_width="@dimen/profile_icon_size"
                             android:layout_height="@dimen/profile_icon_size"
                             android:layout_centerVertical="true"
                             android:src="@drawable/ic_mobile_fingerprint" />
 
                         <TextView
-                            android:id="@+id/lockTitleTxv"
+                            android:id="@+id/txv_lock_title"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginStart="@dimen/_16sdp"
                             android:layout_centerVertical="true"
-                            android:layout_toEndOf="@id/lockIcon"
+                            android:layout_toEndOf="@id/icon_lock"
                             android:text="Lock my app"
                             android:textColor="@color/color_text_secondary"
                             android:textSize="@dimen/primary_sub_title_size" />
@@ -381,7 +381,7 @@
                 </LinearLayout>
 
                 <LinearLayout
-                    android:id="@+id/loginLL"
+                    android:id="@+id/ll_login"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/settings_section_distance"
@@ -404,19 +404,19 @@
                         android:onClick="@{() -> viewModel.navigateToChangePassword()}">
 
                         <ImageView
-                            android:id="@+id/passwordIcon"
+                            android:id="@+id/icon_password"
                             android:layout_width="@dimen/profile_icon_size"
                             android:layout_height="@dimen/profile_icon_size"
                             android:layout_centerVertical="true"
                             android:src="@drawable/ic_lock" />
 
                         <TextView
-                            android:id="@+id/passwordTitleTxv"
+                            android:id="@+id/txv_password_title"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginStart="@dimen/_16sdp"
                             android:layout_centerVertical="true"
-                            android:layout_toEndOf="@id/passwordIcon"
+                            android:layout_toEndOf="@id/icon_password"
                             android:text="Password"
                             android:textColor="@color/color_text_secondary"
                             android:textSize="@dimen/primary_sub_title_size" />
@@ -432,7 +432,7 @@
                 </LinearLayout>
 
                 <LinearLayout
-                    android:id="@+id/deleteAccountLL"
+                    android:id="@+id/ll_delete_account"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="@android:color/white"

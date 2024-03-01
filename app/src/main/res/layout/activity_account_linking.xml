@@ -54,19 +54,19 @@
                 android:paddingHorizontal="@dimen/profile_item_padding_horizontal">
 
                 <ImageView
-                    android:id="@+id/passIcon"
+                    android:id="@+id/icon_pass"
                     android:layout_width="@dimen/profile_icon_size"
                     android:layout_height="@dimen/profile_icon_size"
                     android:layout_centerVertical="true"
                     android:src="@drawable/ic_padlock" />
 
                 <TextView
-                    android:id="@+id/passTitleTxv"
+                    android:id="@+id/txv_pass_title"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="@dimen/_16sdp"
                     android:layout_centerVertical="true"
-                    android:layout_toEndOf="@id/passIcon"
+                    android:layout_toEndOf="@id/icon_pass"
                     android:text="In-app password"
                     android:textColor="@color/color_text_primary"
                     android:textSize="@dimen/primary_sub_title_size"/>
@@ -101,7 +101,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="0.5dp"
                     android:layout_marginStart="@dimen/_16sdp"
-                    android:layout_toEndOf="@id/passIcon"
+                    android:layout_toEndOf="@id/icon_pass"
                     android:layout_alignParentBottom="true"
                     android:background="@color/color_primary_gray" />
             </RelativeLayout>
@@ -112,19 +112,19 @@
                 android:paddingHorizontal="@dimen/profile_item_padding_horizontal">
 
                 <ImageView
-                    android:id="@+id/googleIcon"
+                    android:id="@+id/icon_google"
                     android:layout_width="@dimen/profile_icon_size"
                     android:layout_height="@dimen/profile_icon_size"
                     android:layout_centerVertical="true"
                     android:src="@drawable/ic_google" />
 
                 <TextView
-                    android:id="@+id/googleTitleTxv"
+                    android:id="@+id/txv_google_title"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="@dimen/_16sdp"
                     android:layout_centerVertical="true"
-                    android:layout_toEndOf="@id/googleIcon"
+                    android:layout_toEndOf="@id/icon_google"
                     android:text="Google"
                     android:textColor="@color/color_text_primary"
                     android:textSize="@dimen/primary_sub_title_size"/>
@@ -160,7 +160,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="0.5dp"
                     android:layout_marginStart="@dimen/_16sdp"
-                    android:layout_toEndOf="@id/googleIcon"
+                    android:layout_toEndOf="@id/icon_google"
                     android:layout_alignParentBottom="true"
                     android:background="@color/color_primary_gray" />
             </RelativeLayout>
@@ -171,19 +171,19 @@
                 android:paddingHorizontal="@dimen/profile_item_padding_horizontal">
 
                 <ImageView
-                    android:id="@+id/githubIcon"
+                    android:id="@+id/icon_github"
                     android:layout_width="@dimen/profile_icon_size"
                     android:layout_height="@dimen/profile_icon_size"
                     android:layout_centerVertical="true"
                     android:src="@drawable/ic_github" />
 
                 <TextView
-                    android:id="@+id/githubTitleTxv"
+                    android:id="@+id/txv_github_title"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="@dimen/_16sdp"
                     android:layout_centerVertical="true"
-                    android:layout_toEndOf="@id/githubIcon"
+                    android:layout_toEndOf="@id/icon_github"
                     android:text="Github"
                     android:textColor="@color/color_text_primary"
                     android:textSize="@dimen/primary_sub_title_size"/>
@@ -218,7 +218,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="0.5dp"
                     android:layout_marginStart="@dimen/_16sdp"
-                    android:layout_toEndOf="@id/githubIcon"
+                    android:layout_toEndOf="@id/icon_github"
                     android:layout_alignParentBottom="true"
                     android:background="@color/color_primary_gray" />
             </RelativeLayout>
@@ -229,19 +229,19 @@
                 android:paddingHorizontal="@dimen/profile_item_padding_horizontal">
 
                 <ImageView
-                    android:id="@+id/smsIcon"
+                    android:id="@+id/icon_sms"
                     android:layout_width="@dimen/profile_icon_size"
                     android:layout_height="@dimen/profile_icon_size"
                     android:layout_centerVertical="true"
                     android:src="@drawable/ic_sms" />
 
                 <TextView
-                    android:id="@+id/smsTitleTxv"
+                    android:id="@+id/txv_sms_title"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="@dimen/_16sdp"
                     android:layout_centerVertical="true"
-                    android:layout_toEndOf="@id/smsIcon"
+                    android:layout_toEndOf="@id/icon_sms"
                     android:text="SMS"
                     android:textColor="@color/color_text_primary"
                     android:textSize="@dimen/primary_sub_title_size"/>
@@ -277,14 +277,14 @@
                     android:layout_width="match_parent"
                     android:layout_height="0.5dp"
                     android:layout_marginStart="@dimen/_16sdp"
-                    android:layout_toEndOf="@id/smsIcon"
+                    android:layout_toEndOf="@id/icon_sms"
                     android:layout_alignParentBottom="true"
                     android:background="@color/color_primary_gray" />
             </RelativeLayout>
 
 
             <TextView
-                android:id="@+id/subTitleTxv"
+                android:id="@+id/txv_sub_title"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/_20sdp"

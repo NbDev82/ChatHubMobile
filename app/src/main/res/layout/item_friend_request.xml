@@ -29,7 +29,7 @@
             android:orientation="horizontal">
 
             <FrameLayout
-                android:id="@+id/avatarFl"
+                android:id="@+id/fl_avatar"
                 android:layout_width="@dimen/_80sdp"
                 android:layout_height="@dimen/_80sdp"
                 android:onClick="@{() -> listener.onItemClick(position)}"
@@ -44,7 +44,7 @@
                     app:riv_oval="true" />
 
                 <TextView
-                    android:id="@+id/textAddImage"
+                    android:id="@+id/txv_img_desc"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
@@ -63,12 +63,12 @@
                 >
 
                 <TextView
-                    android:id="@+id/nameTxv"
+                    android:id="@+id/txv_name"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_alignParentStart="true"
                     android:layout_alignParentTop="true"
-                    android:layout_toStartOf="@id/timeAgoTxv"
+                    android:layout_toStartOf="@id/txv_time_ago"
                     android:ellipsize="end"
                     android:maxLines="1"
                     android:text="@{requestView.displayName}"
@@ -77,7 +77,7 @@
                     tools:text="Van A" />
 
                 <TextView
-                    android:id="@+id/timeAgoTxv"
+                    android:id="@+id/txv_time_ago"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentEnd="true"
@@ -89,12 +89,12 @@
                     tools:text="1w"/>
 
                 <TextView
-                    android:id="@+id/mutualFriendsTxv"
+                    android:id="@+id/txv_mutual_friends"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentStart="true"
-                    android:layout_below="@id/nameTxv"
-                    android:layout_above="@id/buttonGroupFl"
+                    android:layout_below="@id/txv_name"
+                    android:layout_above="@id/fl_button_group"
                     android:ellipsize="marquee"
                     android:text="@{requestView.mutualFriends > 0 ? String.valueOf(requestView.mutualFriends + ` mutualFriend`) : ``}"
                     android:textColor="@color/color_text_secondary"
@@ -102,14 +102,14 @@
                     tools:text="1 mutual friend"/>
 
                 <FrameLayout
-                    android:id="@+id/buttonGroupFl"
+                    android:id="@+id/fl_button_group"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_alignParentBottom="true"
                     android:animateLayoutChanges="true">
 
                     <LinearLayout
-                        android:id="@+id/buttonGroupLl"
+                        android:id="@+id/li_button_group"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:weightSum="2"

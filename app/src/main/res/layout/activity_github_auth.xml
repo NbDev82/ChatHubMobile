@@ -20,7 +20,7 @@
 
 
         <com.google.android.material.card.MaterialCardView
-            android:id="@+id/emailCardView"
+            android:id="@+id/card_view_email"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
@@ -41,7 +41,7 @@
 
 
                 <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/emailTIL"
+                    android:id="@+id/til_email"
                     style="@style/ThemeOverlay.Material3.TextInputEditText.FilledBox"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -62,7 +62,7 @@
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <TextView
-                    android:id="@+id/signUpTitleTxv"
+                    android:id="@+id/txv_sign_up_title"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/_8sdp"

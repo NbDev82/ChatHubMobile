@@ -11,7 +11,7 @@
     </data>
 
     <RelativeLayout
-        android:id="@+id/mainRL"
+        android:id="@+id/rl_main"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/color_background_primary"
@@ -20,16 +20,16 @@
         tools:errorToastMessage="@{viewModel.errorToastMessage}">
 
         <ImageView
-            android:id="@+id/sendIcon"
+            android:id="@+id/icon_send"
             android:layout_width="@dimen/_200sdp"
             android:layout_height="@dimen/_200sdp"
             android:layout_centerHorizontal="true"
-            android:layout_above="@id/otpTitleLL"
+            android:layout_above="@id/ll_otp_title"
             android:layout_marginEnd="@dimen/item_gap"
             android:background="@drawable/ic_enter_otp" />
 
         <LinearLayout
-            android:id="@+id/otpTitleLL"
+            android:id="@+id/ll_otp_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
@@ -62,11 +62,11 @@
         </LinearLayout>
 
         <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/phoneNumberTIL"
+            android:id="@+id/til_phone_number"
             style="@style/CustomTextInputLayoutPrimary"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@id/otpTitleLL"
+            android:layout_below="@id/ll_otp_title"
             android:layout_marginTop="@dimen/_20sdp"
             app:counterEnabled="true"
             app:counterMaxLength="6"
@@ -87,10 +87,10 @@
         </com.google.android.material.textfield.TextInputLayout>
 
         <TextView
-            android:id="@+id/resendTxv"
+            android:id="@+id/txv_resend"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@id/phoneNumberTIL"
+            android:layout_below="@id/til_phone_number"
             android:layout_centerHorizontal="true"
             android:enabled="@{viewModel.resendContentStatus}"
             android:onClick="@{() -> viewModel.resendOtp()}"
@@ -100,10 +100,10 @@
             tools:text="Resend OTP in 30 sec" />
 
         <FrameLayout
-            android:id="@+id/nextBtn"
+            android:id="@+id/btn_next"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@id/resendTxv"
+            android:layout_below="@id/txv_resend"
             android:layout_marginTop="@dimen/_20sdp"
             android:animateLayoutChanges="true">
 
@@ -129,7 +129,7 @@
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:layout_below="@id/nextBtn"
+            android:layout_below="@id/btn_next"
             android:layout_centerHorizontal="true"
             android:layout_alignParentBottom="true"
             android:gravity="center">

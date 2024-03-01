@@ -11,7 +11,7 @@
     </data>
 
     <RelativeLayout
-        android:id="@+id/mainRL"
+        android:id="@+id/rl_main"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/color_background_primary"
@@ -19,7 +19,7 @@
         tools:errorToastMessage="@{viewModel.errorToastMessage}">
 
         <RelativeLayout
-            android:id="@+id/backgroundRl"
+            android:id="@+id/rl_background"
             android:layout_width="match_parent"
             android:layout_height="@dimen/_300sdp"
             android:background="@drawable/background_gradient_half_circle"/>
@@ -28,7 +28,7 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_alignParentTop="true"
-            android:layout_above="@id/loginCardView"
+            android:layout_above="@id/card_view_login"
             android:layout_centerHorizontal="true"
             android:gravity="center" >
 
@@ -43,7 +43,7 @@
         </LinearLayout>
 
         <com.google.android.material.card.MaterialCardView
-            android:id="@+id/loginCardView"
+            android:id="@+id/card_view_login"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
@@ -134,7 +134,7 @@
                         android:layout_height="wrap_content"
                         android:layout_alignParentStart="true"
                         android:layout_marginEnd="@dimen/_10sdp"
-                        android:layout_toStartOf="@id/fingerIcon"
+                        android:layout_toStartOf="@id/icon_finger"
                         android:animateLayoutChanges="true">
 
                         <com.google.android.material.button.MaterialButton
@@ -155,7 +155,7 @@
                     </FrameLayout>
 
                     <ImageView
-                        android:id="@+id/fingerIcon"
+                        android:id="@+id/icon_finger"
                         android:layout_width="@dimen/_30sdp"
                         android:layout_height="@dimen/_30sdp"
                         android:layout_alignParentEnd="true"
@@ -213,7 +213,7 @@
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:layout_below="@id/loginCardView"
+            android:layout_below="@id/card_view_login"
             android:layout_alignParentBottom="true"
             android:layout_centerHorizontal="true"
             android:gravity="center">

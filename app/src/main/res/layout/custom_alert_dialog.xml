@@ -14,7 +14,7 @@
         android:orientation="vertical">
 
         <TextView
-            android:id="@+id/titleTxv"
+            android:id="@+id/txv_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textStyle="bold"
@@ -22,7 +22,7 @@
             tools:text="Login"/>
 
         <TextView
-            android:id="@+id/messageTxv"
+            android:id="@+id/txv_message"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/_10sdp"
@@ -39,7 +39,7 @@
 
             <com.google.android.material.button.MaterialButton
                 style="@style/ButtonPrimaryHighlight"
-                android:id="@+id/positiveBtn"
+                android:id="@+id/btn_positive"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_margin="@dimen/_5sdp"
@@ -50,7 +50,7 @@
 
             <com.google.android.material.button.MaterialButton
                 style="@style/ButtonPrimaryNeutral"
-                android:id="@+id/negativeBtn"
+                android:id="@+id/btn_negative"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_margin="@dimen/_5sdp"

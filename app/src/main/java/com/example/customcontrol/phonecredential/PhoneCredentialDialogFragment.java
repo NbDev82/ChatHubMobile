@@ -25,7 +25,6 @@ import com.example.R;
 import com.example.customcontrol.CustomToast;
 import com.example.infrastructure.Utils;
 import com.example.user.repository.AuthRepos;
-import com.example.user.repository.AuthReposImpl;
 import com.example.user.Validator;
 import com.example.user.repository.UserRepos;
 import com.google.android.material.button.MaterialButton;
@@ -38,18 +37,18 @@ import com.google.firebase.auth.PhoneAuthProvider;
 public class PhoneCredentialDialogFragment extends DialogFragment {
     public static final String TAG = PhoneCredentialDialogFragment.class.getSimpleName();
 
-    private LinearLayout inputPhoneNumberLl;
-    private AutoCompleteTextView countryCodeActv;
-    private TextInputLayout localNumberTil;
-    private TextInputEditText localNumberEdt;
-    private MaterialButton sendOtpBtn;
-    private ProgressBar sendOtpPgb;
+    private LinearLayout llInputPhoneNumber;
+    private AutoCompleteTextView actvCountryCode;
+    private TextInputLayout tilLocalNumber;
+    private TextInputEditText edtLocalNumber;
+    private MaterialButton btnSendOtp;
+    private ProgressBar pgbSendOtp;
 
-    private LinearLayout verifyOtpLl;
-    private TextInputEditText otpEdt;
-    private TextView resendTxv;
-    private MaterialButton verifyBtn;
-    private ProgressBar verifyPgb;
+    private LinearLayout llVerifyOtp;
+    private TextInputEditText edtOpt;
+    private TextView txvResend;
+    private MaterialButton btnVerify;
+    private ProgressBar pgbVerify;
 
     private final UserRepos userRepos;
     private final AuthRepos authRepos;
@@ -88,27 +87,27 @@ public class PhoneCredentialDialogFragment extends DialogFragment {
     }
 
     public void initializeViews(View view) {
-        inputPhoneNumberLl = view.findViewById(R.id.inputPhoneNumberLl);
-        countryCodeActv = view.findViewById(R.id.countryCodeActv);
-        localNumberTil = view.findViewById(R.id.localNumberTil);
-        localNumberEdt = view.findViewById(R.id.localNumberEdt);
-        sendOtpBtn = view.findViewById(R.id.sendOtpBtn);
-        sendOtpPgb = view.findViewById(R.id.sendOtpPgb);
+        llInputPhoneNumber = view.findViewById(R.id.ll_input_phone_number);
+        actvCountryCode = view.findViewById(R.id.actv_country_code);
+        tilLocalNumber = view.findViewById(R.id.til_local_number);
+        edtLocalNumber = view.findViewById(R.id.edt_local_number);
+        btnSendOtp = view.findViewById(R.id.btn_send_otp);
+        pgbSendOtp = view.findViewById(R.id.pgb_send_otp);
 
-        verifyOtpLl = view.findViewById(R.id.verifyOtpLl);
-        otpEdt = view.findViewById(R.id.otpEdt);
-        resendTxv = view.findViewById(R.id.resendTxv);
-        verifyBtn = view.findViewById(R.id.verifyBtn);
-        verifyPgb = view.findViewById(R.id.verifyPgb);
+        llVerifyOtp = view.findViewById(R.id.ll_verify_otp);
+        edtOpt = view.findViewById(R.id.edt_otp);
+        txvResend = view.findViewById(R.id.txv_resend);
+        btnVerify = view.findViewById(R.id.btn_verify);
+        pgbVerify = view.findViewById(R.id.pgb_verify);
 
-        inputPhoneNumberLl.setVisibility(View.VISIBLE);
-        verifyOtpLl.setVisibility(View.GONE);
+        llInputPhoneNumber.setVisibility(View.VISIBLE);
+        llVerifyOtp.setVisibility(View.GONE);
     }
 
     private void setupPhoneNumberInput() {
-        countryCodeActv.setText("+84");
+        actvCountryCode.setText("+84");
 
-        localNumberEdt.addTextChangedListener(new TextWatcher() {
+        edtLocalNumber.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
@@ -125,7 +124,7 @@ public class PhoneCredentialDialogFragment extends DialogFragment {
             }
         });
 
-        sendOtpBtn.setOnClickListener(v -> {
+        btnSendOtp.setOnClickListener(v -> {
             verifyPhoneNumberAndSendOtp();
         });
     }
@@ -137,12 +136,12 @@ public class PhoneCredentialDialogFragment extends DialogFragment {
                 .addOnSuccessListener(isExists -> {
                     setPhoneNumberInputInProgress(false);
                     if (isExists) {
-                        localNumberTil.setError("This phone number is already in use");
+                        tilLocalNumber.setError("This phone number is already in use");
                     } else {
                         sendOtp(phoneNumber, false);
 
-                        inputPhoneNumberLl.setVisibility(View.GONE);
-                        verifyOtpLl.setVisibility(View.VISIBLE);
+                        llInputPhoneNumber.setVisibility(View.GONE);
+                        llVerifyOtp.setVisibility(View.VISIBLE);
                     }
                 })
                 .addOnFailureListener(e -> {
@@ -153,25 +152,25 @@ public class PhoneCredentialDialogFragment extends DialogFragment {
     }
 
     private String getFullPhoneNumber() {
-        String countryCode = countryCodeActv.getText().toString();
-        String number = localNumberEdt.getText().toString();
+        String countryCode = actvCountryCode.getText().toString();
+        String number = edtLocalNumber.getText().toString();
         return Utils.getFullPhoneNumber(countryCode, number);
     }
 
     public void checkPhoneNumber(CharSequence s) {
-        String countryCode = countryCodeActv.getText().toString();
+        String countryCode = actvCountryCode.getText().toString();
         String localNumber = s.toString();
         String phoneNumber = Utils.getFullPhoneNumber(countryCode, localNumber);
         String error = Validator.validPhoneNumber(phoneNumber);
-        localNumberTil.setError(error);
+        tilLocalNumber.setError(error);
     }
 
     private void setupVerifyOtp() {
-        resendTxv.setOnClickListener(v -> {
+        txvResend.setOnClickListener(v -> {
             resendOtp();
         });
 
-        verifyBtn.setOnClickListener(v -> verifyOtp());
+        btnVerify.setOnClickListener(v -> verifyOtp());
     }
 
     public void resendOtp() {
@@ -181,7 +180,7 @@ public class PhoneCredentialDialogFragment extends DialogFragment {
 
     private void sendOtp(String phoneNumber, boolean isResend) {
         startResendTimer();
-        resendTxv.setEnabled(false);
+        txvResend.setEnabled(false);
         authRepos.sendOtp(requireActivity(),
                 phoneNumber,
                 isResend,
@@ -211,7 +210,7 @@ public class PhoneCredentialDialogFragment extends DialogFragment {
     }
 
     public void verifyOtp() {
-        String enteredOtp = otpEdt.getText().toString();
+        String enteredOtp = edtOpt.getText().toString();
         try {
             PhoneAuthCredential phoneCredential = PhoneAuthProvider.getCredential(verificationId, enteredOtp);
             applyCredentialAndDismiss(phoneCredential);
@@ -234,14 +233,14 @@ public class PhoneCredentialDialogFragment extends DialogFragment {
             public void onTick(long millisUntilFinished) {
                 timeoutSeconds = (int) (millisUntilFinished / 1000);
                 String content = String.format("Resend OTP in " + timeoutSeconds + " seconds");
-                resendTxv.setText(content);
+                txvResend.setText(content);
             }
 
             @Override
             public void onFinish() {
                 timeoutSeconds = Utils.OTP_TIME_OUT_SECONDS;
-                resendTxv.setText("Resend");
-                resendTxv.setEnabled(true);
+                txvResend.setText("Resend");
+                txvResend.setEnabled(true);
             }
         };
         timer.start();
@@ -249,21 +248,21 @@ public class PhoneCredentialDialogFragment extends DialogFragment {
 
     private void setPhoneNumberInputInProgress(boolean inProgress) {
         if (inProgress) {
-            sendOtpBtn.setVisibility(View.GONE);
-            sendOtpPgb.setVisibility(View.VISIBLE);
+            btnSendOtp.setVisibility(View.GONE);
+            pgbSendOtp.setVisibility(View.VISIBLE);
         } else {
-            sendOtpBtn.setVisibility(View.VISIBLE);
-            sendOtpPgb.setVisibility(View.GONE);
+            btnSendOtp.setVisibility(View.VISIBLE);
+            pgbSendOtp.setVisibility(View.GONE);
         }
     }
 
     private void setVerifyOtpInProgress(boolean inProgress) {
         if (inProgress) {
-            verifyBtn.setVisibility(View.GONE);
-            verifyPgb.setVisibility(View.VISIBLE);
+            btnVerify.setVisibility(View.GONE);
+            pgbVerify.setVisibility(View.VISIBLE);
         } else {
-            verifyBtn.setVisibility(View.VISIBLE);
-            verifyPgb.setVisibility(View.GONE);
+            btnVerify.setVisibility(View.VISIBLE);
+            pgbVerify.setVisibility(View.GONE);
         }
     }
 }

@@ -64,14 +64,14 @@
                 android:orientation="vertical">
 
                 <FrameLayout
-                    android:id="@+id/avatarFl"
+                    android:id="@+id/fl_avatar"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/_20sdp"
                     android:onClick="@{() -> viewModel.openImagePicker()}">
 
                     <com.makeramen.roundedimageview.RoundedImageView
-                        android:id="@+id/imageProfile"
+                        android:id="@+id/img_profile"
                         android:layout_width="@dimen/_100sdp"
                         android:layout_height="@dimen/_100sdp"
                         android:background="@drawable/background_image"
@@ -80,7 +80,7 @@
                         app:riv_oval="true" />
 
                     <TextView
-                        android:id="@+id/textAddImage"
+                        android:id="@+id/txv_img_desc"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
@@ -102,19 +102,19 @@
                     android:onClick="@{() -> viewModel.openCustomInputDialog()}">
 
                     <ImageView
-                        android:id="@+id/nameIcon"
+                        android:id="@+id/icon_name"
                         android:layout_width="@dimen/profile_icon_size"
                         android:layout_height="@dimen/profile_icon_size"
                         android:layout_centerVertical="true"
                         android:src="@drawable/ic_profile_circle_light" />
 
                     <TextView
-                        android:id="@+id/nameTitleTxv"
+                        android:id="@+id/txv_name_title"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="@dimen/_16sdp"
                         android:layout_centerVertical="true"
-                        android:layout_toEndOf="@id/nameIcon"
+                        android:layout_toEndOf="@id/icon_name"
                         android:text="Full name"
                         android:textColor="@color/color_text_secondary"
                         android:textSize="@dimen/primary_sub_title_size"/>
@@ -125,8 +125,8 @@
                         android:layout_marginStart="@dimen/_20sdp"
                         android:layout_marginEnd="@dimen/_5sdp"
                         android:layout_centerVertical="true"
-                        android:layout_toEndOf="@id/nameTitleTxv"
-                        android:layout_toStartOf="@id/editNameIcon"
+                        android:layout_toEndOf="@id/txv_name_title"
+                        android:layout_toStartOf="@id/icon_edit_name"
                         android:text="@{viewModel.fullName.isEmpty() ? `(None)` : viewModel.fullName}"
                         android:gravity="end"
                         android:textColor="@color/color_text_primary"
@@ -136,7 +136,7 @@
                         tools:text="Văn An"/>
 
                     <ImageView
-                        android:id="@+id/editNameIcon"
+                        android:id="@+id/icon_edit_name"
                         android:layout_width="@dimen/_12sdp"
                         android:layout_height="@dimen/_12sdp"
                         android:layout_centerVertical="true"
@@ -147,7 +147,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="0.5dp"
                         android:layout_marginStart="@dimen/_16sdp"
-                        android:layout_toEndOf="@id/nameIcon"
+                        android:layout_toEndOf="@id/icon_name"
                         android:layout_alignParentBottom="true"
                         android:background="@color/color_primary_gray" />
                 </RelativeLayout>
@@ -162,19 +162,19 @@
                     android:onClick="@{() -> viewModel.openDatePickerDialog()}">
 
                     <ImageView
-                        android:id="@+id/birthdayIcon"
+                        android:id="@+id/icon_birthday"
                         android:layout_width="@dimen/profile_icon_size"
                         android:layout_height="@dimen/profile_icon_size"
                         android:layout_centerVertical="true"
                         android:src="@drawable/ic_calendar" />
 
                     <TextView
-                        android:id="@+id/birthdayTitleTxv"
+                        android:id="@+id/txv_birthday_title"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="@dimen/_16sdp"
                         android:layout_centerVertical="true"
-                        android:layout_toEndOf="@id/birthdayIcon"
+                        android:layout_toEndOf="@id/icon_birthday"
                         android:text="Birthday"
                         android:textColor="@color/color_text_secondary"
                         android:textSize="@dimen/primary_sub_title_size"/>
@@ -185,8 +185,8 @@
                         android:layout_marginStart="@dimen/_20sdp"
                         android:layout_marginEnd="@dimen/_5sdp"
                         android:layout_centerVertical="true"
-                        android:layout_toEndOf="@id/birthdayTitleTxv"
-                        android:layout_toStartOf="@id/editBirthdayIcon"
+                        android:layout_toEndOf="@id/txv_birthday_title"
+                        android:layout_toStartOf="@id/icon_edit_birthday"
                         android:gravity="end"
                         android:text="@{viewModel.birthdayStr}"
                         android:textColor="@color/color_text_primary"
@@ -196,7 +196,7 @@
                         tools:text="01/01/1990"/>
 
                     <ImageView
-                        android:id="@+id/editBirthdayIcon"
+                        android:id="@+id/icon_edit_birthday"
                         android:layout_width="@dimen/_12sdp"
                         android:layout_height="@dimen/_12sdp"
                         android:layout_centerVertical="true"
@@ -207,7 +207,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="0.5dp"
                         android:layout_marginStart="@dimen/_16sdp"
-                        android:layout_toEndOf="@id/birthdayIcon"
+                        android:layout_toEndOf="@id/icon_birthday"
                         android:layout_alignParentBottom="true"
                         android:background="@color/color_primary_gray" />
                 </RelativeLayout>
@@ -222,19 +222,19 @@
                     android:onClick="@{() -> viewModel.openSingleChoiceGender()}">
 
                     <ImageView
-                        android:id="@+id/genderIcon"
+                        android:id="@+id/icon_gender"
                         android:layout_width="@dimen/profile_icon_size"
                         android:layout_height="@dimen/profile_icon_size"
                         android:layout_centerVertical="true"
                         android:src="@drawable/ic_gender" />
 
                     <TextView
-                        android:id="@+id/genderTitleTxv"
+                        android:id="@+id/txv_gender_title"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="@dimen/_16sdp"
                         android:layout_centerVertical="true"
-                        android:layout_toEndOf="@id/genderIcon"
+                        android:layout_toEndOf="@id/icon_gender"
                         android:text="Gender"
                         android:textColor="@color/color_text_secondary"
                         android:textSize="@dimen/primary_sub_title_size"/>
@@ -245,8 +245,8 @@
                         android:layout_marginStart="@dimen/_20sdp"
                         android:layout_marginEnd="@dimen/_5sdp"
                         android:layout_centerVertical="true"
-                        android:layout_toEndOf="@id/genderTitleTxv"
-                        android:layout_toStartOf="@id/editGenderIcon"
+                        android:layout_toEndOf="@id/txv_gender_title"
+                        android:layout_toStartOf="@id/icon_edit_gender"
                         android:gravity="end"
                         android:text="@{viewModel.gender.getDisplay()}"
                         android:textColor="@color/color_text_primary"
@@ -256,7 +256,7 @@
                         tools:text="Male" />
 
                     <ImageView
-                        android:id="@+id/editGenderIcon"
+                        android:id="@+id/icon_edit_gender"
                         android:layout_width="@dimen/_12sdp"
                         android:layout_height="@dimen/_12sdp"
                         android:layout_centerVertical="true"
@@ -267,7 +267,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="0.5dp"
                         android:layout_marginStart="@dimen/_16sdp"
-                        android:layout_toEndOf="@id/genderIcon"
+                        android:layout_toEndOf="@id/icon_gender"
                         android:layout_alignParentBottom="true"
                         android:background="@color/color_primary_gray" />
                 </RelativeLayout>
