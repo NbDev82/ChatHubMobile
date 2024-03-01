@@ -12,9 +12,11 @@ import com.example.infrastructure.Utils;
 import com.example.navigation.EAnimationType;
 import com.example.navigation.NavigationManager;
 import com.example.navigation.NavigationManagerImpl;
-import com.example.user.authservice.AuthService;
-import com.example.user.authservice.AuthServiceImpl;
+import com.example.user.repository.AuthRepos;
+import com.example.user.repository.AuthReposImpl;
 import com.example.user.EUserField;
+import com.example.user.repository.UserRepos;
+import com.example.user.repository.UserReposImpl;
 
 import java.util.Timer;
 import java.util.TimerTask;
@@ -22,7 +24,7 @@ import java.util.TimerTask;
 public class VerifyOtpActivity extends AppCompatActivity {
 
     private NavigationManager navigationManager;
-    private AuthService authService;
+    private AuthRepos authRepos;
     private VerifyOtpViewModel viewModel;
 
     @Override
@@ -32,8 +34,9 @@ public class VerifyOtpActivity extends AppCompatActivity {
 
         navigationManager = new NavigationManagerImpl(this);
 
-        authService = new AuthServiceImpl();
-        VerifyOtpViewModelFactory factory = new VerifyOtpViewModelFactory(authService);
+        UserRepos userRepos = new UserReposImpl();
+        authRepos = new AuthReposImpl(userRepos);
+        VerifyOtpViewModelFactory factory = new VerifyOtpViewModelFactory(authRepos);
         viewModel = new ViewModelProvider(this, factory).get(VerifyOtpViewModel.class);
 
         Bundle extras = getIntent().getExtras();
@@ -71,7 +74,7 @@ public class VerifyOtpActivity extends AppCompatActivity {
         startResendTimer();
         viewModel.setResendContentStatus(false);
 
-        authService.sendOtp(this,
+        authRepos.sendOtp(this,
                 phoneNumber,
                 isResend,
                 viewModel.getResendingToken(),

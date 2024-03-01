@@ -8,7 +8,7 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.example.infrastructure.BaseViewModel;
-import com.example.user.authservice.AuthService;
+import com.example.user.repository.AuthRepos;
 
 public class SignUpViewModel extends BaseViewModel {
 
@@ -45,8 +45,8 @@ public class SignUpViewModel extends BaseViewModel {
         return isSigningUp;
     }
 
-    public SignUpViewModel(AuthService authService) {
-        this.authService = authService;
+    public SignUpViewModel(AuthRepos authRepos) {
+        this.authRepos = authRepos;
     }
 
     public void navigateToLogin() {
@@ -78,7 +78,7 @@ public class SignUpViewModel extends BaseViewModel {
             return;
         }
         SignUpRequest signUpRequest = new SignUpRequest(email, password, confirmPassword);
-        authService.signUp(signUpRequest)
+        authRepos.signUp(signUpRequest)
                 .addOnSuccessListener(aVoid -> {
                     successToastMessage.postValue("Sign up successful");
                     isSigningUp.postValue(false);

@@ -7,7 +7,7 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.example.infrastructure.BaseViewModel;
-import com.example.user.authservice.AuthService;
+import com.example.user.repository.AuthRepos;
 
 public class HomeViewModel extends BaseViewModel {
 
@@ -39,10 +39,10 @@ public class HomeViewModel extends BaseViewModel {
         return navigateToLogin;
     }
 
-    public HomeViewModel(AuthService authService) {
-        this.authService = authService;
+    public HomeViewModel(AuthRepos authRepos) {
+        this.authRepos = authRepos;
 
-        this.authService.getCurrentUser()
+        this.authRepos.getCurrentUser()
                 .addOnSuccessListener(user -> {
                     if (user != null) {
                         email.postValue(user.getEmail());
@@ -66,7 +66,7 @@ public class HomeViewModel extends BaseViewModel {
     }
 
     public void signOut() {
-        authService.signOut();
+        authRepos.signOut();
         successToastMessage.postValue("Sign out");
         new Handler().postDelayed(new Runnable() {
             @Override

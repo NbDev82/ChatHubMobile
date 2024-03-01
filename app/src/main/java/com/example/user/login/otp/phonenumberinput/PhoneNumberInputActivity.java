@@ -12,13 +12,15 @@ import com.example.infrastructure.Utils;
 import com.example.navigation.EAnimationType;
 import com.example.navigation.NavigationManager;
 import com.example.navigation.NavigationManagerImpl;
-import com.example.user.authservice.AuthService;
-import com.example.user.authservice.AuthServiceImpl;
+import com.example.user.repository.AuthRepos;
+import com.example.user.repository.AuthReposImpl;
+import com.example.user.repository.UserRepos;
+import com.example.user.repository.UserReposImpl;
 
 public class PhoneNumberInputActivity extends AppCompatActivity {
 
     private NavigationManager navigationManager;
-    private AuthService authService;
+    private AuthRepos authRepos;
     private PhoneNumberInputViewModel viewModel;
 
     @Override
@@ -28,8 +30,9 @@ public class PhoneNumberInputActivity extends AppCompatActivity {
 
         navigationManager = new NavigationManagerImpl(this);
 
-        authService = new AuthServiceImpl();
-        PhoneNumberInputViewModelFactory factory = new PhoneNumberInputViewModelFactory(authService);
+        UserRepos userRepos = new UserReposImpl();
+        authRepos = new AuthReposImpl(userRepos);
+        PhoneNumberInputViewModelFactory factory = new PhoneNumberInputViewModelFactory(userRepos, authRepos);
         viewModel = new ViewModelProvider(this, factory).get(PhoneNumberInputViewModel.class);
 
         ActivityPhoneNumberInputBinding binding =

@@ -22,8 +22,10 @@ import com.example.infrastructure.Utils;
 import com.example.navigation.EAnimationType;
 import com.example.navigation.NavigationManager;
 import com.example.navigation.NavigationManagerImpl;
-import com.example.user.authservice.AuthService;
-import com.example.user.authservice.AuthServiceImpl;
+import com.example.user.repository.AuthRepos;
+import com.example.user.repository.AuthReposImpl;
+import com.example.user.repository.UserRepos;
+import com.example.user.repository.UserReposImpl;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
@@ -33,7 +35,8 @@ import com.google.android.gms.tasks.Task;
 public class AccountLinkingActivity extends AppCompatActivity {
 
     private NavigationManager navigationManager;
-    private AuthService authService;
+    private UserRepos userRepos;
+    private AuthRepos authRepos;
     private AccountLinkingViewModel viewModel;
 
     @Override
@@ -43,8 +46,9 @@ public class AccountLinkingActivity extends AppCompatActivity {
 
         navigationManager = new NavigationManagerImpl(this);
 
-        authService = new AuthServiceImpl();
-        AccountLinkingViewModelFactory factory = new AccountLinkingViewModelFactory(authService);
+        userRepos = new UserReposImpl();
+        authRepos = new AuthReposImpl(userRepos);
+        AccountLinkingViewModelFactory factory = new AccountLinkingViewModelFactory(authRepos);
         viewModel = new ViewModelProvider(this, factory).get(AccountLinkingViewModel.class);
 
         ActivityAccountLinkingBinding binding =
@@ -105,7 +109,8 @@ public class AccountLinkingActivity extends AppCompatActivity {
     }
 
     private void openPhoneCredentialDialog(PhoneCredentialDialogModel model) {
-        PhoneCredentialDialogFragment dialog = new PhoneCredentialDialogFragment(model);
+        PhoneCredentialDialogFragment dialog =
+                new PhoneCredentialDialogFragment(userRepos, authRepos, model);
         dialog.show(getSupportFragmentManager(), PhoneCredentialDialogFragment.TAG);
     }
 
@@ -115,7 +120,7 @@ public class AccountLinkingActivity extends AppCompatActivity {
     }
 
     private void openGithubSignInFlow(String email) {
-        authService.linkGithubWithCurrentUser(AccountLinkingActivity.this, email)
+        authRepos.linkGithubWithCurrentUser(AccountLinkingActivity.this, email)
                 .addOnSuccessListener(authResult -> {
                     viewModel.loginGithubSuccessfully();
                 })

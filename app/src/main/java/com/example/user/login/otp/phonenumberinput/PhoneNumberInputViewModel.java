@@ -8,9 +8,10 @@ import androidx.lifecycle.MutableLiveData;
 
 import com.example.infrastructure.BaseViewModel;
 import com.example.infrastructure.Utils;
-import com.example.user.authservice.AuthService;
+import com.example.user.repository.AuthRepos;
 import com.example.user.EUserField;
 import com.example.user.Validator;
+import com.example.user.repository.UserRepos;
 
 public class PhoneNumberInputViewModel extends BaseViewModel {
 
@@ -22,7 +23,7 @@ public class PhoneNumberInputViewModel extends BaseViewModel {
     private final MutableLiveData<Boolean> isPhoneVerifying = new MutableLiveData<>();
     private final MutableLiveData<Bundle> navigateToVerifyOtpWithPhoneNumber = new MutableLiveData<>();
     private final MutableLiveData<Boolean> navigateToSignUp = new MutableLiveData<>();
-    private AuthService authService;
+    private final UserRepos userRepos;
 
     public MutableLiveData<String> getCountryCode() {
         return countryCode;
@@ -48,8 +49,9 @@ public class PhoneNumberInputViewModel extends BaseViewModel {
         return navigateToSignUp;
     }
 
-    public PhoneNumberInputViewModel(AuthService authService) {
-        this.authService = authService;
+    public PhoneNumberInputViewModel(UserRepos userRepos, AuthRepos authRepos) {
+        this.userRepos = userRepos;
+        this.authRepos = authRepos;
     }
 
     public void checkPhoneNumber(CharSequence s) {
@@ -63,7 +65,7 @@ public class PhoneNumberInputViewModel extends BaseViewModel {
     public void verifyPhoneNumberAndNavigate() {
         this.isPhoneVerifying.postValue(true);
         String phoneNumber = getFullPhoneNumber();
-        authService.existsByPhoneNumber(phoneNumber)
+        userRepos.existsByPhoneNumber(phoneNumber)
                 .addOnSuccessListener(isExists -> {
                     this.isPhoneVerifying.postValue(false);
                     if (isExists) {

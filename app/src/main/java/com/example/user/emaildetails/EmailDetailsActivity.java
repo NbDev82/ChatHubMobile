@@ -12,8 +12,10 @@ import com.example.infrastructure.Utils;
 import com.example.navigation.EAnimationType;
 import com.example.navigation.NavigationManager;
 import com.example.navigation.NavigationManagerImpl;
-import com.example.user.authservice.AuthService;
-import com.example.user.authservice.AuthServiceImpl;
+import com.example.user.repository.AuthRepos;
+import com.example.user.repository.AuthReposImpl;
+import com.example.user.repository.UserRepos;
+import com.example.user.repository.UserReposImpl;
 
 public class EmailDetailsActivity extends AppCompatActivity {
 
@@ -27,8 +29,9 @@ public class EmailDetailsActivity extends AppCompatActivity {
 
         navigationManager = new NavigationManagerImpl(this);
 
-        AuthService authService = new AuthServiceImpl();
-        EmailDetailsViewModelFactory factory = new EmailDetailsViewModelFactory(authService);
+        UserRepos userRepos = new UserReposImpl();
+        AuthRepos authRepos = new AuthReposImpl(userRepos);
+        EmailDetailsViewModelFactory factory = new EmailDetailsViewModelFactory(authRepos);
         viewModel = new ViewModelProvider(this, factory).get(EmailDetailsViewModel.class);
 
         ActivityEmailDetailsBinding binding =

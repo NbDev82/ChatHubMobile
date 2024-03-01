@@ -10,14 +10,16 @@ import com.example.R;
 import com.example.customcontrol.customalertdialog.AlertDialogFragment;
 import com.example.customcontrol.customalertdialog.AlertDialogModel;
 import com.example.databinding.ActivityProfileViewerBinding;
-import com.example.friend.service.FriendRequestService;
-import com.example.friend.service.FriendRequestServiceImpl;
+import com.example.friend.repository.FriendRequestRepos;
+import com.example.friend.repository.FriendRequestReposImpl;
 import com.example.infrastructure.Utils;
 import com.example.navigation.EAnimationType;
 import com.example.navigation.NavigationManager;
 import com.example.navigation.NavigationManagerImpl;
-import com.example.user.authservice.AuthService;
-import com.example.user.authservice.AuthServiceImpl;
+import com.example.user.repository.AuthRepos;
+import com.example.user.repository.AuthReposImpl;
+import com.example.user.repository.UserRepos;
+import com.example.user.repository.UserReposImpl;
 
 public class ProfileViewerActivity extends AppCompatActivity {
 
@@ -31,10 +33,11 @@ public class ProfileViewerActivity extends AppCompatActivity {
 
         navigationManager = new NavigationManagerImpl(this);
 
-        AuthService authService = new AuthServiceImpl();
-        FriendRequestService friendRequestService = new FriendRequestServiceImpl(authService);
+        UserRepos userRepos = new UserReposImpl();
+        AuthRepos authRepos = new AuthReposImpl(userRepos);
+        FriendRequestRepos friendRequestRepos = new FriendRequestReposImpl(userRepos, authRepos);
         ProfileViewerViewModelFactory factory =
-                new ProfileViewerViewModelFactory(authService, friendRequestService);
+                new ProfileViewerViewModelFactory(userRepos, authRepos, friendRequestRepos);
         viewModel = new ViewModelProvider(this, factory).get(ProfileViewerViewModel.class);
 
         ActivityProfileViewerBinding binding = DataBindingUtil

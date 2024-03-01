@@ -9,12 +9,13 @@ import androidx.lifecycle.MutableLiveData;
 
 import com.example.customcontrol.customalertdialog.AlertDialogModel;
 import com.example.friend.FriendRequest;
-import com.example.friend.service.FriendRequestService;
+import com.example.friend.repository.FriendRequestRepos;
 import com.example.infrastructure.BaseViewModel;
 import com.example.infrastructure.Utils;
-import com.example.user.authservice.AuthService;
+import com.example.user.repository.AuthRepos;
 import com.example.user.EGender;
 import com.example.user.User;
+import com.example.user.repository.UserRepos;
 
 import java.util.Date;
 
@@ -31,8 +32,9 @@ public class ProfileViewerViewModel extends BaseViewModel {
     private final MutableLiveData<Boolean> isUserInitializing = new MutableLiveData<>();
     private final MutableLiveData<Boolean> isLoading = new MutableLiveData<>();
     private final MutableLiveData<EFriendshipStatus> friendshipStatus = new MutableLiveData<>(EFriendshipStatus.NOT_FOUND);
-    private final AuthService authService;
-    private final FriendRequestService friendRequestService;
+    private final UserRepos userRepos;
+    private final AuthRepos authRepos;
+    private final FriendRequestRepos friendRequestRepos;
     private String displayedUserId = "";
     private String friendRequestId = "";
 
@@ -72,14 +74,17 @@ public class ProfileViewerViewModel extends BaseViewModel {
         return friendshipStatus;
     }
 
-    public ProfileViewerViewModel(AuthService authService, FriendRequestService friendRequestService) {
-        this.authService = authService;
-        this.friendRequestService = friendRequestService;
+    public ProfileViewerViewModel(UserRepos userRepos,
+                                  AuthRepos authRepos,
+                                  FriendRequestRepos friendRequestRepos) {
+        this.userRepos = userRepos;
+        this.authRepos = authRepos;
+        this.friendRequestRepos = friendRequestRepos;
     }
 
     public void fetchUserInformation() {
         isUserInitializing.postValue(true);
-        authService.getUserByUid(displayedUserId)
+        userRepos.getUserByUid(displayedUserId)
                 .addOnSuccessListener(user -> {
                     setUser(user);
                     new Handler().postDelayed(() -> {
@@ -113,8 +118,8 @@ public class ProfileViewerViewModel extends BaseViewModel {
     }
 
     public void checkFriendRequestStatus() {
-        String currentUserId = authService.getCurrentUid();
-//        friendRequestService.getFriendRequest(displayedUserId, currentUserId)
+        String currentUserId = authRepos.getCurrentUid();
+//        friendRequestRepos.getFriendRequest(displayedUserId, currentUserId)
 //                .addOnSuccessListener(friendRequest -> {
 //                    if (friendRequest == null) {
 //                        friendshipStatus.postValue(EFriendshipStatus.NOT_FRIEND);
@@ -165,10 +170,10 @@ public class ProfileViewerViewModel extends BaseViewModel {
                 .setTitle("Send Friend Request")
                 .setMessage("Are you sure you want to send a friend request?")
                 .setPositiveButton("Ok", aVoid -> {
-                    String loggedUserId = authService.getCurrentUid();
+                    String loggedUserId = authRepos.getCurrentUid();
                     FriendRequest friendRequest =
                             new FriendRequest(loggedUserId, displayedUserId, FriendRequest.EStatus.PENDING, new Date());
-                    friendRequestService.addFriendRequest(friendRequest);
+                    friendRequestRepos.addFriendRequest(friendRequest);
                 })
                 .setNegativeButton("Cancel", null)
                 .build();
@@ -189,7 +194,7 @@ public class ProfileViewerViewModel extends BaseViewModel {
 
     public void acceptFriendRequest() {
         isLoading.postValue(true);
-        friendRequestService
+        friendRequestRepos
                 .updateFriendRequestStatus(friendRequestId, FriendRequest.EStatus.ACCEPTED)
                 .addOnSuccessListener(aVoid -> {
                     successToastMessage.postValue("Accept successfully");
@@ -204,7 +209,7 @@ public class ProfileViewerViewModel extends BaseViewModel {
 
     public void rejectFriendRequest() {
         isLoading.postValue(true);
-        friendRequestService
+        friendRequestRepos
                 .updateFriendRequestStatus(friendRequestId, FriendRequest.EStatus.REJECTED)
                 .addOnSuccessListener(aVoid -> {
                     successToastMessage.postValue("Reject successfully");
@@ -223,7 +228,7 @@ public class ProfileViewerViewModel extends BaseViewModel {
                 .setMessage("Are you sure you want to unfriend?")
                 .setPositiveButton("Ok", aVoid -> {
                     isLoading.postValue(true);
-                    friendRequestService
+                    friendRequestRepos
                             .updateFriendRequestStatus(friendRequestId, FriendRequest.EStatus.NONE)
                             .addOnSuccessListener(aUpdateVoid -> {
                                 successToastMessage.postValue("Unfriend successfully");

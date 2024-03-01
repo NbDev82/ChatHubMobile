@@ -10,7 +10,7 @@ import com.example.customcontrol.inputdialogfragment.EInputType;
 import com.example.customcontrol.inputdialogfragment.InputDialogModel;
 import com.example.customcontrol.phonecredential.PhoneCredentialDialogModel;
 import com.example.infrastructure.BaseViewModel;
-import com.example.user.authservice.AuthService;
+import com.example.user.repository.AuthRepos;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.Task;
@@ -38,7 +38,7 @@ public class AccountLinkingViewModel extends BaseViewModel {
     private final MutableLiveData<PhoneCredentialDialogModel> openPhoneCredentialDialog = new MutableLiveData<>();
     private final MutableLiveData<InputDialogModel> openInputDialog = new MutableLiveData<>();
     private final MutableLiveData<String> openGithubLinkingFlow = new MutableLiveData<>();
-    private final AuthService authService;
+    private final AuthRepos authRepos;
 
     public LiveData<Boolean> getNavigateToSettings() {
         return navigateToSettings;
@@ -96,8 +96,8 @@ public class AccountLinkingViewModel extends BaseViewModel {
         return openGithubLinkingFlow;
     }
 
-    public AccountLinkingViewModel(AuthService authService) {
-        this.authService = authService;
+    public AccountLinkingViewModel(AuthRepos authRepos) {
+        this.authRepos = authRepos;
 
         loadProviders();
     }
@@ -108,7 +108,7 @@ public class AccountLinkingViewModel extends BaseViewModel {
         isSmsAccountLinked.postValue(false);
         isGithubAccountLinked.postValue(false);
 
-        authService.fetchSignInMethods()
+        authRepos.fetchSignInMethods()
                 .addOnSuccessListener(providerIds -> {
                     for (String providerId : providerIds) {
                         switch (providerId) {
@@ -140,17 +140,17 @@ public class AccountLinkingViewModel extends BaseViewModel {
         EmailPasswordDialogModel model = new EmailPasswordDialogModel.Builder()
                 .setTitle("In-app password")
                 .setSubTitle("Enter your information for password setup")
-                .setEmail( authService.getCurrentEmail() )
+                .setEmail( authRepos.getCurrentEmail() )
                 .setPassword("")
                 .setSubmitButtonClickListener((email, password) -> {
                     isInAppAdding.postValue(true);
-                    if (!authService.isCurrentUserEmail(email)) {
+                    if (!authRepos.isCurrentUserEmail(email)) {
                         errorToastMessage.postValue("Your typed email mismatch");
                         isInAppAdding.postValue(false);
                         return;
                     }
 
-                    authService.updatePassword(password)
+                    authRepos.updatePassword(password)
                             .addOnSuccessListener(aVoid -> {
                                 loadProviders();
                                 isInAppAdding.postValue(false);
@@ -180,7 +180,7 @@ public class AccountLinkingViewModel extends BaseViewModel {
             GoogleSignInAccount account = completedTask.getResult(ApiException.class);
             String idToken = account.getIdToken();
             AuthCredential googleCredential = GoogleAuthProvider.getCredential(idToken, null);
-            authService.linkCurrentUserWithCredential(googleCredential)
+            authRepos.linkCurrentUserWithCredential(googleCredential)
                     .addOnSuccessListener(authResult -> {
                         loadProviders();
                         successToastMessage.postValue("Link google account successfully");
@@ -231,7 +231,7 @@ public class AccountLinkingViewModel extends BaseViewModel {
         PhoneCredentialDialogModel model = new PhoneCredentialDialogModel.Builder()
                 .setVerifyButtonClickListener(phoneAuthCredential -> {
                     isSmsAdding.postValue(true);
-                    authService.linkCurrentUserWithPhoneAuthCredential(phoneAuthCredential)
+                    authRepos.linkCurrentUserWithPhoneAuthCredential(phoneAuthCredential)
                             .addOnSuccessListener(authResult -> {
                                 loadProviders();
                                 isSmsAdding.postValue(false);

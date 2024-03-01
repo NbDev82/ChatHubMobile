@@ -11,8 +11,10 @@ import com.example.databinding.ActivityGithubAuthBinding;
 import com.example.navigation.EAnimationType;
 import com.example.navigation.NavigationManager;
 import com.example.navigation.NavigationManagerImpl;
-import com.example.user.authservice.AuthService;
-import com.example.user.authservice.AuthServiceImpl;
+import com.example.user.repository.AuthRepos;
+import com.example.user.repository.AuthReposImpl;
+import com.example.user.repository.UserRepos;
+import com.example.user.repository.UserReposImpl;
 
 public class GithubAuthActivity extends AppCompatActivity {
 
@@ -28,8 +30,9 @@ public class GithubAuthActivity extends AppCompatActivity {
         ActivityGithubAuthBinding binding =
                 DataBindingUtil.setContentView(this, R.layout.activity_github_auth);
 
-        AuthService authService = new AuthServiceImpl();
-        GithubAuthViewModelFactory factory = new GithubAuthViewModelFactory(this, authService);
+        UserRepos userRepos = new UserReposImpl();
+        AuthRepos authRepos = new AuthReposImpl(userRepos);
+        GithubAuthViewModelFactory factory = new GithubAuthViewModelFactory(this, authRepos);
         viewModel = new ViewModelProvider(this, factory).get(GithubAuthViewModel.class);
 
         binding.setViewModel(viewModel);

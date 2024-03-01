@@ -11,10 +11,10 @@ import com.example.customcontrol.snackbar.SnackbarModel;
 import com.example.friend.FriendRequest;
 import com.example.friend.FriendRequestView;
 import com.example.friend.friendrequest.adapter.FriendRequestListener;
-import com.example.friend.service.FriendRequestService;
+import com.example.friend.repository.FriendRequestRepos;
 import com.example.infrastructure.BaseViewModel;
 import com.example.infrastructure.Utils;
-import com.example.user.authservice.AuthService;
+import com.example.user.repository.AuthRepos;
 import com.google.android.material.snackbar.Snackbar;
 
 import java.util.ArrayList;
@@ -30,9 +30,9 @@ public class FriendRequestsViewModel extends BaseViewModel implements FriendRequ
     private final MutableLiveData<Bundle> navigateToProfileViewer = new MutableLiveData<>();
     private final MutableLiveData<List<FriendRequestView>> friendRequests = new MutableLiveData<>(new ArrayList<>());
     private final MutableLiveData<Boolean> isRequestsLoading = new MutableLiveData<>();
-    private MutableLiveData<SnackbarModel> snackbarModel = new MutableLiveData<>();
-    private final AuthService authService;
-    private final FriendRequestService friendRequestService;
+    private final MutableLiveData<SnackbarModel> snackbarModel = new MutableLiveData<>();
+    private final AuthRepos authRepos;
+    private final FriendRequestRepos friendRequestRepos;
 
     public LiveData<Boolean> getNavigateToHome() {
         return navigateToHome;
@@ -62,16 +62,16 @@ public class FriendRequestsViewModel extends BaseViewModel implements FriendRequ
         return snackbarModel;
     }
 
-    public FriendRequestsViewModel(AuthService authService,
-                                   FriendRequestService friendRequestService) {
-        this.authService = authService;
-        this.friendRequestService = friendRequestService;
+    public FriendRequestsViewModel(AuthRepos authRepos,
+                                   FriendRequestRepos friendRequestRepos) {
+        this.authRepos = authRepos;
+        this.friendRequestRepos = friendRequestRepos;
     }
 
     public void loadFriendRequests() {
         this.isRequestsLoading.postValue(true);
-        String uid = authService.getCurrentUid();
-        friendRequestService.getPendingFriendRequestsByRecipientId(uid)
+        String uid = authRepos.getCurrentUid();
+        friendRequestRepos.getPendingFriendRequestsByRecipientId(uid)
                 .addOnSuccessListener(friendRequests -> {
                     this.isRequestsLoading.postValue(false);
                     this.friendRequests.postValue(friendRequests);
@@ -140,7 +140,7 @@ public class FriendRequestsViewModel extends BaseViewModel implements FriendRequ
                         return;
                     }
 
-                    friendRequestService
+                    friendRequestRepos
                             .updateFriendRequestStatus(request.getFriendRequest().getId(), status)
                             .addOnSuccessListener(aVoid -> {})
                             .addOnFailureListener(e -> {

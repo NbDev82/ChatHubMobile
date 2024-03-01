@@ -7,7 +7,7 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.example.infrastructure.BaseViewModel;
-import com.example.user.authservice.AuthService;
+import com.example.user.repository.AuthRepos;
 
 public class ForgotPasswordViewModel extends BaseViewModel {
 
@@ -29,8 +29,8 @@ public class ForgotPasswordViewModel extends BaseViewModel {
         return isSending;
     }
 
-    public ForgotPasswordViewModel(AuthService authService) {
-        this.authService = authService;
+    public ForgotPasswordViewModel(AuthRepos authRepos) {
+        this.authRepos = authRepos;
     }
 
     public void navigateToLogin() {
@@ -46,7 +46,7 @@ public class ForgotPasswordViewModel extends BaseViewModel {
         }
         
         this.email.postValue( email.trim() );
-        authService.sendPasswordResetEmail(email)
+        authRepos.sendPasswordResetEmail(email)
                 .addOnSuccessListener(aVoid -> {
                     successToastMessage.postValue("Password reset link sent to your Email");
                     isSending.postValue(false);

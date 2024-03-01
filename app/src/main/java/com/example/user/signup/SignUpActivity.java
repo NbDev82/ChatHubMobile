@@ -13,8 +13,10 @@ import com.example.infrastructure.Utils;
 import com.example.navigation.EAnimationType;
 import com.example.navigation.NavigationManager;
 import com.example.navigation.NavigationManagerImpl;
-import com.example.user.authservice.AuthService;
-import com.example.user.authservice.AuthServiceImpl;
+import com.example.user.repository.AuthRepos;
+import com.example.user.repository.AuthReposImpl;
+import com.example.user.repository.UserRepos;
+import com.example.user.repository.UserReposImpl;
 
 public class SignUpActivity extends AppCompatActivity {
 
@@ -30,8 +32,10 @@ public class SignUpActivity extends AppCompatActivity {
 
         ActivitySignUpBinding binding = DataBindingUtil
                 .setContentView(this, R.layout.activity_sign_up);
-        AuthService authService = new AuthServiceImpl();
-        SignUpViewModelFactory factory = new SignUpViewModelFactory(authService);
+
+        UserRepos userRepos = new UserReposImpl();
+        AuthRepos authRepos = new AuthReposImpl(userRepos);
+        SignUpViewModelFactory factory = new SignUpViewModelFactory(authRepos);
         viewModel = new ViewModelProvider(this, factory).get(SignUpViewModel.class);
         binding.setViewModel(viewModel);
         binding.setLifecycleOwner(this);

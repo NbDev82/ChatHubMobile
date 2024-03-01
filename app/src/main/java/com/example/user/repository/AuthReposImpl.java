@@ -1,4 +1,4 @@
-package com.example.user.authservice;
+package com.example.user.repository;
 
 import android.app.Activity;
 import android.text.TextUtils;
@@ -12,7 +12,6 @@ import com.example.user.EUserField;
 import com.example.user.EmailMismatchException;
 import com.example.user.User;
 import com.example.user.UserNotAuthenticatedException;
-import com.example.user.UserNotFoundException;
 import com.example.user.changepassword.UpdatePasswordRequest;
 import com.example.user.login.SignInRequest;
 import com.example.user.signup.SignUpRequest;
@@ -29,30 +28,23 @@ import com.google.firebase.auth.PhoneAuthCredential;
 import com.google.firebase.auth.PhoneAuthOptions;
 import com.google.firebase.auth.PhoneAuthProvider;
 import com.google.firebase.auth.UserInfo;
-import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.Query;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
-public class AuthServiceImpl implements AuthService {
+public class AuthReposImpl implements AuthRepos {
 
-    private static final String TAG = AuthServiceImpl.class.getSimpleName();
+    private static final String TAG = AuthReposImpl.class.getSimpleName();
 
+    private final UserRepos userRepos;
     private FirebaseAuth auth;
-    private FirebaseFirestore db;
 
-    public AuthServiceImpl() {
+    public AuthReposImpl(UserRepos userRepos) {
+        this.userRepos = userRepos;
         auth = FirebaseAuth.getInstance();
-        db = FirebaseFirestore.getInstance();
     }
 
     @Override
@@ -67,7 +59,7 @@ public class AuthServiceImpl implements AuthService {
                 FirebaseUser firebaseUser = auth.getCurrentUser();
                 String uid = firebaseUser.getUid();
                 User user = new User(email);
-                addUser(uid, user).addOnSuccessListener(aVoid -> {
+                userRepos.addUser(uid, user).addOnSuccessListener(aVoid -> {
                     source.setResult(null);
                 }).addOnFailureListener(source::setException);
             } else {
@@ -76,24 +68,6 @@ public class AuthServiceImpl implements AuthService {
         });
 
         return source.getTask();
-    }
-
-    private Task<Void> addUser(String uid, User user) {
-        DocumentReference userRef = db
-                .collection(EUserField.COLLECTION_NAME.getName())
-                .document(uid);
-
-        Map<String, Object> data = new HashMap<>();
-        data.put(EUserField.FULL_NAME.getName(), user.getFullName());
-        data.put(EUserField.EMAIL.getName(), user.getEmail());
-        data.put(EUserField.PHONE_NUMBER.getName(), user.getPhoneNumber());
-        data.put(EUserField.GENDER.getName(), user.getGender());
-        data.put(EUserField.BIRTHDAY.getName(), user.getBirthday());
-        data.put(EUserField.IMAGE_URL.getName(), user.getImageUrl());
-        data.put(EUserField.IS_ONLINE.getName(), user.isOnline());
-        data.put(EUserField.IS_DELETED.getName(), user.isDeleted());
-
-        return userRef.set(data);
     }
 
     @Override
@@ -130,7 +104,7 @@ public class AuthServiceImpl implements AuthService {
                     .addOnSuccessListener(authResult -> {
                         FirebaseUser curUser = authResult.getUser();
 
-                        checkUserExistsByEmail(curUser.getEmail())
+                        userRepos.checkUserExistsByEmail(curUser.getEmail())
                                 .addOnSuccessListener(exits -> {
                                     if (exits) {
                                         source.setResult(authResult);
@@ -138,7 +112,7 @@ public class AuthServiceImpl implements AuthService {
                                     }
                                     String uid = curUser.getUid();
                                     User user = new User(curUser.getEmail());
-                                    addUser(uid, user)
+                                    userRepos.addUser(uid, user)
                                             .addOnSuccessListener(aVoid -> source.setResult(authResult))
                                             .addOnFailureListener(e -> {
                                                 source.setException(e);
@@ -156,27 +130,6 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public Task<Void> updateOnlineStatus(String uid, boolean isOnline) {
-        DocumentReference userRef = db.collection(EUserField.COLLECTION_NAME.getName())
-                .document(uid);
-        return userRef.update(EUserField.IS_ONLINE.getName(), isOnline);
-    }
-
-    @Override
-    public Task<Void> updateEmail(String uid, String email) {
-        DocumentReference userRef = db.collection(EUserField.COLLECTION_NAME.getName())
-                .document(uid);
-        return userRef.update(EUserField.EMAIL.getName(), email);
-    }
-
-    @Override
-    public Task<Void> updatePhoneNumber(String uid, String phoneNumber) {
-        DocumentReference userRef = db.collection(EUserField.COLLECTION_NAME.getName())
-                .document(uid);
-        return userRef.update(EUserField.PHONE_NUMBER.getName(), phoneNumber);
-    }
-
-    @Override
     public String getCurrentUid() {
         FirebaseUser firebaseUser = auth.getCurrentUser();
         return firebaseUser != null ? firebaseUser.getUid() : "";
@@ -185,30 +138,7 @@ public class AuthServiceImpl implements AuthService {
     @Override
     public Task<User> getCurrentUser() {
         String uid = getCurrentUid();
-        return getUserByUid(uid);
-    }
-
-    @Override
-    public Task<User> getUserByUid(String uid) {
-        if (uid == null || uid.isEmpty()) {
-            return Tasks.forException(new IllegalArgumentException("Invalid UID"));
-        }
-
-        return db.collection(EUserField.COLLECTION_NAME.getName())
-                .document(uid)
-                .get()
-                .continueWith(task -> {
-                    if (task.isSuccessful()) {
-                        DocumentSnapshot document = task.getResult();
-                        User user = convertDocumentToModel(document);
-                        if (user == null) {
-                            throw new UserNotFoundException("Could not find any user with uid=" + uid);
-                        }
-                        return user;
-                    } else {
-                        throw task.getException();
-                    }
-                });
+        return userRepos.getUserByUid(uid);
     }
 
     private User convertDocumentToModel(DocumentSnapshot documentSnapshot) {
@@ -238,21 +168,6 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public Task<Boolean> checkUserExistsByEmail(String email) {
-        CollectionReference usersRef = db.collection(EUserField.COLLECTION_NAME.getName());
-
-        Query query = usersRef.whereEqualTo(EUserField.EMAIL.getName(), email);
-        return query.get()
-                .continueWith(task -> {
-                    if (task.isSuccessful()) {
-                        return !task.getResult().isEmpty();
-                    } else {
-                        throw Objects.requireNonNull(task.getException());
-                    }
-                });
-    }
-
-    @Override
     public void signOut() {
         auth.signOut();
     }
@@ -265,20 +180,6 @@ public class AuthServiceImpl implements AuthService {
     @Override
     public boolean isLoggedIn() {
         return auth.getCurrentUser() != null;
-    }
-
-    @Override
-    public Task<Void> updateBasicUser(String uid, User user) {
-        CollectionReference usersRef = db.collection(EUserField.COLLECTION_NAME.getName());
-        DocumentReference userRef = usersRef.document(uid);
-
-        Map<String, Object> updates = new HashMap<>();
-        updates.put(EUserField.IMAGE_URL.getName(), user.getImageUrl());
-        updates.put(EUserField.FULL_NAME.getName(), user.getFullName());
-        updates.put(EUserField.GENDER.getName(), user.getGender());
-        updates.put(EUserField.BIRTHDAY.getName(), user.getBirthday());
-
-        return userRef.update(updates);
     }
 
     @Override
@@ -389,7 +290,7 @@ public class AuthServiceImpl implements AuthService {
                 .addOnSuccessListener(authResult -> {
                     FirebaseUser linkedUser = authResult.getUser();
                     String phoneNumber = linkedUser.getPhoneNumber();
-                    updatePhoneNumber(user.getUid(), phoneNumber)
+                    userRepos.updatePhoneNumber(user.getUid(), phoneNumber)
                             .addOnSuccessListener(aVoid -> {
                                 source.setResult(authResult);
                             })
@@ -506,7 +407,7 @@ public class AuthServiceImpl implements AuthService {
                         return;
                     }
 
-                    checkUserExistsByEmail(curUser.getEmail())
+                    userRepos.checkUserExistsByEmail(curUser.getEmail())
                             .addOnSuccessListener(exists -> {
                                 if (exists) {
                                     source.setResult(null);
@@ -514,7 +415,7 @@ public class AuthServiceImpl implements AuthService {
                                 }
                                 String uid = curUser.getUid();
                                 User user = new User(curUser.getEmail());
-                                addUser(uid, user)
+                                userRepos.addUser(uid, user)
                                         .addOnSuccessListener(aVoid -> source.setResult(null))
                                         .addOnFailureListener(e -> {
                                             source.setException(e);
@@ -526,26 +427,6 @@ public class AuthServiceImpl implements AuthService {
                                 Log.e(TAG, "Error fetching user data: " + e);
                             });
                 });
-
-        return source.getTask();
-    }
-
-    @Override
-    public Task<Boolean> existsByPhoneNumber(String phoneNumber) {
-        TaskCompletionSource<Boolean> source = new TaskCompletionSource<>();
-
-        CollectionReference usersRef = db.collection(EUserField.COLLECTION_NAME.getName());
-        Query query = usersRef.whereEqualTo(EUserField.PHONE_NUMBER.getName(), phoneNumber)
-                .limit(1);
-        query.get().addOnCompleteListener(task -> {
-            if (task.isSuccessful()) {
-                boolean exists = !task.getResult().isEmpty();
-                source.setResult(exists);
-            } else {
-                Exception exception = task.getException();
-                source.setException(exception);
-            }
-        });
 
         return source.getTask();
     }
@@ -603,9 +484,5 @@ public class AuthServiceImpl implements AuthService {
                     .addOnFailureListener(source::setException);
         }
         return source.getTask();
-    }
-
-    private CollectionReference getUsersRef() {
-        return db.collection(EUserField.COLLECTION_NAME.getName());
     }
 }

@@ -6,7 +6,7 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.example.infrastructure.BaseViewModel;
-import com.example.user.authservice.AuthService;
+import com.example.user.repository.AuthRepos;
 import com.example.user.UserNotAuthenticatedException;
 import com.example.user.Validator;
 import com.google.firebase.auth.EmailAuthProvider;
@@ -28,7 +28,7 @@ public class ChangePasswordViewModel extends BaseViewModel {
     private final MutableLiveData<String> confirmPasswordError = new MutableLiveData<>();
     private final MutableLiveData<Boolean> canPerformUpdate = new MutableLiveData<>();
     private final MutableLiveData<Boolean> isUpdating = new MutableLiveData<>();
-    private final AuthService authService;
+    private final AuthRepos authRepos;
 
     public MutableLiveData<Boolean> getNavigateToAccountLinking() {
         return navigateToAccountLinking;
@@ -74,14 +74,14 @@ public class ChangePasswordViewModel extends BaseViewModel {
         return isUpdating;
     }
 
-    public ChangePasswordViewModel(AuthService authService) {
-        this.authService = authService;
+    public ChangePasswordViewModel(AuthRepos authRepos) {
+        this.authRepos = authRepos;
 
         checkPasswordSetStatus();
     }
 
     private void checkPasswordSetStatus() {
-        authService.fetchSignInMethods()
+        authRepos.fetchSignInMethods()
                 .addOnSuccessListener(providerIds -> {
                     boolean isPasswordSet = providerIds.stream()
                             .anyMatch(signInMethod -> Objects.equals(signInMethod, EmailAuthProvider.PROVIDER_ID));
@@ -146,7 +146,7 @@ public class ChangePasswordViewModel extends BaseViewModel {
         String currentPassword = this.oldPassword.getValue();
         String newPassword = this.newPassword.getValue();
         UpdatePasswordRequest request = new UpdatePasswordRequest(email, currentPassword, newPassword);
-        authService.updatePassword(request)
+        authRepos.updatePassword(request)
                 .addOnSuccessListener(aVoid -> {
                     successToastMessage.postValue("Update successfully");
                     isUpdating.postValue(false);

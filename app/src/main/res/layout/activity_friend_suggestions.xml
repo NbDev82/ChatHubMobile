@@ -78,14 +78,14 @@
                 android:overScrollMode="never"
                 android:padding="@dimen/_5sdp"
                 android:adapter="@{suggestionAdapter}"
-                android:visibility="@{viewModel.isSuggestionLoading ? View.GONE : View.VISIBLE}"
+                android:visibility="@{viewModel.isSuggestionsLoading ? View.GONE : View.VISIBLE}"
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                 tools:visibility="gone" />
 
             <ProgressBar
                 android:layout_width="@dimen/_25sdp"
                 android:layout_height="@dimen/_25sdp"
-                android:visibility="@{viewModel.isSuggestionLoading ? View.VISIBLE : View.GONE}"
+                android:visibility="@{viewModel.isSuggestionsLoading ? View.VISIBLE : View.GONE}"
                 android:layout_gravity="center" />
 
         </FrameLayout>

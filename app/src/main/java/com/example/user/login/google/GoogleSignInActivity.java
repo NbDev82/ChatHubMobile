@@ -16,9 +16,11 @@ import com.example.infrastructure.Utils;
 import com.example.navigation.EAnimationType;
 import com.example.navigation.NavigationManager;
 import com.example.navigation.NavigationManagerImpl;
-import com.example.user.authservice.AuthService;
-import com.example.user.authservice.AuthServiceImpl;
+import com.example.user.repository.AuthRepos;
+import com.example.user.repository.AuthReposImpl;
 import com.example.user.login.LoginActivity;
+import com.example.user.repository.UserRepos;
+import com.example.user.repository.UserReposImpl;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
@@ -38,8 +40,9 @@ public class GoogleSignInActivity extends LoginActivity {
 
         navigationManager = new NavigationManagerImpl(this);
 
-        AuthService authService = new AuthServiceImpl();
-        GoogleSignInViewModelFactory factory = new GoogleSignInViewModelFactory(authService);
+        UserRepos userRepos = new UserReposImpl();
+        AuthRepos authRepos = new AuthReposImpl(userRepos);
+        GoogleSignInViewModelFactory factory = new GoogleSignInViewModelFactory(authRepos);
         viewModel = new ViewModelProvider(this, factory).get(GoogleSignInViewModel.class);
 
         loadingDialog = new LoadingDialog(GoogleSignInActivity.this);

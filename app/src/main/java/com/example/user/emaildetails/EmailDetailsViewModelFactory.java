@@ -4,21 +4,21 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 
-import com.example.user.authservice.AuthService;
+import com.example.user.repository.AuthRepos;
 
 public class EmailDetailsViewModelFactory implements ViewModelProvider.Factory {
 
-    private final AuthService authService;
+    private final AuthRepos authRepos;
 
-    public EmailDetailsViewModelFactory(AuthService mAuthService) {
-        this.authService = mAuthService;
+    public EmailDetailsViewModelFactory(AuthRepos mAuthService) {
+        this.authRepos = mAuthService;
     }
 
     @NonNull
     @Override
     public <T extends ViewModel> T create(@NonNull Class<T> modelClass) {
         if (modelClass.isAssignableFrom(EmailDetailsViewModel.class)) {
-            return (T) new EmailDetailsViewModel(authService);
+            return (T) new EmailDetailsViewModel(authRepos);
         }
         throw new IllegalArgumentException("Unknown ViewModel class");
     }

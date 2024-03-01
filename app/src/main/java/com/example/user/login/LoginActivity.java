@@ -12,8 +12,10 @@ import com.example.infrastructure.Utils;
 import com.example.navigation.EAnimationType;
 import com.example.navigation.NavigationManager;
 import com.example.navigation.NavigationManagerImpl;
-import com.example.user.authservice.AuthService;
-import com.example.user.authservice.AuthServiceImpl;
+import com.example.user.repository.AuthRepos;
+import com.example.user.repository.AuthReposImpl;
+import com.example.user.repository.UserRepos;
+import com.example.user.repository.UserReposImpl;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -30,8 +32,9 @@ public class LoginActivity extends AppCompatActivity {
         ActivityLoginBinding binding = DataBindingUtil
                 .setContentView(this, R.layout.activity_login);
 
-        AuthService authService = new AuthServiceImpl();
-        LoginViewModelFactory factory = new LoginViewModelFactory(authService);
+        UserRepos userRepos = new UserReposImpl();
+        AuthRepos authRepos = new AuthReposImpl(userRepos);
+        LoginViewModelFactory factory = new LoginViewModelFactory(authRepos);
         viewModel = new ViewModelProvider(this, factory).get(LoginViewModel.class);
         binding.setViewModel(viewModel);
         binding.setLifecycleOwner(this);

@@ -1,4 +1,4 @@
-package com.example.friend.service;
+package com.example.friend.repository;
 
 import com.example.friend.FriendRequest;
 import com.example.friend.FriendRequestView;
@@ -6,7 +6,7 @@ import com.google.android.gms.tasks.Task;
 
 import java.util.List;
 
-public interface FriendRequestService {
+public interface FriendRequestRepos {
     Task<List<FriendRequestView>> getPendingFriendRequestsBySenderId(String senderId);
     Task<List<FriendRequestView>> getPendingFriendRequestsByRecipientId(String recipientId);
     Task<FriendRequest.EStatus> getFriendRequestStatus(String senderId, String recipientId);

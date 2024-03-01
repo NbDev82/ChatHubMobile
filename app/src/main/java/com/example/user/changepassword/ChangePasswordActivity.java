@@ -12,8 +12,10 @@ import com.example.infrastructure.Utils;
 import com.example.navigation.EAnimationType;
 import com.example.navigation.NavigationManager;
 import com.example.navigation.NavigationManagerImpl;
-import com.example.user.authservice.AuthService;
-import com.example.user.authservice.AuthServiceImpl;
+import com.example.user.repository.AuthRepos;
+import com.example.user.repository.AuthReposImpl;
+import com.example.user.repository.UserRepos;
+import com.example.user.repository.UserReposImpl;
 
 public class ChangePasswordActivity extends AppCompatActivity {
 
@@ -26,8 +28,9 @@ public class ChangePasswordActivity extends AppCompatActivity {
 
         navigationManager = new NavigationManagerImpl(this);
 
-        AuthService authService = new AuthServiceImpl();
-        ChangePasswordViewModelFactory factory = new ChangePasswordViewModelFactory(authService);
+        UserRepos userRepos = new UserReposImpl();
+        AuthRepos authRepos = new AuthReposImpl(userRepos);
+        ChangePasswordViewModelFactory factory = new ChangePasswordViewModelFactory(authRepos);
         ChangePasswordViewModel viewModel = new ViewModelProvider(this, factory)
                 .get(ChangePasswordViewModel.class);
 

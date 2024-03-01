@@ -5,7 +5,7 @@ import android.util.Log;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
-import com.example.user.authservice.AuthService;
+import com.example.user.repository.AuthRepos;
 import com.example.user.login.LoginViewModel;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.common.api.ApiException;
@@ -28,8 +28,8 @@ public class GoogleSignInViewModel extends LoginViewModel {
         return navigateToHome;
     }
 
-    public GoogleSignInViewModel(AuthService authService) {
-        super(authService);
+    public GoogleSignInViewModel(AuthRepos authRepos) {
+        super(authRepos);
 
         isLoading.postValue(true);
     }
@@ -46,7 +46,7 @@ public class GoogleSignInViewModel extends LoginViewModel {
 
     private void signInWithIdToken(String idToken) {
         AuthCredential credential = GoogleAuthProvider.getCredential(idToken, null);
-        authService.signInWithCredential(credential)
+        authRepos.signInWithCredential(credential)
                 .addOnSuccessListener(aVoid -> {
                     isLoading.postValue(false);
                     navigateToHome();

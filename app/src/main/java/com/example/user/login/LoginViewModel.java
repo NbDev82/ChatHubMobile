@@ -9,7 +9,7 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.example.infrastructure.BaseViewModel;
-import com.example.user.authservice.AuthService;
+import com.example.user.repository.AuthRepos;
 
 public class LoginViewModel extends BaseViewModel {
 
@@ -61,8 +61,8 @@ public class LoginViewModel extends BaseViewModel {
         return isLogging;
     }
 
-    public LoginViewModel(AuthService authService) {
-        this.authService = authService;
+    public LoginViewModel(AuthRepos authRepos) {
+        this.authRepos = authRepos;
     }
 
     public void onLoginBtnClick() {
@@ -86,7 +86,7 @@ public class LoginViewModel extends BaseViewModel {
         }
 
         SignInRequest signInRequest = new SignInRequest(email, password);
-        authService.signInWithEmailPassword(signInRequest)
+        authRepos.signInWithEmailPassword(signInRequest)
                 .addOnSuccessListener(aVoid -> {
                     isLogging.postValue(false);
                     successToastMessage.postValue("Login successfully");
@@ -134,7 +134,7 @@ public class LoginViewModel extends BaseViewModel {
     }
 
     public void navigateIfAuthenticated() {
-        if (authService.isLoggedIn()) {
+        if (authRepos.isLoggedIn()) {
             navigateToHome.postValue(true);
         }
     }

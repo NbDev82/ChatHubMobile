@@ -1,11 +1,12 @@
-package com.example.friend.service;
+package com.example.friend.repository;
 
 import android.util.Log;
 
 import com.example.friend.EFriendRequestField;
 import com.example.friend.FriendRequest;
 import com.example.friend.FriendRequestView;
-import com.example.user.authservice.AuthService;
+import com.example.user.repository.AuthRepos;
+import com.example.user.repository.UserRepos;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.TaskCompletionSource;
 import com.google.android.gms.tasks.Tasks;
@@ -25,16 +26,18 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class FriendRequestServiceImpl implements FriendRequestService {
+public class FriendRequestReposImpl implements FriendRequestRepos {
 
-    private static final String TAG = FriendRequestServiceImpl.class.getSimpleName();
+    private static final String TAG = FriendRequestReposImpl.class.getSimpleName();
 
+    private final UserRepos userRepos;
+    private final AuthRepos authRepos;
     private final FirebaseFirestore db;
-    private final AuthService authService;
 
-    public FriendRequestServiceImpl(AuthService authService) {
+    public FriendRequestReposImpl(UserRepos userRepos, AuthRepos authRepos) {
+        this.userRepos = userRepos;
+        this.authRepos = authRepos;
         db = FirebaseFirestore.getInstance();
-        this.authService = authService;
     }
 
     @Override
@@ -139,7 +142,7 @@ public class FriendRequestServiceImpl implements FriendRequestService {
 
         TaskCompletionSource<FriendRequestView> taskCompletionSource = new TaskCompletionSource<>();
 
-        authService.getUserByUid(senderId)
+        userRepos.getUserByUid(senderId)
                 .addOnSuccessListener(user -> {
                     String senderImgUrl = user.getImageUrl();
                     String senderName = user.getFullName();

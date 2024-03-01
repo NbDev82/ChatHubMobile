@@ -6,9 +6,9 @@ import androidx.lifecycle.MutableLiveData;
 import com.example.customcontrol.snackbar.SnackbarModel;
 import com.example.friend.FriendRequestView;
 import com.example.friend.myfriend.adapter.FriendListener;
-import com.example.friend.service.FriendRequestService;
+import com.example.friend.repository.FriendRequestRepos;
 import com.example.infrastructure.BaseViewModel;
-import com.example.user.authservice.AuthService;
+import com.example.user.repository.AuthRepos;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,8 +19,8 @@ public class FriendsViewModel extends BaseViewModel implements FriendListener {
     private final MutableLiveData<List<FriendRequestView>> friendRequests = new MutableLiveData<>(new ArrayList<>());
     private final MutableLiveData<Boolean> isFriendsLoading = new MutableLiveData<>(true);
     private MutableLiveData<SnackbarModel> snackbarModel = new MutableLiveData<>();
-    private final AuthService authService;
-    private final FriendRequestService friendRequestService;
+    private final AuthRepos authRepos;
+    private final FriendRequestRepos friendRequestRepos;
 
     public LiveData<Boolean> getNavigateBack() {
         return navigateBack;
@@ -38,9 +38,9 @@ public class FriendsViewModel extends BaseViewModel implements FriendListener {
         return snackbarModel;
     }
 
-    public FriendsViewModel(AuthService authService, FriendRequestService friendRequestService) {
-        this.authService = authService;
-        this.friendRequestService = friendRequestService;
+    public FriendsViewModel(AuthRepos authRepos, FriendRequestRepos friendRequestRepos) {
+        this.authRepos = authRepos;
+        this.friendRequestRepos = friendRequestRepos;
     }
 
     public void navigateBack() {

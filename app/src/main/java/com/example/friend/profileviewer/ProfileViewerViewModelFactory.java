@@ -4,25 +4,29 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 
-import com.example.friend.service.FriendRequestService;
-import com.example.user.authservice.AuthService;
+import com.example.friend.repository.FriendRequestRepos;
+import com.example.user.repository.AuthRepos;
+import com.example.user.repository.UserRepos;
 
 public class ProfileViewerViewModelFactory implements ViewModelProvider.Factory {
 
-    private final AuthService authService;
-    private final FriendRequestService friendRequestService;
+    private final UserRepos userRepos;
+    private final AuthRepos authRepos;
+    private final FriendRequestRepos friendRequestRepos;
 
-    public ProfileViewerViewModelFactory(AuthService authService,
-                                         FriendRequestService friendRequestService) {
-        this.authService = authService;
-        this.friendRequestService = friendRequestService;
+    public ProfileViewerViewModelFactory(UserRepos userRepos,
+                                         AuthRepos authRepos,
+                                         FriendRequestRepos friendRequestRepos) {
+        this.userRepos = userRepos;
+        this.authRepos = authRepos;
+        this.friendRequestRepos = friendRequestRepos;
     }
 
     @NonNull
     @Override
     public <T extends ViewModel> T create(@NonNull Class<T> modelClass) {
         if (modelClass.isAssignableFrom(ProfileViewerViewModel.class)) {
-            return (T) new ProfileViewerViewModel(authService, friendRequestService);
+            return (T) new ProfileViewerViewModel(userRepos, authRepos, friendRequestRepos);
         }
         throw new IllegalArgumentException("Unknown ViewModel class");
     }

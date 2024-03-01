@@ -1,4 +1,4 @@
-package com.example.user.authservice;
+package com.example.user.repository;
 
 import android.app.Activity;
 
@@ -17,34 +17,22 @@ import com.google.firebase.auth.PhoneAuthProvider;
 
 import java.util.List;
 
-public interface AuthService {
+public interface AuthRepos {
     Task<Void> signUp(SignUpRequest signUpRequest);
 
     Task<AuthResult> signInWithEmailPassword(SignInRequest signInRequest);
 
     Task<AuthResult> signInWithGithub(Activity activity, String email);
 
-    Task<Void> updateOnlineStatus(String uid, boolean isOnline);
-
-    Task<Void> updateEmail(String uid, String email);
-
-    Task<Void> updatePhoneNumber(String uid, String phoneNumber);
-
     String getCurrentUid();
 
     Task<User> getCurrentUser();
-
-    Task<User> getUserByUid(String uid);
-
-    Task<Boolean> checkUserExistsByEmail(String email);
 
     void signOut();
 
     Task<Void> sendPasswordResetEmail(String email);
 
     boolean isLoggedIn();
-
-    Task<Void> updateBasicUser(String uid, User user);
 
     Task<Void> updatePassword(String newPassword);
 
@@ -71,8 +59,6 @@ public interface AuthService {
     FirebaseAuth getFirebaseAuth();
 
     Task<Void> signInWithCredential(AuthCredential authCredential);
-
-    Task<Boolean> existsByPhoneNumber(String phoneNumber);
 
     void sendOtp(Activity activity,
                  String phoneNumber,

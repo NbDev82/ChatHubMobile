@@ -9,14 +9,16 @@ import android.os.Bundle;
 import com.example.R;
 import com.example.databinding.ActivityFriendsBinding;
 import com.example.friend.myfriend.adapter.FriendAdapter;
-import com.example.friend.service.FriendRequestService;
-import com.example.friend.service.FriendRequestServiceImpl;
+import com.example.friend.repository.FriendRequestRepos;
+import com.example.friend.repository.FriendRequestReposImpl;
 import com.example.infrastructure.Utils;
 import com.example.navigation.EAnimationType;
 import com.example.navigation.NavigationManager;
 import com.example.navigation.NavigationManagerImpl;
-import com.example.user.authservice.AuthService;
-import com.example.user.authservice.AuthServiceImpl;
+import com.example.user.repository.AuthRepos;
+import com.example.user.repository.AuthReposImpl;
+import com.example.user.repository.UserRepos;
+import com.example.user.repository.UserReposImpl;
 
 import java.util.ArrayList;
 
@@ -33,9 +35,10 @@ public class FriendsActivity extends AppCompatActivity {
 
         navigationManager = new NavigationManagerImpl(this);
 
-        AuthService authService = new AuthServiceImpl();
-        FriendRequestService friendRequestService = new FriendRequestServiceImpl(authService);
-        FriendsViewModelFactory factory = new FriendsViewModelFactory(authService, friendRequestService);
+        UserRepos userRepos = new UserReposImpl();
+        AuthRepos authRepos = new AuthReposImpl(userRepos);
+        FriendRequestRepos friendRequestRepos = new FriendRequestReposImpl(userRepos, authRepos);
+        FriendsViewModelFactory factory = new FriendsViewModelFactory(authRepos, friendRequestRepos);
         viewModel = new ViewModelProvider(this, factory).get(FriendsViewModel.class);
 
         friendsAdapter = new FriendAdapter(new ArrayList<>(), viewModel);

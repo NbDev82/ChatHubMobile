@@ -11,9 +11,10 @@ import com.example.customcontrol.customalertdialog.AlertDialogModel;
 import com.example.customcontrol.inputdialogfragment.InputDialogModel;
 import com.example.infrastructure.BaseViewModel;
 import com.example.infrastructure.Utils;
-import com.example.user.authservice.AuthService;
+import com.example.user.repository.AuthRepos;
 import com.example.user.EGender;
 import com.example.user.User;
+import com.example.user.repository.UserRepos;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -35,6 +36,7 @@ public class UserProfileViewModel extends BaseViewModel {
     private final MutableLiveData<Calendar> openDatePickerDialog = new MutableLiveData<>();
     private final MutableLiveData<AlertDialogModel> openCustomAlertDialog = new MutableLiveData<>();
     private final MutableLiveData<Integer> openSingleChoiceGender = new MutableLiveData<>();
+    private final UserRepos userRepos;
     private User originalUser;
     private String encodedImage;
 
@@ -107,12 +109,13 @@ public class UserProfileViewModel extends BaseViewModel {
         return openSingleChoiceGender;
     }
 
-    public UserProfileViewModel(AuthService authService) {
-        this.authService = authService;
+    public UserProfileViewModel(UserRepos userRepos, AuthRepos authRepos) {
+        this.userRepos = userRepos;
+        this.authRepos = authRepos;
 
         isDataChanged.postValue(false);
         isUserInitializing.postValue(true);
-        authService.getCurrentUser()
+        authRepos.getCurrentUser()
                 .addOnSuccessListener(user -> {
                     if (user != null) {
                         setUser(user);
@@ -202,8 +205,8 @@ public class UserProfileViewModel extends BaseViewModel {
         Date birthday = Utils.stringToDate( birthdayStr.getValue() );
         originalUser.setBirthday(birthday);
 
-        String uid = authService.getCurrentUid();
-        authService.updateBasicUser(uid, originalUser)
+        String uid = authRepos.getCurrentUid();
+        userRepos.updateBasicUser(uid, originalUser)
                 .addOnSuccessListener(aVoid -> {
                     successToastMessage.postValue("Update successfully");
                     isDataChanged.postValue(false);

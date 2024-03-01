@@ -9,7 +9,7 @@ import androidx.lifecycle.MutableLiveData;
 
 import com.example.infrastructure.BaseViewModel;
 import com.example.infrastructure.Utils;
-import com.example.user.authservice.AuthService;
+import com.example.user.repository.AuthRepos;
 import com.example.user.login.otp.phonenumberinput.PhoneNumberInputActivity;
 import com.google.firebase.FirebaseException;
 import com.google.firebase.auth.PhoneAuthCredential;
@@ -28,7 +28,7 @@ public class VerifyOtpViewModel extends BaseViewModel {
     private final MutableLiveData<Boolean> isOtpVerifying = new MutableLiveData<>();
     private final MutableLiveData<Boolean> navigateToHome = new MutableLiveData<>();
     private final MutableLiveData<Boolean> navigateToSignUp = new MutableLiveData<>();
-    private final AuthService authService;
+    private final AuthRepos authRepos;
     private long timeoutSeconds;
     private String verificationId;
     private PhoneAuthProvider.ForceResendingToken resendingToken;
@@ -81,8 +81,8 @@ public class VerifyOtpViewModel extends BaseViewModel {
         return navigateToSignUp;
     }
 
-    public VerifyOtpViewModel(AuthService authService) {
-        this.authService = authService;
+    public VerifyOtpViewModel(AuthRepos authRepos) {
+        this.authRepos = authRepos;
 
         this.resendContentStatus.postValue(false);
         resetTimeoutSeconds();
@@ -131,7 +131,7 @@ public class VerifyOtpViewModel extends BaseViewModel {
 
     private void signIn(PhoneAuthCredential phoneCredential) {
         this.isOtpVerifying.postValue(true);
-        authService.signInWithCredential(phoneCredential)
+        authRepos.signInWithCredential(phoneCredential)
                 .addOnSuccessListener(aVoid -> {
                     this.isOtpVerifying.postValue(false);
                     successToastMessage.postValue("Verify successfully");

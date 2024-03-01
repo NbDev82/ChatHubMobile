@@ -13,8 +13,10 @@ import com.example.infrastructure.Utils;
 import com.example.navigation.EAnimationType;
 import com.example.navigation.NavigationManager;
 import com.example.navigation.NavigationManagerImpl;
-import com.example.user.authservice.AuthService;
-import com.example.user.authservice.AuthServiceImpl;
+import com.example.user.repository.AuthRepos;
+import com.example.user.repository.AuthReposImpl;
+import com.example.user.repository.UserRepos;
+import com.example.user.repository.UserReposImpl;
 
 public class SettingsActivity extends AppCompatActivity {
 
@@ -31,8 +33,9 @@ public class SettingsActivity extends AppCompatActivity {
         ActivitySettingsBinding binding = DataBindingUtil
                 .setContentView(this, R.layout.activity_settings);
 
-        AuthService authService = new AuthServiceImpl();
-        SettingsViewModelFactory factory = new SettingsViewModelFactory(authService);
+        UserRepos userRepos = new UserReposImpl();
+        AuthRepos authRepos = new AuthReposImpl(userRepos);
+        SettingsViewModelFactory factory = new SettingsViewModelFactory(authRepos);
         viewModel = new ViewModelProvider(this, factory).get(SettingsViewModel.class);
         binding.setViewModel(viewModel);
         binding.setLifecycleOwner(this);

@@ -24,9 +24,10 @@ import androidx.fragment.app.DialogFragment;
 import com.example.R;
 import com.example.customcontrol.CustomToast;
 import com.example.infrastructure.Utils;
-import com.example.user.authservice.AuthService;
-import com.example.user.authservice.AuthServiceImpl;
+import com.example.user.repository.AuthRepos;
+import com.example.user.repository.AuthReposImpl;
 import com.example.user.Validator;
+import com.example.user.repository.UserRepos;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
@@ -50,16 +51,20 @@ public class PhoneCredentialDialogFragment extends DialogFragment {
     private MaterialButton verifyBtn;
     private ProgressBar verifyPgb;
 
+    private final UserRepos userRepos;
+    private final AuthRepos authRepos;
     private final PhoneCredentialDialogModel model;
-    private AuthService authService;
     private long timeoutSeconds = Utils.OTP_TIME_OUT_SECONDS;
     private String verificationId;
     private PhoneAuthProvider.ForceResendingToken resendingToken;
 
-    public PhoneCredentialDialogFragment(PhoneCredentialDialogModel model) {
+    public PhoneCredentialDialogFragment(UserRepos userRepos,
+                                         AuthRepos authRepos,
+                                         PhoneCredentialDialogModel model) {
         super();
+        this.userRepos = userRepos;
+        this.authRepos = authRepos;
         this.model = model;
-        authService = new AuthServiceImpl();
     }
 
     @NonNull
@@ -128,7 +133,7 @@ public class PhoneCredentialDialogFragment extends DialogFragment {
     public void verifyPhoneNumberAndSendOtp() {
         setPhoneNumberInputInProgress(true);
         String phoneNumber = getFullPhoneNumber();
-        authService.existsByPhoneNumber(phoneNumber)
+        userRepos.existsByPhoneNumber(phoneNumber)
                 .addOnSuccessListener(isExists -> {
                     setPhoneNumberInputInProgress(false);
                     if (isExists) {
@@ -177,7 +182,7 @@ public class PhoneCredentialDialogFragment extends DialogFragment {
     private void sendOtp(String phoneNumber, boolean isResend) {
         startResendTimer();
         resendTxv.setEnabled(false);
-        authService.sendOtp(requireActivity(),
+        authRepos.sendOtp(requireActivity(),
                 phoneNumber,
                 isResend,
                 resendingToken,

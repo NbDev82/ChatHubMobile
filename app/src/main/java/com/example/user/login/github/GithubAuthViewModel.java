@@ -9,7 +9,7 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.example.infrastructure.BaseViewModel;
-import com.example.user.authservice.AuthService;
+import com.example.user.repository.AuthRepos;
 
 import java.lang.ref.WeakReference;
 
@@ -39,9 +39,9 @@ public class GithubAuthViewModel extends BaseViewModel {
         return isLogging;
     }
 
-    public GithubAuthViewModel(Activity activity, AuthService authService) {
+    public GithubAuthViewModel(Activity activity, AuthRepos authRepos) {
         activityRef = new WeakReference<>(activity);
-        this.authService = authService;
+        this.authRepos = authRepos;
     }
 
     public void navigateToLogin() {
@@ -58,7 +58,7 @@ public class GithubAuthViewModel extends BaseViewModel {
         }
         Activity activity = activityRef.get();
         if (activity != null) {
-            authService.signInWithGithub(activity, email)
+            authRepos.signInWithGithub(activity, email)
                     .addOnSuccessListener(authResult -> {
                         isLogging.postValue(false);
                         successToastMessage.postValue("Login successfully");

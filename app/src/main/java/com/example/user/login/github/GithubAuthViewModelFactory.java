@@ -6,23 +6,23 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 
-import com.example.user.authservice.AuthService;
+import com.example.user.repository.AuthRepos;
 
 public class GithubAuthViewModelFactory implements ViewModelProvider.Factory {
 
     private final Activity activity;
-    private final AuthService authService;
+    private final AuthRepos authRepos;
 
-    public GithubAuthViewModelFactory(Activity activity, AuthService authService) {
+    public GithubAuthViewModelFactory(Activity activity, AuthRepos authRepos) {
         this.activity = activity;
-        this.authService = authService;
+        this.authRepos = authRepos;
     }
 
     @NonNull
     @Override
     public <T extends ViewModel> T create(@NonNull Class<T> modelClass) {
         if (modelClass.isAssignableFrom(GithubAuthViewModel.class)) {
-            return (T) new GithubAuthViewModel(activity, authService);
+            return (T) new GithubAuthViewModel(activity, authRepos);
         }
         throw new IllegalArgumentException("Unknown ViewModel class");
     }

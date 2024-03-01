@@ -8,7 +8,7 @@ import androidx.lifecycle.MutableLiveData;
 
 import com.example.infrastructure.BaseViewModel;
 import com.example.infrastructure.Utils;
-import com.example.user.authservice.AuthService;
+import com.example.user.repository.AuthRepos;
 import com.example.user.User;
 
 public class SettingsViewModel extends BaseViewModel {
@@ -81,10 +81,10 @@ public class SettingsViewModel extends BaseViewModel {
         return mUser;
     }
 
-    public SettingsViewModel(AuthService authService) {
-        this.authService = authService;
+    public SettingsViewModel(AuthRepos authRepos) {
+        this.authRepos = authRepos;
 
-        this.authService.getCurrentUser()
+        this.authRepos.getCurrentUser()
                 .addOnSuccessListener(user -> {
                     if (user != null) {
                         mUser = user;

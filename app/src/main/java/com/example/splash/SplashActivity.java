@@ -10,8 +10,10 @@ import com.example.infrastructure.Utils;
 import com.example.navigation.EAnimationType;
 import com.example.navigation.NavigationManager;
 import com.example.navigation.NavigationManagerImpl;
-import com.example.user.authservice.AuthService;
-import com.example.user.authservice.AuthServiceImpl;
+import com.example.user.repository.AuthRepos;
+import com.example.user.repository.AuthReposImpl;
+import com.example.user.repository.UserRepos;
+import com.example.user.repository.UserReposImpl;
 
 public class SplashActivity extends AppCompatActivity {
 
@@ -25,12 +27,13 @@ public class SplashActivity extends AppCompatActivity {
         setContentView(R.layout.activity_splash);
 
         navigationManager = new NavigationManagerImpl(this);
-        AuthService mAuthService = new AuthServiceImpl();
+        UserRepos userRepos = new UserReposImpl();
+        AuthRepos authRepos = new AuthReposImpl(userRepos);
 
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                if (mAuthService.isLoggedIn()) {
+                if (authRepos.isLoggedIn()) {
                     navigationManager.navigateToHome(EAnimationType.FADE_IN);
                 } else {
                     navigationManager.navigateToLogin(EAnimationType.FADE_IN);

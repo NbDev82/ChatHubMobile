@@ -27,9 +27,11 @@ import com.example.infrastructure.Utils;
 import com.example.navigation.EAnimationType;
 import com.example.navigation.NavigationManager;
 import com.example.navigation.NavigationManagerImpl;
-import com.example.user.authservice.AuthService;
-import com.example.user.authservice.AuthServiceImpl;
+import com.example.user.repository.AuthRepos;
+import com.example.user.repository.AuthReposImpl;
 import com.example.user.EGender;
+import com.example.user.repository.UserRepos;
+import com.example.user.repository.UserReposImpl;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 import java.io.FileNotFoundException;
@@ -54,8 +56,9 @@ public class UserProfileActivity extends AppCompatActivity {
         ActivityUserProfileBinding binding = DataBindingUtil
                 .setContentView(this, R.layout.activity_user_profile);
 
-        AuthService authService = new AuthServiceImpl();
-        UserProfileViewModelFactory factory = new UserProfileViewModelFactory(authService);
+        UserRepos userRepos = new UserReposImpl();
+        AuthRepos authRepos = new AuthReposImpl(userRepos);
+        UserProfileViewModelFactory factory = new UserProfileViewModelFactory(userRepos, authRepos);
         profileViewModel = new ViewModelProvider(this, factory).get(UserProfileViewModel.class);
 
         binding.setViewModel(profileViewModel);

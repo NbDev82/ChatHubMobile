@@ -6,7 +6,7 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.example.infrastructure.BaseViewModel;
-import com.example.user.authservice.AuthService;
+import com.example.user.repository.AuthRepos;
 
 public class EmailDetailsViewModel extends BaseViewModel {
 
@@ -17,7 +17,7 @@ public class EmailDetailsViewModel extends BaseViewModel {
     private final MutableLiveData<String> email = new MutableLiveData<>();
     private final MutableLiveData<Boolean> isEmailVerified = new MutableLiveData<>();
     private final MutableLiveData<Boolean> isVerifyingEmail = new MutableLiveData<>();
-    private final AuthService authService;
+    private final AuthRepos authRepos;
 
     public LiveData<Boolean> getNavigateToSettings() {
         return navigateToSettings;
@@ -39,17 +39,17 @@ public class EmailDetailsViewModel extends BaseViewModel {
         return isVerifyingEmail;
     }
 
-    public EmailDetailsViewModel(AuthService authService) {
-        this.authService = authService;
+    public EmailDetailsViewModel(AuthRepos authRepos) {
+        this.authRepos = authRepos;
 
         loadData();
     }
 
     public void loadData() {
-        String email = authService.getCurrentEmail();
+        String email = authRepos.getCurrentEmail();
         this.email.postValue(email);
 
-        authService.checkCurrentEmailVerificationStatus()
+        authRepos.checkCurrentEmailVerificationStatus()
                 .addOnSuccessListener(isEmailVerified -> {
                     this.isEmailVerified.postValue(isEmailVerified);
                 })
@@ -65,7 +65,7 @@ public class EmailDetailsViewModel extends BaseViewModel {
     }
 
     public void sendEmailVerification() {
-        authService.sendCurrentUserEmailVerification()
+        authRepos.sendCurrentUserEmailVerification()
                 .addOnSuccessListener(aVoid -> {
                     successToastMessage.postValue("Email verification sent successfully");
                 }).addOnFailureListener(e -> {
