@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+        <import type="android.view.View"/>
+        <variable
+            name="viewModel"
+            type="com.example.user.login.otp.phonenumberinput.PhoneNumberInputViewModel" />
+    </data>
+
+    <RelativeLayout
+        android:id="@+id/rl_main"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/color_background_primary"
+        android:paddingHorizontal="@dimen/profile_item_padding_horizontal"
+        tools:successToastMessage="@{viewModel.successToastMessage}"
+        tools:errorToastMessage="@{viewModel.errorToastMessage}">
+
+        <ImageView
+            android:id="@+id/icon_send"
+            android:layout_width="@dimen/_200sdp"
+            android:layout_height="@dimen/_200sdp"
+            android:layout_centerHorizontal="true"
+            android:layout_above="@id/ll_otp_title"
+            android:layout_marginEnd="@dimen/item_gap"
+            android:background="@drawable/ic_send" />
+
+        <LinearLayout
+            android:id="@+id/ll_otp_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="OTP Verification"
+                android:textSize="@dimen/primary_title_size"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_5sdp"
+                android:textColor="@color/color_text_primary"
+                android:text="We will send you an One Time Password on this mobile number"
+                android:textSize="@dimen/primary_text_size" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/ll_phone_number"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/ll_otp_title"
+            android:layout_marginTop="@dimen/_20sdp"
+            android:orientation="vertical">
+            <com.google.android.material.textfield.TextInputLayout
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense.ExposedDropdownMenu"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:boxCornerRadiusBottomEnd="@dimen/input_layout_corner_radius"
+                app:boxCornerRadiusBottomStart="@dimen/input_layout_corner_radius"
+                app:boxCornerRadiusTopEnd="@dimen/input_layout_corner_radius"
+                app:boxCornerRadiusTopStart="@dimen/input_layout_corner_radius"
+                app:boxStrokeWidth="1dp"
+                android:enabled="false"
+                android:hint="Country code">
+
+                <AutoCompleteTextView
+                    android:id="@+id/auto_complete_text_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:inputType="textAutoComplete"
+                    android:text="@={viewModel.countryCode}"
+                    tools:text="+84" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                style="@style/CustomTextInputLayoutPrimary"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_5sdp"
+                android:hint="Phone number"
+                app:endIconMode="clear_text"
+                app:errorEnabled="true"
+                app:error="@{viewModel.phoneNumberError}">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="number"
+                    android:maxLines="1"
+                    android:onTextChanged="@{(s, start, before, count) -> viewModel.checkPhoneNumber(s)}"
+                    android:text="@={viewModel.localNumber}"
+                    android:textSize="@dimen/primary_text_size"
+                    tools:text="123456789" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+        </LinearLayout>
+
+        <FrameLayout
+            android:id="@+id/btn_next"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_10sdp"
+            android:layout_below="@id/ll_phone_number"
+            android:animateLayoutChanges="true">
+
+            <com.google.android.material.button.MaterialButton
+                style="@style/ButtonPrimaryHighlight"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_45sdp"
+                android:text="Next"
+                android:onClick="@{()-> viewModel.verifyPhoneNumberAndNavigate()}"
+                android:enabled="@{viewModel.phoneNumberError == null}"
+                android:visibility="@{viewModel.isPhoneVerifying ? View.INVISIBLE : View.VISIBLE}"
+                app:cornerRadius="@dimen/button_primary_corner_radius" />
+
+            <ProgressBar
+                android:layout_width="@dimen/_25sdp"
+                android:layout_height="@dimen/_25sdp"
+                android:layout_gravity="center"
+                android:visibility="@{viewModel.isPhoneVerifying ? View.VISIBLE : View.INVISIBLE}"
+                tools:visibility="invisible"/>
+        </FrameLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_below="@id/btn_next"
+            android:layout_centerHorizontal="true"
+            android:layout_alignParentBottom="true"
+            android:gravity="center">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Do you have an account?"
+                android:textColor="@color/color_text_primary"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/_5sdp"
+                android:onClick="@{() -> viewModel.navigateToSignUp()}"
+                android:text="Sign up"
+                android:textColor="@color/color_primary_link_blue"/>
+        </LinearLayout>
+
+    </RelativeLayout>
+</layout>

@@ -1,29 +1,25 @@
 package com.example.infrastructure;
 
-import android.app.Application;
+import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.ViewModel;
 
-import androidx.lifecycle.AndroidViewModel;
+import com.example.user.repository.AuthRepos;
 
-import com.example.user.UserService;
-import com.example.user.UserServiceImpl;
+public abstract class BaseViewModel extends ViewModel {
 
-public class BaseViewModel extends AndroidViewModel {
+    protected final MutableLiveData<String> successToastMessage = new MutableLiveData<>();
+    protected final MutableLiveData<String> errorToastMessage = new MutableLiveData<>();
 
-    private UserService userService;
+    protected AuthRepos authRepos;
 
-    public BaseViewModel(Application application) {
-        super(application);
-
-        userService = new UserServiceImpl();
+    public MutableLiveData<String> getSuccessToastMessage() {
+        return successToastMessage;
     }
 
-    public void onPause() {
-        String uid = userService.getCurrentUid();
-        userService.updateOnlineStatus(uid, false);
+    public MutableLiveData<String> getErrorToastMessage() {
+        return errorToastMessage;
     }
 
-    public void onResume() {
-        String uid = userService.getCurrentUid();
-        userService.updateOnlineStatus(uid, true);
+    public BaseViewModel() {
     }
 }

@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+        <import type="android.view.View"/>
+        <variable
+            name="viewModel"
+            type="com.example.user.login.otp.verify.VerifyOtpViewModel" />
+    </data>
+
+    <RelativeLayout
+        android:id="@+id/rl_main"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/color_background_primary"
+        android:paddingHorizontal="@dimen/profile_item_padding_horizontal"
+        tools:successToastMessage="@{viewModel.successToastMessage}"
+        tools:errorToastMessage="@{viewModel.errorToastMessage}">
+
+        <ImageView
+            android:id="@+id/icon_send"
+            android:layout_width="@dimen/_200sdp"
+            android:layout_height="@dimen/_200sdp"
+            android:layout_centerHorizontal="true"
+            android:layout_above="@id/ll_otp_title"
+            android:layout_marginEnd="@dimen/item_gap"
+            android:background="@drawable/ic_enter_otp" />
+
+        <LinearLayout
+            android:id="@+id/ll_otp_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="OTP Verification"
+                android:textSize="@dimen/primary_title_size"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_5sdp"
+                android:textColor="@color/color_text_primary"
+                android:text="Enter the OTP sent to"
+                android:textSize="@dimen/primary_text_size" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textStyle="bold"
+                android:textColor="@color/color_text_primary"
+                android:text="@{viewModel.phoneNumber}"
+                android:textSize="@dimen/primary_text_size"
+                tools:text="+84-123912049"/>
+        </LinearLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/til_phone_number"
+            style="@style/CustomTextInputLayoutPrimary"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/ll_otp_title"
+            android:layout_marginTop="@dimen/_20sdp"
+            app:counterEnabled="true"
+            app:counterMaxLength="6"
+            android:hint="OTP"
+            app:endIconMode="clear_text"
+            app:errorEnabled="true"
+            app:errorIconDrawable="@drawable/ic_circle_xmark_solid"
+            app:error="@{viewModel.otpError}">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="phone"
+                android:maxLines="1"
+                android:text="@={viewModel.otp}"
+                android:textSize="@dimen/primary_text_size" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <TextView
+            android:id="@+id/txv_resend"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/til_phone_number"
+            android:layout_centerHorizontal="true"
+            android:enabled="@{viewModel.resendContentStatus}"
+            android:onClick="@{() -> viewModel.resendOtp()}"
+            android:text="@{viewModel.resendContent}"
+            android:textColor="@color/color_text_primary"
+            android:textSize="@dimen/primary_text_size"
+            tools:text="Resend OTP in 30 sec" />
+
+        <FrameLayout
+            android:id="@+id/btn_next"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/txv_resend"
+            android:layout_marginTop="@dimen/_20sdp"
+            android:animateLayoutChanges="true">
+
+            <com.google.android.material.button.MaterialButton
+                style="@style/ButtonPrimaryHighlight"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_45sdp"
+                android:text="Verify"
+                android:onClick="@{()-> viewModel.verifyOtp()}"
+                android:enabled="@{viewModel.otpError == null}"
+                android:visibility="@{viewModel.isOtpVerifying ? View.INVISIBLE : View.VISIBLE}"
+                app:cornerRadius="@dimen/button_primary_corner_radius" />
+
+
+            <ProgressBar
+                android:layout_width="@dimen/_25sdp"
+                android:layout_height="@dimen/_25sdp"
+                android:layout_gravity="center"
+                android:visibility="@{viewModel.isOtpVerifying ? View.VISIBLE : View.INVISIBLE}"
+                tools:visibility="invisible"/>
+        </FrameLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_below="@id/btn_next"
+            android:layout_centerHorizontal="true"
+            android:layout_alignParentBottom="true"
+            android:gravity="center">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Do you have an account?"
+                android:textColor="@color/color_text_primary"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/_5sdp"
+                android:onClick="@{() -> viewModel.navigateToSignUp()}"
+                android:text="Sign up"
+                android:textColor="@color/color_primary_link_blue"/>
+        </LinearLayout>
+
+    </RelativeLayout>
+</layout>

@@ -1,0 +1,374 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+        <import type="android.view.View"/>
+        <import type="com.example.friend.profileviewer.EFriendshipStatus" />
+        <variable
+            name="viewModel"
+            type="com.example.friend.profileviewer.ProfileViewerViewModel" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:background="@color/color_background_secondary"
+        tools:successToastMessage="@{viewModel.successToastMessage}"
+        tools:errorToastMessage="@{viewModel.errorToastMessage}">
+
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/tb_navigation"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/toolbar_height"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:background="@drawable/gradient_color_primary">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_nav_arrow_left"
+                app:tint="@android:color/white"
+                android:onClickListener="@{() -> viewModel.navigateBack()}"
+                android:contentDescription="Back to home" />
+
+            <TextView
+                android:id="@+id/toolbar_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="Profile Viewer"
+                android:textColor="@android:color/white"
+                android:textStyle="bold"
+                android:textSize="@dimen/primary_title_size" />
+        </androidx.appcompat.widget.Toolbar>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            app:layout_constraintTop_toBottomOf="@id/tb_navigation"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:orientation="vertical">
+
+            <com.facebook.shimmer.ShimmerFrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:visibility="@{viewModel.isUserInitializing ? View.VISIBLE : View.GONE}"
+                tools:visibility="gone">
+
+                <include layout="@layout/profile_items_placeholder"/>
+
+            </com.facebook.shimmer.ShimmerFrameLayout>
+
+            <ScrollView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:visibility="@{viewModel.isUserInitializing ? View.GONE : View.VISIBLE}">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_horizontal"
+                    android:orientation="vertical">
+
+                    <FrameLayout
+                        android:id="@+id/fl_avatar"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/_20sdp">
+
+                        <com.makeramen.roundedimageview.RoundedImageView
+                            android:id="@+id/img_profile"
+                            android:layout_width="@dimen/_100sdp"
+                            android:layout_height="@dimen/_100sdp"
+                            android:background="@drawable/background_image"
+                            android:scaleType="centerCrop"
+                            app:imageBitmap="@{viewModel.userImageBitmap}"
+                            app:riv_oval="true" />
+
+                        <TextView
+                            android:id="@+id/txv_img_desc"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:text="No image"
+                            android:visibility="@{viewModel.userImageBitmap == null ? View.VISIBLE : View.GONE}"
+                            android:textColor="@color/color_text_secondary"
+                            android:textSize="@dimen/_10ssp"
+                            tools:ignore="InvalidId" />
+
+                    </FrameLayout>
+
+                    <FrameLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/_40sdp"
+                        android:layout_marginTop="@dimen/_20sdp"
+                        android:layout_marginHorizontal="@dimen/profile_item_padding_horizontal"
+                        android:visibility="@{viewModel.friendshipStatus == EFriendshipStatus.NOT_FOUND ? View.GONE : View.VISIBLE}"
+                        android:animateLayoutChanges="true">
+
+                        <com.google.android.material.button.MaterialButton
+                            style="@style/ButtonSecondaryHighlight"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:text="Add friend"
+                            android:onClick="@{()-> viewModel.sendFriendRequest()}"
+                            android:visibility="@{viewModel.friendshipStatus == EFriendshipStatus.FRIEND || viewModel.isLoading ? View.GONE : View.VISIBLE}"
+                            app:icon="@drawable/ic_user_plus"
+                            app:cornerRadius="@dimen/button_primary_corner_radius"
+                            tools:visibility="gone"/>
+
+                        <com.google.android.material.button.MaterialButton
+                            style="@style/ButtonSecondaryHighlight"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:text="Recall request"
+                            android:onClick="@{()-> viewModel.recallRequest()}"
+                            android:visibility="@{viewModel.friendshipStatus != EFriendshipStatus.SENT_REQUEST || viewModel.isLoading ? View.GONE : View.VISIBLE}"
+                            app:icon="@drawable/ic_undo"
+                            app:cornerRadius="@dimen/button_primary_corner_radius"
+                            tools:visibility="gone" />
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:orientation="horizontal"
+                            android:visibility="@{viewModel.friendshipStatus != EFriendshipStatus.RECEIVED_REQUEST || viewModel.isLoading ? View.GONE : View.VISIBLE}"
+                            android:weightSum="2">
+
+                            <com.google.android.material.button.MaterialButton
+                                style="@style/ButtonSecondaryHighlight"
+                                android:layout_width="0dp"
+                                android:layout_height="match_parent"
+                                android:layout_weight="1"
+                                android:text="Accept"
+                                android:onClick="@{()-> viewModel.acceptFriendRequest()}"
+                                app:icon="@drawable/ic_check"
+                                app:cornerRadius="@dimen/button_primary_corner_radius" />
+
+                            <com.google.android.material.button.MaterialButton
+                                style="@style/ButtonSecondaryDanger"
+                                android:layout_width="0dp"
+                                android:layout_height="match_parent"
+                                android:layout_weight="1"
+                                android:layout_marginStart="@dimen/_10sdp"
+                                android:text="Reject"
+                                android:onClick="@{()-> viewModel.rejectFriendRequest()}"
+                                app:icon="@drawable/ic_xmark"
+                                app:cornerRadius="@dimen/button_primary_corner_radius" />
+                        </LinearLayout>
+
+
+                        <com.google.android.material.button.MaterialButton
+                            style="@style/ButtonSecondaryDanger"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:text="Unfriend"
+                            android:onClick="@{()-> viewModel.unfriend()}"
+                            android:visibility="@{viewModel.friendshipStatus == EFriendshipStatus.NOT_FRIEND || !viewModel.isLoading ? View.VISIBLE : View.GONE}"
+                            app:icon="@drawable/ic_xmark"
+                            app:cornerRadius="@dimen/button_primary_corner_radius"
+                            tools:visibility="gone" />
+
+                        <ProgressBar
+                            android:layout_width="@dimen/_25sdp"
+                            android:layout_height="@dimen/_25sdp"
+                            android:layout_gravity="center"
+                            android:visibility="@{viewModel.isLoading ? View.VISIBLE : View.GONE}"
+                            tools:visibility="gone"/>
+                    </FrameLayout>
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/profile_item_height"
+                        android:layout_marginTop="@dimen/_10sdp"
+                        android:paddingHorizontal="@dimen/profile_item_padding_horizontal">
+
+                        <ImageView
+                            android:id="@+id/icon_name"
+                            android:layout_width="@dimen/profile_icon_size"
+                            android:layout_height="@dimen/profile_icon_size"
+                            android:layout_centerVertical="true"
+                            android:src="@drawable/ic_profile_circle_light" />
+
+                        <TextView
+                            android:id="@+id/txv_name_title"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="@dimen/_16sdp"
+                            android:layout_centerVertical="true"
+                            android:layout_toEndOf="@id/icon_name"
+                            android:text="Full name"
+                            android:textColor="@color/color_text_secondary"
+                            android:textSize="@dimen/primary_sub_title_size"/>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="@dimen/_20sdp"
+                            android:layout_marginEnd="@dimen/_5sdp"
+                            android:layout_centerVertical="true"
+                            android:layout_toEndOf="@id/txv_name_title"
+                            android:layout_toStartOf="@id/icon_edit_name"
+                            android:text="@{viewModel.fullName.isEmpty() ? `(None)` : viewModel.fullName}"
+                            android:gravity="end"
+                            android:textColor="@color/color_text_primary"
+                            android:textSize="@dimen/primary_text_size"
+                            android:maxLines="1"
+                            android:ellipsize="end"
+                            tools:text="Văn An"/>
+
+                        <ImageView
+                            android:id="@+id/icon_edit_name"
+                            android:layout_width="@dimen/_12sdp"
+                            android:layout_height="@dimen/_12sdp"
+                            android:layout_centerVertical="true"
+                            android:layout_alignParentEnd="true"
+                            android:src="@drawable/ic_right_chevron" />
+
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="0.5dp"
+                            android:layout_marginStart="@dimen/_16sdp"
+                            android:layout_toEndOf="@id/icon_name"
+                            android:layout_alignParentBottom="true"
+                            android:background="@color/color_primary_gray" />
+                    </RelativeLayout>
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/profile_item_height"
+                        android:layout_marginTop="@dimen/profile_item_distance"
+                        android:paddingHorizontal="@dimen/profile_item_padding_horizontal">
+
+                        <ImageView
+                            android:id="@+id/icon_birthday"
+                            android:layout_width="@dimen/profile_icon_size"
+                            android:layout_height="@dimen/profile_icon_size"
+                            android:layout_centerVertical="true"
+                            android:src="@drawable/ic_calendar" />
+
+                        <TextView
+                            android:id="@+id/txv_birthday_title"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="@dimen/_16sdp"
+                            android:layout_centerVertical="true"
+                            android:layout_toEndOf="@id/icon_birthday"
+                            android:text="Birthday"
+                            android:textColor="@color/color_text_secondary"
+                            android:textSize="@dimen/primary_sub_title_size"/>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="@dimen/_20sdp"
+                            android:layout_marginEnd="@dimen/_5sdp"
+                            android:layout_centerVertical="true"
+                            android:layout_toEndOf="@id/txv_birthday_title"
+                            android:layout_toStartOf="@id/icon_edit_birthday"
+                            android:gravity="end"
+                            android:text="@{viewModel.birthdayStr}"
+                            android:textColor="@color/color_text_primary"
+                            android:textSize="@dimen/primary_text_size"
+                            android:maxLines="1"
+                            android:ellipsize="end"
+                            tools:text="01/01/1990"/>
+
+                        <ImageView
+                            android:id="@+id/icon_edit_birthday"
+                            android:layout_width="@dimen/_12sdp"
+                            android:layout_height="@dimen/_12sdp"
+                            android:layout_centerVertical="true"
+                            android:layout_alignParentEnd="true"
+                            android:src="@drawable/ic_right_chevron" />
+
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="0.5dp"
+                            android:layout_marginStart="@dimen/_16sdp"
+                            android:layout_toEndOf="@id/icon_birthday"
+                            android:layout_alignParentBottom="true"
+                            android:background="@color/color_primary_gray" />
+                    </RelativeLayout>
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/profile_item_height"
+                        android:layout_marginTop="@dimen/profile_item_distance"
+                        android:paddingHorizontal="@dimen/profile_item_padding_horizontal">
+
+                        <ImageView
+                            android:id="@+id/icon_gender"
+                            android:layout_width="@dimen/profile_icon_size"
+                            android:layout_height="@dimen/profile_icon_size"
+                            android:layout_centerVertical="true"
+                            android:src="@drawable/ic_gender" />
+
+                        <TextView
+                            android:id="@+id/txv_gender_title"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="@dimen/_16sdp"
+                            android:layout_centerVertical="true"
+                            android:layout_toEndOf="@id/icon_gender"
+                            android:text="Gender"
+                            android:textColor="@color/color_text_secondary"
+                            android:textSize="@dimen/primary_sub_title_size"/>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="@dimen/_20sdp"
+                            android:layout_marginEnd="@dimen/_5sdp"
+                            android:layout_centerVertical="true"
+                            android:layout_toEndOf="@id/txv_gender_title"
+                            android:layout_toStartOf="@id/icon_edit_gender"
+                            android:gravity="end"
+                            android:text="@{viewModel.gender.getDisplay()}"
+                            android:textColor="@color/color_text_primary"
+                            android:textSize="@dimen/primary_text_size"
+                            android:maxLines="1"
+                            android:ellipsize="end"
+                            tools:text="Male" />
+
+                        <ImageView
+                            android:id="@+id/icon_edit_gender"
+                            android:layout_width="@dimen/_12sdp"
+                            android:layout_height="@dimen/_12sdp"
+                            android:layout_centerVertical="true"
+                            android:layout_alignParentEnd="true"
+                            android:src="@drawable/ic_right_chevron" />
+
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="0.5dp"
+                            android:layout_marginStart="@dimen/_16sdp"
+                            android:layout_toEndOf="@id/icon_gender"
+                            android:layout_alignParentBottom="true"
+                            android:background="@color/color_primary_gray" />
+                    </RelativeLayout>
+                </LinearLayout>
+            </ScrollView>
+        </LinearLayout>
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/_24sdp"
+            android:layout_marginBottom="@dimen/_24sdp"
+            android:contentDescription="@string/app_name"
+            android:onClick="@{() -> viewModel.navigateToChat()}"
+            android:src="@drawable/ic_chat_lines"
+            android:tint="@android:color/black"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:backgroundTint="@color/color_background_primary" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

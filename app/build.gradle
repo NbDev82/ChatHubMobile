@@ -58,7 +58,8 @@ dependencies {
     implementation("com.google.firebase:firebase-analytics")
 
     // Firebase
-    implementation 'com.google.firebase:firebase-auth:22.3.1'
+    implementation("com.google.firebase:firebase-auth")
+    implementation("com.google.android.gms:play-services-auth:20.7.0")
     implementation 'com.google.firebase:firebase-messaging:23.4.0'
     implementation 'com.google.firebase:firebase-firestore:24.10.1'
 
@@ -68,4 +69,13 @@ dependencies {
 
     // MultiDex
     implementation 'androidx.multidex:multidex:2.0.1'
+
+    // Rounded ImageView
+    implementation 'com.makeramen:roundedimageview:2.3.0'
+
+    // Shimmer effect
+    implementation 'com.facebook.shimmer:shimmer:0.5.0'
+
+    // Swipe down to refresh page
+    implementation "androidx.swiperefreshlayout:swiperefreshlayout:1.0.0"
 }

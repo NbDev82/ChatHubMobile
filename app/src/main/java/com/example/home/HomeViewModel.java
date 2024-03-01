@@ -1,48 +1,82 @@
 package com.example.home;
 
-import android.content.Context;
-import android.content.Intent;
+import android.os.Handler;
 import android.util.Log;
-import android.widget.Toast;
 
-import androidx.databinding.BaseObservable;
-import androidx.databinding.Bindable;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
 
-import com.example.user.login.LoginActivity;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
+import com.example.infrastructure.BaseViewModel;
+import com.example.user.repository.AuthRepos;
 
-public class HomeViewModel extends BaseObservable {
+public class HomeViewModel extends BaseViewModel {
 
     private static final String TAG = HomeViewModel.class.getSimpleName();
 
-    private final Context context;
+    private final MutableLiveData<String> email = new MutableLiveData<>("");
+    private final MutableLiveData<Boolean> navigateToUserProfile = new MutableLiveData<>();
+    private final MutableLiveData<Boolean> navigateToSettings = new MutableLiveData<>();
+    private final MutableLiveData<Boolean> navigateToFriendRequests = new MutableLiveData<>();
+    private final MutableLiveData<Boolean> navigateToLogin = new MutableLiveData<>();
 
-    private FirebaseAuth mAuth;
-    private FirebaseUser mUser;
-
-    @Bindable
-    public String getEmail() {
-        return mUser.getEmail();
+    public MutableLiveData<String> getEmail() {
+        return email;
     }
 
-    public HomeViewModel(Context context) {
-        this.context = context;
-        mAuth = FirebaseAuth.getInstance();
-        mUser = mAuth.getCurrentUser();
+    public MutableLiveData<Boolean> getNavigateToUserProfile() {
+        return navigateToUserProfile;
     }
 
-    public void onBackBtnClick(Context context) {
-        Log.i(TAG, "Back to login");
-
-        Toast.makeText(context, "Sign out", Toast.LENGTH_SHORT).show();
-        signOut();
-
-        Intent intent = new Intent(context, LoginActivity.class);
-        context.startActivity(intent);
+    public LiveData<Boolean> getNavigateToSettings() {
+        return navigateToSettings;
     }
 
-    private void signOut() {
-        mAuth.signOut();
+    public LiveData<Boolean> getNavigateToFriendRequests() {
+        return navigateToFriendRequests;
+    }
+
+    public LiveData<Boolean> getNavigateToLogin() {
+        return navigateToLogin;
+    }
+
+    public HomeViewModel(AuthRepos authRepos) {
+        this.authRepos = authRepos;
+
+        this.authRepos.getCurrentUser()
+                .addOnSuccessListener(user -> {
+                    if (user != null) {
+                        email.postValue(user.getEmail());
+                    }
+                })
+                .addOnFailureListener(e -> {
+                    Log.e(TAG, "Error: " + e);
+                });
+    }
+
+    public void navigateToSettings() {
+        navigateToSettings.postValue(true);
+    }
+
+    public void navigateToUserProfile() {
+        navigateToUserProfile.postValue(true);
+    }
+
+    public void navigateToFriendRequests() {
+        this.navigateToFriendRequests.postValue(true);
+    }
+
+    public void signOut() {
+        authRepos.signOut();
+        successToastMessage.postValue("Sign out");
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                navigateToLogin();
+            }
+        }, 100);
+    }
+
+    private void navigateToLogin() {
+        navigateToLogin.postValue(true);
     }
 }

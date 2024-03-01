@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/profile_item_height"
+    android:layout_marginStart="@dimen/_10sdp"
+    android:layout_marginEnd="@dimen/_10sdp" >
+
+        <ImageView
+            android:id="@+id/icon_name"
+            android:layout_width="@dimen/_32sdp"
+            android:layout_height="@dimen/_32sdp"
+            android:background="@color/color_input_background"
+            android:layout_marginStart="@dimen/default_icon_margin"
+            android:layout_marginTop="@dimen/default_icon_margin"
+            android:layout_marginEnd="@dimen/default_icon_margin"
+            android:layout_marginBottom="@dimen/default_icon_margin" />
+
+        <TextView
+            android:id="@+id/txv_name_title"
+            android:layout_width="@dimen/sub_title_width"
+            android:layout_height="@dimen/sub_title_height"
+            android:layout_marginStart="@dimen/_16sdp"
+            android:layout_centerVertical="true"
+            android:layout_toEndOf="@id/icon_name"
+            android:background="@color/color_input_background" />
+
+        <TextView
+            android:layout_width="@dimen/sub_title_width"
+            android:layout_height="@dimen/sub_title_height"
+            android:background="@color/color_input_background"
+            android:layout_marginStart="@dimen/_20sdp"
+            android:layout_marginEnd="@dimen/_5sdp"
+            android:layout_centerVertical="true"
+            android:layout_toEndOf="@id/txv_name_title"
+            android:layout_toStartOf="@id/icon_edit_name" />
+
+        <ImageView
+            android:id="@+id/icon_edit_name"
+            android:layout_width="@dimen/_12sdp"
+            android:layout_height="@dimen/_12sdp"
+            android:background="@color/color_input_background"
+            android:layout_centerVertical="true"
+            android:layout_alignParentEnd="true" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0.5dp"
+            android:layout_marginStart="@dimen/_16sdp"
+            android:layout_toEndOf="@id/icon_name"
+            android:layout_alignParentBottom="true"
+            android:background="@color/color_primary_gray" />
+</RelativeLayout>

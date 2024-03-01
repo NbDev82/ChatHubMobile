@@ -15,17 +15,63 @@
         android:theme="@style/Theme.ChatHub"
         tools:targetApi="31">
         <activity
-            android:name=".home.HomeActivity"
+            android:name=".friend.friendsuggestion.FriendSuggestionsActivity"
             android:exported="false" />
         <activity
-            android:name=".user.login.LoginActivity"
-            android:exported="true">
+            android:name=".friend.myfriend.FriendsActivity"
+            android:exported="false" />
+        <activity
+            android:name=".friend.profileviewer.ProfileViewerActivity"
+            android:exported="false" />
+        <activity
+            android:name=".friend.friendrequest.FriendRequestsActivity"
+            android:exported="false" />
+        <activity
+            android:name=".user.login.otp.verify.VerifyOtpActivity"
+            android:exported="false" />
+        <activity
+            android:name=".user.login.otp.phonenumberinput.PhoneNumberInputActivity"
+            android:exported="false" />
+        <activity
+            android:name=".user.emaildetails.EmailDetailsActivity"
+            android:exported="false" />
+        <activity
+            android:name=".user.accountlink.AccountLinkingActivity"
+            android:exported="false" />
+        <activity
+            android:name=".user.changepassword.ChangePasswordActivity"
+            android:exported="false" />
+        <activity
+            android:name=".splash.SplashActivity"
+            android:exported="true"
+            android:theme="@style/Theme.Design.Light.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".setting.SettingsActivity"
+            android:exported="false" />
+        <activity
+            android:name=".user.profile.UserProfileActivity"
+            android:exported="false" />
+        <activity
+            android:name=".user.login.github.GithubAuthActivity"
+            android:exported="false" />
+        <activity
+            android:name=".user.forgotpassword.ForgotPasswordActivity"
+            android:exported="false" />
+        <activity
+            android:name=".user.login.google.GoogleSignInActivity"
+            android:exported="false" />
+        <activity
+            android:name=".home.HomeActivity"
+            android:exported="false" />
+        <activity
+            android:name=".user.login.LoginActivity"
+            android:exported="false" />
         <activity
             android:name=".user.signup.SignUpActivity"
             android:exported="true" />

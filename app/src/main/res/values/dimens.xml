@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="default_icon_margin">@dimen/_10sdp</dimen>
+
+    <dimen name="primary_app_title_size">@dimen/_26ssp</dimen>
+    <dimen name="primary_title_size">@dimen/_18ssp</dimen>
+    <dimen name="primary_sub_title_size">@dimen/_12ssp</dimen>
+    <dimen name="primary_text_size">@dimen/_10ssp</dimen>
+
+    <dimen name="sub_title_width">@dimen/_70sdp</dimen>
+    <dimen name="sub_title_height">@dimen/_16sdp</dimen>
+
+    <dimen name="common_horizontal_padding_layout">@dimen/_30sdp</dimen>
+
+    <!-- activity_user_profile.xml-->
+    <dimen name="profile_item_height">@dimen/_50sdp</dimen>
+    <dimen name="profile_icon_size">@dimen/_25sdp</dimen>
+    <dimen name="profile_item_padding_horizontal">@dimen/_20sdp</dimen>
+    <dimen name="profile_item_distance">@dimen/_5sdp</dimen>
+
+    <!-- activity_settings.xml-->
+    <dimen name="settings_item_height">@dimen/_50sdp</dimen>
+    <dimen name="settings_section_distance">@dimen/_5sdp</dimen>
+    <dimen name="settings_sub_title_margin">@dimen/_10sdp</dimen>
+
+    <!-- activity_change_password.xml-->
+
+    <dimen name="card_corner_radius">@dimen/_16sdp</dimen>
+    <dimen name="input_layout_corner_radius">@dimen/_10sdp</dimen>
+
+    <!-- activity_send_otp.xml-->
+    <dimen name="otp_input_layout_height">@dimen/_10sdp</dimen>
+
+    <dimen name="toolbar_height">@dimen/_40sdp</dimen>
+
+    <dimen name="item_gap">@dimen/_30sdp</dimen>
+
+    <dimen name="button_primary_corner_radius">@dimen/_16sdp</dimen>
+</resources>

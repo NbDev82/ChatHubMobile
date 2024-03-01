@@ -1,0 +1,151 @@
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+    <data>
+        <import type="android.view.View"/>
+        <variable
+            name="requestView"
+            type="com.example.friend.FriendRequestView" />
+
+        <variable
+            name="listener"
+            type="com.example.friend.friendrequest.adapter.FriendRequestListener" />
+
+        <variable
+            name="position"
+            type="int" />
+    </data>
+
+    <com.google.android.material.card.MaterialCardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:cardBackgroundColor="@color/color_background_primary"
+        app:strokeWidth="0dp"
+        app:cardCornerRadius="0dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <FrameLayout
+                android:id="@+id/fl_avatar"
+                android:layout_width="@dimen/_80sdp"
+                android:layout_height="@dimen/_80sdp"
+                android:onClick="@{() -> listener.onItemClick(position)}"
+                android:padding="@dimen/_2sdp">
+
+                <com.makeramen.roundedimageview.RoundedImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/background_image"
+                    android:scaleType="centerCrop"
+                    app:imageBase64="@{requestView.imageUrl}"
+                    app:riv_oval="true" />
+
+                <TextView
+                    android:id="@+id/txv_img_desc"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:text="None"
+                    android:textColor="@color/color_text_secondary"
+                    android:textSize="@dimen/_10ssp"
+                    android:visibility="@{requestView.imageUrl == null ? View.VISIBLE : View.GONE}"
+                    tools:ignore="InvalidId" />
+
+            </FrameLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_margin="@dimen/_5sdp"
+                >
+
+                <TextView
+                    android:id="@+id/txv_name"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentTop="true"
+                    android:layout_toStartOf="@id/txv_time_ago"
+                    android:ellipsize="end"
+                    android:maxLines="1"
+                    android:text="@{requestView.displayName}"
+                    android:textColor="@color/color_text_primary"
+                    android:textSize="@dimen/primary_sub_title_size"
+                    tools:text="Van A" />
+
+                <TextView
+                    android:id="@+id/txv_time_ago"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_alignParentTop="true"
+                    android:maxLines="1"
+                    app:timeAgo="@{requestView.friendRequest.createdTime}"
+                    android:textColor="@color/color_text_secondary"
+                    android:textSize="@dimen/primary_text_size"
+                    tools:text="1w"/>
+
+                <TextView
+                    android:id="@+id/txv_mutual_friends"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:layout_below="@id/txv_name"
+                    android:layout_above="@id/fl_button_group"
+                    android:ellipsize="marquee"
+                    android:text="@{requestView.mutualFriends > 0 ? String.valueOf(requestView.mutualFriends + ` mutualFriend`) : ``}"
+                    android:textColor="@color/color_text_secondary"
+                    android:textSize="@dimen/primary_text_size"
+                    tools:text="1 mutual friend"/>
+
+                <FrameLayout
+                    android:id="@+id/fl_button_group"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentBottom="true"
+                    android:animateLayoutChanges="true">
+
+                    <LinearLayout
+                        android:id="@+id/li_button_group"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:weightSum="2"
+                        android:orientation="horizontal">
+
+                        <com.google.android.material.button.MaterialButton
+                            style="@style/ButtonPrimaryHighlight"
+                            android:layout_width="0dp"
+                            android:layout_height="@dimen/_36sdp"
+                            android:layout_weight="1"
+                            android:text="Confirm"
+                            android:onClick="@{() -> listener.onAcceptClick(position)}"
+                            android:visibility="@{requestView.isLoading ? View.GONE : View.VISIBLE}"
+                            app:cornerRadius="@dimen/button_primary_corner_radius" />
+
+                        <com.google.android.material.button.MaterialButton
+                            style="@style/ButtonPrimaryNeutral"
+                            android:layout_width="0dp"
+                            android:layout_height="@dimen/_36sdp"
+                            android:layout_weight="1"
+                            android:layout_marginStart="@dimen/_15sdp"
+                            android:text="Reject"
+                            android:onClick="@{() -> listener.onRejectClick(position)}"
+                            android:visibility="@{requestView.isLoading ? View.GONE : View.VISIBLE}"
+                            app:cornerRadius="@dimen/button_primary_corner_radius" />
+
+                    </LinearLayout>
+
+                    <ProgressBar
+                        android:layout_width="@dimen/_25sdp"
+                        android:layout_height="@dimen/_25sdp"
+                        android:layout_gravity="center"
+                        android:visibility="@{requestView.isLoading ? View.VISIBLE : View.GONE}"
+                        tools:visibility="gone"/>
+                </FrameLayout>
+            </RelativeLayout>
+        </LinearLayout>
+    </com.google.android.material.card.MaterialCardView>
+</layout>

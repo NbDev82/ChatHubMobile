@@ -1,101 +1,161 @@
 package com.example.user.login;
 
-import android.content.Context;
-import android.content.Intent;
+import android.os.Handler;
+import android.text.TextUtils;
 import android.util.Log;
 import android.util.Patterns;
 
-import androidx.databinding.BaseObservable;
-import androidx.databinding.Bindable;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
 
-import com.example.BR;
-import com.example.home.HomeActivity;
-import com.example.user.UserService;
-import com.example.user.UserServiceImpl;
-import com.example.user.signup.SignUpActivity;
+import com.example.infrastructure.BaseViewModel;
+import com.example.user.repository.AuthRepos;
 
-public class LoginViewModel extends BaseObservable {
+public class LoginViewModel extends BaseViewModel {
 
     private static final String TAG = LoginViewModel.class.getSimpleName();
 
-    private final Context context;
-    private UserService userService;
+    private final MutableLiveData<String> email = new MutableLiveData<>();
+    private final MutableLiveData<String> password = new MutableLiveData<>();
+    private final MutableLiveData<Boolean> navigateToForgotPassword = new MutableLiveData<>();
+    private final MutableLiveData<Boolean> navigateToSignUp = new MutableLiveData<>();
+    private final MutableLiveData<Boolean> navigateToHome = new MutableLiveData<>();
+    private final MutableLiveData<Boolean> navigateToSendOtp = new MutableLiveData<>();
+    private final MutableLiveData<Boolean> navigateToGoogleSignIn = new MutableLiveData<>();
+    private final MutableLiveData<Boolean> navigateToGithubAuth = new MutableLiveData<>();
+    private final MutableLiveData<Boolean> isLogging = new MutableLiveData<>();
 
-    private SignInRequest signInRequest;
-
-    @Bindable
-    public String getEmail() {
-        return signInRequest.getEmail();
+    public MutableLiveData<String> getEmail() {
+        return email;
     }
 
-    public void setEmail(String email) {
-        signInRequest.setEmail(email);
-        notifyPropertyChanged(BR.email);
+    public MutableLiveData<String> getPassword() {
+        return password;
     }
 
-    @Bindable
-    public String getPassword() {
-        return signInRequest.getPassword();
+    public LiveData<Boolean> getNavigateToForgotPassword() {
+        return navigateToForgotPassword;
     }
 
-    public void setPassword(String password) {
-        signInRequest.setPassword(password);
-        notifyPropertyChanged(BR.password);
+    public LiveData<Boolean> getNavigateToSignUp() {
+        return navigateToSignUp;
     }
 
-    @Bindable
-    private String toastMessage = null;
-
-    public String getToastMessage() {
-        return toastMessage;
+    public LiveData<Boolean> getNavigateToHome() {
+        return navigateToHome;
     }
 
-    private void setToastMessage(String toastMessage) {
-        this.toastMessage = toastMessage;
-        notifyPropertyChanged(BR.toastMessage);
+    public LiveData<Boolean> getNavigateToSendOtp() {
+        return navigateToSendOtp;
     }
 
-    public LoginViewModel(Context context) {
-        this.context = context;
-        userService = new UserServiceImpl();
-
-        signInRequest = new SignInRequest();
+    public LiveData<Boolean> getNavigateToGoogleSignIn() {
+        return navigateToGoogleSignIn;
     }
 
-    public void onButtonClicked() {
+    public LiveData<Boolean> getNavigateToGithubAuth() {
+        return navigateToGithubAuth;
+    }
+
+    public MutableLiveData<Boolean> getIsLogging() {
+        return isLogging;
+    }
+
+    public LoginViewModel(AuthRepos authRepos) {
+        this.authRepos = authRepos;
+    }
+
+    public void onLoginBtnClick() {
+        isLogging.postValue(true);
         Log.i(TAG, "Login button clicked");
-        performLogin();
+
+        trimAllInputs();
+        String email = this.email.getValue() != null ? this.email.getValue() : "";
+        String password = this.password.getValue() != null ? this.password.getValue() : "";
+
+        if (!isValidEmail(email)) {
+            errorToastMessage.postValue("Enter your email.");
+            isLogging.postValue(false);
+            return;
+        }
+
+        if (!isValidPassword(password)) {
+            errorToastMessage.postValue("Enter proper password.");
+            isLogging.postValue(false);
+            return;
+        }
+
+        SignInRequest signInRequest = new SignInRequest(email, password);
+        authRepos.signInWithEmailPassword(signInRequest)
+                .addOnSuccessListener(aVoid -> {
+                    isLogging.postValue(false);
+                    successToastMessage.postValue("Login successfully");
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                                                    navigateToHome();
+                                                                     }
+                    }, 100);
+                })
+                .addOnFailureListener(e -> {
+                    errorToastMessage.postValue(e.getMessage());
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                                                    isLogging.postValue(false);
+                                                                               }
+                    }, 500);
+                    Log.e(TAG, "Error: " + e);
+                });
     }
 
-    private void performLogin() {
-        String email = getEmail();
-        String password = getPassword();
+    private void trimAllInputs() {
+        String email = this.email.getValue() != null ? this.email.getValue() : "";
+        String password = this.password.getValue() != null ? this.password.getValue() : "";
 
-        if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-            setToastMessage("Enter context email.");
-        } else if (password.isEmpty() || password.length() < 6) {
-            setToastMessage("Enter proper password.");
-        } else {
-            userService.signIn(signInRequest, aVoid -> {
-                sendUserToHomeActivity();
-                setToastMessage("Login successful");
-            }, e -> {
-                setToastMessage("Please wait while login...");
-                setToastMessage(String.valueOf(e));
-            });
+        this.email.postValue(email.trim());
+        this.password.postValue(password.trim());
+    }
+
+    private boolean isValidEmail(String email) {
+        return !TextUtils.isEmpty(email) && Patterns.EMAIL_ADDRESS.matcher(email).matches();
+    }
+
+    private boolean isValidPassword(String password) {
+        return !TextUtils.isEmpty(password) && password.length() >= 6;
+    }
+
+    public void navigateToForgotPassword() {
+        navigateToForgotPassword.postValue(true);
+    }
+
+    public void navigateToSignUp() {
+        navigateToSignUp.postValue(true);
+    }
+
+    public void navigateIfAuthenticated() {
+        if (authRepos.isLoggedIn()) {
+            navigateToHome.postValue(true);
         }
     }
 
-    private void sendUserToHomeActivity() {
-        Intent intent = new Intent(context, HomeActivity.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-        context.startActivity(intent);
+    public void navigateToHome() {
+        navigateToHome.postValue(true);
     }
 
-    public void onSignUpTextClick(Context context) {
-        Log.i(TAG, "Sign Up clicked");
+    public void navigateToFingerprintSignIn() {
+        errorToastMessage.postValue("Without implementation");
+    }
 
-        Intent intent = new Intent(context, SignUpActivity.class);
-        context.startActivity(intent);
+    public void navigateToSendOtp() {
+        navigateToSendOtp.postValue(true);
+    }
+
+    public void navigateToGoogleSignIn() {
+        navigateToGoogleSignIn.postValue(true);
+    }
+
+    public void navigateToGithubAuth() {
+        navigateToGithubAuth.postValue(true);
     }
 }

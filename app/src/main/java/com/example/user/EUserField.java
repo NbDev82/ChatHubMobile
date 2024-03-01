@@ -2,13 +2,14 @@ package com.example.user;
 
 public enum EUserField {
     COLLECTION_NAME("users"),
-    USERNAME("username"),
-    HASHED_PASS("hashedPass"),
     FULL_NAME("fullName"),
     EMAIL("email"),
+    PHONE_NUMBER("phoneNumber"),
     GENDER("gender"),
-    IS_ONLINE("isOnline"),
-    IS_DELETED("isDeleted");
+    BIRTHDAY("birthday"),
+    IMAGE_URL("imageUrl"),
+    IS_ONLINE("online"),
+    IS_DELETED("deleted");
 
     private String name;
 

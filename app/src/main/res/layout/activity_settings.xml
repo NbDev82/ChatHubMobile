@@ -1,0 +1,453 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+        <variable
+            name="viewModel"
+            type="com.example.setting.SettingsViewModel" />
+    </data>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:background="@color/color_background_primary"
+        tools:successToastMessage="@{viewModel.successToastMessage}"
+        tools:errorToastMessage="@{viewModel.errorToastMessage}">
+
+        <androidx.appcompat.widget.Toolbar
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/toolbar_height"
+            android:background="@drawable/gradient_color_primary">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_nav_arrow_left"
+                app:tint="@android:color/white"
+                android:onClickListener="@{() -> viewModel.navigateToHome()}"
+                android:contentDescription="Back to home"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="Settings"
+                android:textColor="@android:color/white"
+                android:textStyle="bold"
+                android:textSize="@dimen/primary_title_size" />
+        </androidx.appcompat.widget.Toolbar>
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/color_background_secondary">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/color_background_secondary"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:id="@+id/ll_account"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@android:color/white"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/color_text_primary_sub_title"
+                        android:layout_margin="@dimen/settings_sub_title_margin"
+                        android:text="Account"/>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@color/color_background_primary"
+                        android:layout_marginHorizontal="@dimen/profile_item_padding_horizontal">
+
+                        <com.google.android.material.card.MaterialCardView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:onClick="@{() -> viewModel.navigateToUserProfile()}"
+                            app:cardBackgroundColor="@color/color_background_primary"
+                            app:cardCornerRadius="@dimen/_10sdp">
+
+                            <RelativeLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="@dimen/settings_item_height"
+                                android:layout_marginVertical="@dimen/_10sdp"
+                                android:layout_marginHorizontal="@dimen/_8sdp">
+
+                                <com.makeramen.roundedimageview.RoundedImageView
+                                    android:id="@+id/img_profile"
+                                    android:layout_width="@dimen/settings_item_height"
+                                    android:layout_height="@dimen/settings_item_height"
+                                    android:background="@drawable/background_image"
+                                    android:scaleType="centerCrop"
+                                    app:imageBitmap="@{viewModel.profileImg}"
+                                    app:riv_oval="true" />
+
+                                <LinearLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_centerInParent="true"
+                                    android:layout_marginHorizontal="@dimen/_20sdp"
+                                    android:layout_toStartOf="@id/icon_edit_profile"
+                                    android:layout_toEndOf="@id/img_profile"
+                                    android:orientation="vertical">
+
+                                    <TextView
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:text="Personal information"
+                                        android:textSize="@dimen/primary_sub_title_size" />
+
+                                    <TextView
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:ellipsize="end"
+                                        android:maxLines="1"
+                                        android:textStyle="bold"
+                                        android:text="@{viewModel.fullName.isEmpty() ? `(None)` : viewModel.fullName}"
+                                        android:textSize="@dimen/primary_text_size"
+                                        tools:text="Văn An" />
+                                </LinearLayout>
+
+                                <ImageView
+                                    android:id="@+id/icon_edit_profile"
+                                    android:layout_width="@dimen/_12sdp"
+                                    android:layout_height="@dimen/_12sdp"
+                                    android:layout_centerVertical="true"
+                                    android:layout_alignParentEnd="true"
+                                    android:src="@drawable/ic_right_chevron" />
+
+                            </RelativeLayout>
+
+
+                        </com.google.android.material.card.MaterialCardView>
+                    </LinearLayout>
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/settings_item_height"
+                        android:paddingHorizontal="@dimen/profile_item_padding_horizontal"
+                        android:background="@drawable/ripple_effect"
+                        android:clickable="true"
+                        android:onClick="@{() -> viewModel.navigateToChangePhoneNumber()}">
+
+                        <ImageView
+                            android:id="@+id/icon_phone"
+                            android:layout_width="@dimen/profile_icon_size"
+                            android:layout_height="@dimen/profile_icon_size"
+                            android:layout_centerVertical="true"
+                            android:src="@drawable/ic_phone" />
+
+                        <TextView
+                            android:id="@+id/txv_phone_title"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="@dimen/_16sdp"
+                            android:layout_centerVertical="true"
+                            android:layout_toEndOf="@id/icon_phone"
+                            android:text="Phone number"
+                            android:textColor="@color/color_text_secondary"
+                            android:textSize="@dimen/primary_sub_title_size" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="@dimen/_20sdp"
+                            android:layout_marginEnd="@dimen/_5sdp"
+                            android:layout_centerVertical="true"
+                            android:layout_toEndOf="@id/txv_phone_title"
+                            android:layout_toStartOf="@id/icon_edit_phone"
+                            android:text="@{viewModel.phoneNumber.isEmpty() ? `(None)` : viewModel.phoneNumber}"
+                            android:gravity="end"
+                            android:textColor="@color/color_text_primary"
+                            android:textSize="@dimen/primary_text_size"
+                            android:maxLines="1"
+                            android:ellipsize="end"
+                            tools:text="09123819238"/>
+
+                        <ImageView
+                            android:id="@+id/icon_edit_phone"
+                            android:layout_width="@dimen/_12sdp"
+                            android:layout_height="@dimen/_12sdp"
+                            android:layout_centerVertical="true"
+                            android:layout_alignParentEnd="true"
+                            android:src="@drawable/ic_right_chevron" />
+
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="0.5dp"
+                            android:layout_marginStart="@dimen/_16sdp"
+                            android:layout_toEndOf="@id/icon_phone"
+                            android:layout_alignParentBottom="true"
+                            android:background="@color/color_primary_gray" />
+                    </RelativeLayout>
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/settings_item_height"
+                        android:paddingHorizontal="@dimen/profile_item_padding_horizontal"
+                        android:background="@drawable/ripple_effect"
+                        android:clickable="true"
+                        android:onClick="@{() -> viewModel.navigateToChangeEmail()}">
+
+                        <ImageView
+                            android:id="@+id/icon_email"
+                            android:layout_width="@dimen/profile_icon_size"
+                            android:layout_height="@dimen/profile_icon_size"
+                            android:layout_centerVertical="true"
+                            android:src="@drawable/ic_mail" />
+
+                        <TextView
+                            android:id="@+id/txv_email_title"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="@dimen/_16sdp"
+                            android:layout_centerVertical="true"
+                            android:layout_toEndOf="@id/icon_email"
+                            android:text="Email"
+                            android:textColor="@color/color_text_secondary"
+                            android:textSize="@dimen/primary_sub_title_size" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="@dimen/_20sdp"
+                            android:layout_marginEnd="@dimen/_5sdp"
+                            android:layout_centerVertical="true"
+                            android:layout_toEndOf="@id/txv_email_title"
+                            android:layout_toStartOf="@id/icon_edit_name"
+                            android:text="@{viewModel.email.isEmpty() ? `(None)` : viewModel.email}"
+                            android:gravity="end"
+                            android:textColor="@color/color_text_primary"
+                            android:textSize="@dimen/primary_text_size"
+                            android:maxLines="1"
+                            android:ellipsize="end"
+                            tools:text="info.abc@gmail.com"/>
+
+                        <ImageView
+                            android:id="@+id/icon_edit_name"
+                            android:layout_width="@dimen/_12sdp"
+                            android:layout_height="@dimen/_12sdp"
+                            android:layout_centerVertical="true"
+                            android:layout_alignParentEnd="true"
+                            android:src="@drawable/ic_right_chevron" />
+
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="0.5dp"
+                            android:layout_marginStart="@dimen/_16sdp"
+                            android:layout_toEndOf="@id/icon_email"
+                            android:layout_alignParentBottom="true"
+                            android:background="@color/color_primary_gray" />
+                    </RelativeLayout>
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/settings_item_height"
+                        android:paddingHorizontal="@dimen/profile_item_padding_horizontal"
+                        android:background="@drawable/ripple_effect"
+                        android:clickable="true"
+                        android:onClick="@{() -> viewModel.navigateToAccountLinking()}">
+
+                        <ImageView
+                            android:id="@+id/icon_linking"
+                            android:layout_width="@dimen/profile_icon_size"
+                            android:layout_height="@dimen/profile_icon_size"
+                            android:layout_centerVertical="true"
+                            android:src="@drawable/ic_link" />
+
+                        <TextView
+                            android:id="@+id/icon_linking_title"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="@dimen/_16sdp"
+                            android:layout_centerVertical="true"
+                            android:layout_toEndOf="@id/icon_linking"
+                            android:text="Linking"
+                            android:textColor="@color/color_text_secondary"
+                            android:textSize="@dimen/primary_sub_title_size" />
+
+                        <ImageView
+                            android:layout_width="@dimen/_12sdp"
+                            android:layout_height="@dimen/_12sdp"
+                            android:layout_centerVertical="true"
+                            android:layout_alignParentEnd="true"
+                            android:src="@drawable/ic_right_chevron" />
+
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="0.5dp"
+                            android:layout_marginStart="@dimen/_16sdp"
+                            android:layout_toEndOf="@id/icon_linking"
+                            android:layout_alignParentBottom="true"
+                            android:background="@color/color_primary_gray" />
+                    </RelativeLayout>
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/settings_item_height"
+                        android:paddingHorizontal="@dimen/profile_item_padding_horizontal"
+                        android:background="@drawable/ripple_effect"
+                        android:clickable="true"
+                        android:onClick="@{() -> viewModel.navigateToMyQrCode()}">
+
+                        <ImageView
+                            android:id="@+id/icon_qr_code"
+                            android:layout_width="@dimen/profile_icon_size"
+                            android:layout_height="@dimen/profile_icon_size"
+                            android:layout_centerVertical="true"
+                            android:src="@drawable/ic_qr_code" />
+
+                        <TextView
+                            android:id="@+id/txv_qr_code_title"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="@dimen/_16sdp"
+                            android:layout_centerVertical="true"
+                            android:layout_toEndOf="@id/icon_qr_code"
+                            android:text="My QR code"
+                            android:textColor="@color/color_text_secondary"
+                            android:textSize="@dimen/primary_sub_title_size" />
+
+                        <ImageView
+                            android:layout_width="@dimen/_12sdp"
+                            android:layout_height="@dimen/_12sdp"
+                            android:layout_centerVertical="true"
+                            android:layout_alignParentEnd="true"
+                            android:src="@drawable/ic_right_chevron" />
+                    </RelativeLayout>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/ll_security"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/settings_section_distance"
+                    android:background="@android:color/white"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/color_text_primary_sub_title"
+                        android:layout_margin="@dimen/settings_sub_title_margin"
+                        android:text="Security"/>
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/settings_item_height"
+                        android:paddingHorizontal="@dimen/profile_item_padding_horizontal"
+                        android:background="@drawable/ripple_effect"
+                        android:clickable="true"
+                        android:onClick="@{() -> viewModel.navigateToLockMyApp()}">
+
+                        <ImageView
+                            android:id="@+id/icon_lock"
+                            android:layout_width="@dimen/profile_icon_size"
+                            android:layout_height="@dimen/profile_icon_size"
+                            android:layout_centerVertical="true"
+                            android:src="@drawable/ic_mobile_fingerprint" />
+
+                        <TextView
+                            android:id="@+id/txv_lock_title"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="@dimen/_16sdp"
+                            android:layout_centerVertical="true"
+                            android:layout_toEndOf="@id/icon_lock"
+                            android:text="Lock my app"
+                            android:textColor="@color/color_text_secondary"
+                            android:textSize="@dimen/primary_sub_title_size" />
+
+                        <ImageView
+                            android:layout_width="@dimen/_12sdp"
+                            android:layout_height="@dimen/_12sdp"
+                            android:layout_centerVertical="true"
+                            android:layout_alignParentEnd="true"
+                            android:src="@drawable/ic_right_chevron" />
+                    </RelativeLayout>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/ll_login"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/settings_section_distance"
+                    android:background="@android:color/white"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/color_text_primary_sub_title"
+                        android:layout_margin="@dimen/settings_sub_title_margin"
+                        android:text="Login"/>
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/settings_item_height"
+                        android:paddingHorizontal="@dimen/profile_item_padding_horizontal"
+                        android:background="@drawable/ripple_effect"
+                        android:clickable="true"
+                        android:onClick="@{() -> viewModel.navigateToChangePassword()}">
+
+                        <ImageView
+                            android:id="@+id/icon_password"
+                            android:layout_width="@dimen/profile_icon_size"
+                            android:layout_height="@dimen/profile_icon_size"
+                            android:layout_centerVertical="true"
+                            android:src="@drawable/ic_lock" />
+
+                        <TextView
+                            android:id="@+id/txv_password_title"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="@dimen/_16sdp"
+                            android:layout_centerVertical="true"
+                            android:layout_toEndOf="@id/icon_password"
+                            android:text="Password"
+                            android:textColor="@color/color_text_secondary"
+                            android:textSize="@dimen/primary_sub_title_size" />
+
+                        <ImageView
+                            android:layout_width="@dimen/_12sdp"
+                            android:layout_height="@dimen/_12sdp"
+                            android:layout_centerVertical="true"
+                            android:layout_alignParentEnd="true"
+                            android:src="@drawable/ic_right_chevron" />
+                    </RelativeLayout>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/ll_delete_account"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@android:color/white"
+                    android:layout_marginTop="@dimen/settings_section_distance">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textStyle="bold"
+                        android:textColor="@color/color_error"
+                        android:layout_margin="@dimen/settings_sub_title_margin"
+                        android:text="Delete account"/>
+
+                </LinearLayout>
+            </LinearLayout>
+        </ScrollView>
+    </LinearLayout>
+</layout>
