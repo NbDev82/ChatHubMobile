@@ -12,9 +12,9 @@ import com.example.infrastructure.Utils;
 import com.example.navigation.EAnimationType;
 import com.example.navigation.NavigationManager;
 import com.example.navigation.NavigationManagerImpl;
+import com.example.user.EUserField;
 import com.example.user.repository.AuthRepos;
 import com.example.user.repository.AuthReposImpl;
-import com.example.user.EUserField;
 import com.example.user.repository.UserRepos;
 import com.example.user.repository.UserReposImpl;
 

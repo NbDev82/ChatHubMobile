@@ -4,7 +4,6 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import com.example.user.repository.AuthRepos;
-import com.example.user.repository.UserRepos;
 
 public abstract class BaseViewModel extends ViewModel {
 

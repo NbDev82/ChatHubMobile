@@ -1,16 +1,13 @@
 package com.example.friend.friendsuggestion.adapter;
 
 import android.view.LayoutInflater;
-import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.databinding.ItemFriendRequestBinding;
 import com.example.databinding.ItemFriendSuggestionBinding;
 import com.example.friend.FriendRequestView;
-import com.example.friend.friendrequest.adapter.FriendRequestAdapter;
 
 import java.util.List;
 

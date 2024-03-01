@@ -2,8 +2,6 @@ package com.example.customcontrol.snackbar;
 
 import android.app.Activity;
 import android.content.Context;
-import android.os.CountDownTimer;
-import android.os.Looper;
 import android.util.DisplayMetrics;
 import android.view.Gravity;
 import android.view.View;
@@ -15,8 +13,6 @@ import androidx.core.content.ContextCompat;
 import com.example.R;
 import com.google.android.material.snackbar.BaseTransientBottomBar;
 import com.google.android.material.snackbar.Snackbar;
-
-import java.util.logging.Handler;
 
 public class CustomSnackbar {
     public static void show(Activity activity, SnackbarModel model) {

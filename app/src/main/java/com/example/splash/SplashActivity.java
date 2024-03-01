@@ -1,9 +1,9 @@
 package com.example.splash;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.os.Bundle;
 import android.os.Handler;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.R;
 import com.example.infrastructure.Utils;

@@ -11,9 +11,9 @@ import com.example.customcontrol.customalertdialog.AlertDialogModel;
 import com.example.customcontrol.inputdialogfragment.InputDialogModel;
 import com.example.infrastructure.BaseViewModel;
 import com.example.infrastructure.Utils;
-import com.example.user.repository.AuthRepos;
 import com.example.user.EGender;
 import com.example.user.User;
+import com.example.user.repository.AuthRepos;
 import com.example.user.repository.UserRepos;
 
 import java.util.Calendar;

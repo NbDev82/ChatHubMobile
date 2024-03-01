@@ -8,8 +8,8 @@ import androidx.lifecycle.MutableLiveData;
 
 import com.example.infrastructure.BaseViewModel;
 import com.example.infrastructure.Utils;
-import com.example.user.repository.AuthRepos;
 import com.example.user.User;
+import com.example.user.repository.AuthRepos;
 
 public class SettingsViewModel extends BaseViewModel {
 

@@ -1,10 +1,10 @@
 package com.example.user.emaildetails;
 
+import android.os.Bundle;
+
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.ViewModelProvider;
-
-import android.os.Bundle;
 
 import com.example.R;
 import com.example.databinding.ActivityEmailDetailsBinding;

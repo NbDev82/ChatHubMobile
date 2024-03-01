@@ -1,7 +1,5 @@
 package com.example.user;
 
-import android.telephony.PhoneNumberUtils;
-
 import org.jetbrains.annotations.Nullable;
 
 public class Validator {

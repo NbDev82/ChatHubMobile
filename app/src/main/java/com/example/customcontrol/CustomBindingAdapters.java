@@ -5,10 +5,8 @@ import android.graphics.Bitmap;
 import android.view.View;
 import android.widget.TextView;
 
-import androidx.core.content.res.ResourcesCompat;
 import androidx.databinding.BindingAdapter;
 
-import com.example.R;
 import com.example.customcontrol.snackbar.CustomSnackbar;
 import com.example.customcontrol.snackbar.SnackbarModel;
 import com.example.infrastructure.Utils;

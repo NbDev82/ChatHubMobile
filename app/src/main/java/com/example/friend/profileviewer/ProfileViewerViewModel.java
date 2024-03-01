@@ -12,9 +12,9 @@ import com.example.friend.FriendRequest;
 import com.example.friend.repository.FriendRequestRepos;
 import com.example.infrastructure.BaseViewModel;
 import com.example.infrastructure.Utils;
-import com.example.user.repository.AuthRepos;
 import com.example.user.EGender;
 import com.example.user.User;
+import com.example.user.repository.AuthRepos;
 import com.example.user.repository.UserRepos;
 
 import java.util.Date;
@@ -118,35 +118,7 @@ public class ProfileViewerViewModel extends BaseViewModel {
     }
 
     public void checkFriendRequestStatus() {
-        String currentUserId = authRepos.getCurrentUid();
-//        friendRequestRepos.getFriendRequest(displayedUserId, currentUserId)
-//                .addOnSuccessListener(friendRequest -> {
-//                    if (friendRequest == null) {
-//                        friendshipStatus.postValue(EFriendshipStatus.NOT_FRIEND);
-//                        return;
-//                    }
-//                    FriendRequest.EStatus friendStatus = friendRequest.getStatus();
-//                    switch (friendStatus) {
-//                        case ACCEPTED:
-//                            friendshipStatus.postValue(EFriendshipStatus.FRIEND);
-//                            break;
-//                        case PENDING:
-//                            friendshipStatus.postValue(EFriendshipStatus.RECEIVED_REQUEST);
-//                            break;
-//                        case REJECTED:
-//                            friendshipStatus.postValue(EFriendshipStatus.NOT_FRIEND);
-//                            break;
-//                        default:
-//                            friendshipStatus.postValue(EFriendshipStatus.NOT_FOUND);
-//                            break;
-//                    }
-//                    Log.i(TAG, "Update status: " + friendStatus);
-//                    Log.i(TAG, "Update status: " + friendshipStatus.getValue().toString());
-//                })
-//                .addOnFailureListener(e -> {
-//                    friendshipStatus.postValue(EFriendshipStatus.NOT_FOUND);
-//                    Log.e(TAG, "Error: " + e.getMessage(), e);
-//                });
+        errorToastMessage.postValue("checkFriendRequestStatus() does not implement");
     }
 
     public void navigateBack() {

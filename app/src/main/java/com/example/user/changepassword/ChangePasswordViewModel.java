@@ -6,9 +6,9 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.example.infrastructure.BaseViewModel;
-import com.example.user.repository.AuthRepos;
 import com.example.user.UserNotAuthenticatedException;
 import com.example.user.Validator;
+import com.example.user.repository.AuthRepos;
 import com.google.firebase.auth.EmailAuthProvider;
 
 import java.util.Objects;
