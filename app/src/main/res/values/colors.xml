@@ -12,6 +12,8 @@
     <!-- Background Colors -->
     <color name="color_background_primary">#ffffff</color>
     <color name="color_background_secondary">#f3f4f7</color>
+    <color name="color_background_conversation">#3498db</color>
+    <color name="color_background_chat_input">#C0C0C0</color>
 
     <color name="color_bottom_navigation_background">#fbfcfd</color>
 
@@ -21,12 +23,15 @@
     <color name="color_text_primary_sub_title">#0045a3</color>
     <color name="color_text_primary">#1c1c1c</color>
     <color name="color_text_secondary">#757575</color>
+    <color name="color_hint_input_text">#ffffff</color>
 
     <!-- Input Colors -->
     <color name="color_input_background">#ececec</color>
 
     <!-- Icon Colors -->
     <color name="color_icon_background">#20ffffff</color>
+    <color name="color_icon_back">#FFFFFFFF</color>
+    <color name="color_icon_info">#FFFFFFFF</color>
 
     <!-- Success and Error Colors -->
     <color name="color_success">#33b864</color>
