@@ -80,9 +80,9 @@ public class SettingsActivity extends AppCompatActivity {
             }
         });
 
-        viewModel.getNavigateToLockMyApp().observe(this, navigate -> {
+        viewModel.getNavigateToLockApp().observe(this, navigate -> {
             if (navigate) {
-                showNotImplementToast();
+                navigationManager.navigateToLockApp(EAnimationType.FADE_IN);
             }
         });
 

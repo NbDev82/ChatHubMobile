@@ -350,7 +350,7 @@
                         android:paddingHorizontal="@dimen/profile_item_padding_horizontal"
                         android:background="@drawable/ripple_effect"
                         android:clickable="true"
-                        android:onClick="@{() -> viewModel.navigateToLockMyApp()}">
+                        android:onClick="@{() -> viewModel.navigateToLockApp()}">
 
                         <ImageView
                             android:id="@+id/icon_lock"

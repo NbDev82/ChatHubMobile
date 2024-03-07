@@ -25,7 +25,7 @@ public class SettingsViewModel extends BaseViewModel {
     private final MutableLiveData<Boolean> navigateToChangeEmail = new MutableLiveData<>();
     private final MutableLiveData<Boolean> navigateToAccountLinking = new MutableLiveData<>();
     private final MutableLiveData<Boolean> navigateToMyQrCode = new MutableLiveData<>();
-    private final MutableLiveData<Boolean> navigateToLockMyApp = new MutableLiveData<>();
+    private final MutableLiveData<Boolean> navigateToLockApp = new MutableLiveData<>();
     private final MutableLiveData<Boolean> navigateToChangePassword = new MutableLiveData<>();
     private User mUser;
 
@@ -69,8 +69,8 @@ public class SettingsViewModel extends BaseViewModel {
         return navigateToMyQrCode;
     }
 
-    public MutableLiveData<Boolean> getNavigateToLockMyApp() {
-        return navigateToLockMyApp;
+    public MutableLiveData<Boolean> getNavigateToLockApp() {
+        return navigateToLockApp;
     }
 
     public LiveData<Boolean> getNavigateToChangePassword() {
@@ -125,8 +125,8 @@ public class SettingsViewModel extends BaseViewModel {
         navigateToMyQrCode.postValue(true);
     }
 
-    public void navigateToLockMyApp() {
-        navigateToLockMyApp.postValue(true);
+    public void navigateToLockApp() {
+        navigateToLockApp.postValue(true);
     }
 
     public void navigateToChangePassword() {

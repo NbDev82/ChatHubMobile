@@ -52,4 +52,9 @@
     <!-- Primary Neutral Button -->
     <color name="color_button_primary_neutral_bg">#e9ebed</color>
     <color name="color_button_primary_neutral_text">#141415</color>
+
+    <color name="switch_track_color_checked">#a9e0ff</color>
+    <color name="switch_thumb_color_checked">#2dafff</color>
+    <color name="switch_track_color_unchecked">#e8e8e8</color>
+    <color name="switch_thumb_color_unchecked">#FFFFFF</color>
 </resources>

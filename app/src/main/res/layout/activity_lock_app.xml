@@ -1,0 +1,234 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+        <variable
+            name="viewModel"
+            type="com.example.lockapp.LockAppViewModel" />
+    </data>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:background="@color/color_background_primary"
+        tools:successToastMessage="@{viewModel.successToastMessage}"
+        tools:errorToastMessage="@{viewModel.errorToastMessage}">
+
+        <androidx.appcompat.widget.Toolbar
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/toolbar_height"
+            android:background="@drawable/gradient_color_primary">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_nav_arrow_left"
+                app:tint="@android:color/white"
+                android:onClickListener="@{() -> viewModel.navigateBack()}"
+                android:contentDescription="Back to home"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="Lock app"
+                android:textColor="@android:color/white"
+                android:textStyle="bold"
+                android:textSize="@dimen/primary_title_size" />
+        </androidx.appcompat.widget.Toolbar>
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/color_background_secondary">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/color_background_secondary"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:id="@+id/ll_set_passcode"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@android:color/white"
+                    android:orientation="vertical">
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/settings_item_height"
+                        android:paddingHorizontal="@dimen/profile_item_padding_horizontal"
+                        android:background="@drawable/ripple_effect"
+                        android:clickable="true"
+                        android:onClick="@{() -> viewModel.toggleSetPassword()}">
+
+                        <TextView
+                            android:id="@+id/txv_set_passcode_title"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerVertical="true"
+                            android:text="Set passcode"
+                            android:textColor="@color/color_text_primary"
+                            android:textSize="@dimen/primary_sub_title_size" />
+
+                        <com.google.android.material.switchmaterial.SwitchMaterial
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:checked="@{viewModel.isPasscodeSet}"
+                            android:layout_centerVertical="true"
+                            android:layout_alignParentEnd="true"
+                            app:thumbTint="@color/switch_thumb_color_selector"
+                            app:trackTint="@color/switch_track_color_selector"
+                            tools:checked="true" />
+
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="0.5dp"
+                            android:layout_alignParentBottom="true"
+                            android:background="@color/color_primary_gray" />
+                    </RelativeLayout>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/ll_change_passcode"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@android:color/white"
+                    android:orientation="vertical">
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/settings_item_height"
+                        android:paddingHorizontal="@dimen/profile_item_padding_horizontal"
+                        android:background="@drawable/ripple_effect"
+                        android:clickable="true"
+                        android:onClick="@{() -> viewModel.openChangePasscodeDialog()}">
+
+                        <TextView
+                            android:id="@+id/txv_change_passcode_title"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerVertical="true"
+                            android:text="Change passcode"
+                            android:textColor="@color/color_text_primary"
+                            android:textSize="@dimen/primary_sub_title_size" />
+
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="0.5dp"
+                            android:layout_alignParentBottom="true"
+                            android:background="@color/color_primary_gray" />
+                    </RelativeLayout>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/ll_fingerprint"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@android:color/white"
+                    android:orientation="vertical">
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/settings_item_height"
+                        android:paddingHorizontal="@dimen/profile_item_padding_horizontal"
+                        android:background="@drawable/ripple_effect"
+                        android:clickable="true"
+                        android:onClick="@{() -> viewModel.toggleUnlockWithFingerprint()}">
+
+                        <TextView
+                            android:id="@+id/txv_fingerprint_title"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerVertical="true"
+                            android:text="Unlock with fingerprint"
+                            android:textColor="@color/color_text_primary"
+                            android:textSize="@dimen/primary_sub_title_size" />
+
+                        <com.google.android.material.switchmaterial.SwitchMaterial
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:checked="@{viewModel.isFingerprintUnlockEnabled}"
+                            android:layout_centerVertical="true"
+                            android:layout_alignParentEnd="true"
+                            app:thumbTint="@color/switch_thumb_color_selector"
+                            app:trackTint="@color/switch_track_color_selector"
+                            tools:checked="false" />
+
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="0.5dp"
+                            android:layout_alignParentBottom="true"
+                            android:background="@color/color_primary_gray" />
+                    </RelativeLayout>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/ll_auto_lock"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@android:color/white"
+                    android:orientation="vertical">
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/settings_item_height"
+                        android:paddingHorizontal="@dimen/profile_item_padding_horizontal"
+                        android:background="@drawable/ripple_effect"
+                        android:clickable="true"
+                        android:onClick="@{() -> viewModel.pickAutoLockTime()}">
+
+                        <TextView
+                            android:id="@+id/txv_auto_lock_title"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerVertical="true"
+                            android:text="Auto-lock"
+                            android:textColor="@color/color_text_primary"
+                            android:textSize="@dimen/primary_sub_title_size" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="@dimen/_20sdp"
+                            android:layout_centerVertical="true"
+                            android:layout_alignParentEnd="true"
+                            android:layout_toEndOf="@id/txv_auto_lock_title"
+                            android:text="@{viewModel.selectedAutoLockTime.isEmpty() ? `(None)` : viewModel.selectedAutoLockTime}"
+                            android:gravity="end"
+                            android:textColor="@color/color_text_primary"
+                            android:textSize="@dimen/primary_text_size"
+                            android:textAlignment="textEnd"
+                            android:maxLines="1"
+                            android:ellipsize="end"
+                            tools:text="In 1 hour"/>
+
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="0.5dp"
+                            android:layout_alignParentBottom="true"
+                            android:background="@color/color_primary_gray" />
+                    </RelativeLayout>
+
+                </LinearLayout>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_10sdp"
+                    android:layout_marginHorizontal="@dimen/_10sdp"
+                    android:text="@string/lock_app_notice"
+                    android:textColor="@color/color_text_secondary"
+                    android:textSize="@dimen/primary_text_size" />
+            </LinearLayout>
+        </ScrollView>
+    </LinearLayout>
+
+</layout>

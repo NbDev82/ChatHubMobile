@@ -11,6 +11,7 @@ import com.example.friend.friendrequest.FriendRequestsActivity;
 import com.example.friend.myfriend.FriendsActivity;
 import com.example.friend.profileviewer.ProfileViewerActivity;
 import com.example.home.HomeActivity;
+import com.example.lockapp.LockAppActivity;
 import com.example.setting.SettingsActivity;
 import com.example.user.accountlink.AccountLinkingActivity;
 import com.example.user.changepassword.ChangePasswordActivity;
@@ -119,6 +120,11 @@ public class NavigationManagerImpl implements NavigationManager {
     @Override
     public void navigateToFriends(EAnimationType animationType) {
         navigateToActivity(FriendsActivity.class, animationType);
+    }
+
+    @Override
+    public void navigateToLockApp(EAnimationType animationType) {
+        navigateToActivity(LockAppActivity.class, animationType);
     }
 
     private void setResultAndFinish(Intent resultIntent, EAnimationType animationType) {
