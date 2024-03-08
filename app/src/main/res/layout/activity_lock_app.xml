@@ -78,7 +78,7 @@
                         <com.google.android.material.switchmaterial.SwitchMaterial
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:checked="@{viewModel.isPasscodeSet}"
+                            android:checked="@={viewModel.isPasscodeSet}"
                             android:layout_centerVertical="true"
                             android:layout_alignParentEnd="true"
                             app:thumbTint="@color/switch_thumb_color_selector"
@@ -91,15 +91,6 @@
                             android:layout_alignParentBottom="true"
                             android:background="@color/color_primary_gray" />
                     </RelativeLayout>
-
-                </LinearLayout>
-
-                <LinearLayout
-                    android:id="@+id/ll_change_passcode"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:background="@android:color/white"
-                    android:orientation="vertical">
 
                     <RelativeLayout
                         android:layout_width="match_parent"
@@ -125,15 +116,6 @@
                             android:background="@color/color_primary_gray" />
                     </RelativeLayout>
 
-                </LinearLayout>
-
-                <LinearLayout
-                    android:id="@+id/ll_fingerprint"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:background="@android:color/white"
-                    android:orientation="vertical">
-
                     <RelativeLayout
                         android:layout_width="match_parent"
                         android:layout_height="@dimen/settings_item_height"
@@ -154,7 +136,7 @@
                         <com.google.android.material.switchmaterial.SwitchMaterial
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:checked="@{viewModel.isFingerprintUnlockEnabled}"
+                            android:checked="@={viewModel.isFingerprintUnlockEnabled}"
                             android:layout_centerVertical="true"
                             android:layout_alignParentEnd="true"
                             app:thumbTint="@color/switch_thumb_color_selector"
@@ -167,15 +149,6 @@
                             android:layout_alignParentBottom="true"
                             android:background="@color/color_primary_gray" />
                     </RelativeLayout>
-
-                </LinearLayout>
-
-                <LinearLayout
-                    android:id="@+id/ll_auto_lock"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:background="@android:color/white"
-                    android:orientation="vertical">
 
                     <RelativeLayout
                         android:layout_width="match_parent"
@@ -201,14 +174,14 @@
                             android:layout_centerVertical="true"
                             android:layout_alignParentEnd="true"
                             android:layout_toEndOf="@id/txv_auto_lock_title"
-                            android:text="@{viewModel.selectedAutoLockTime.isEmpty() ? `(None)` : viewModel.selectedAutoLockTime}"
+                            android:text="@{viewModel.selectedAutoLockTime == null ? `(None)` : viewModel.selectedAutoLockTime.displayName}"
                             android:gravity="end"
                             android:textColor="@color/color_text_primary"
                             android:textSize="@dimen/primary_text_size"
                             android:textAlignment="textEnd"
                             android:maxLines="1"
                             android:ellipsize="end"
-                            tools:text="In 1 hour"/>
+                            tools:text="1 hour"/>
 
                         <View
                             android:layout_width="match_parent"
