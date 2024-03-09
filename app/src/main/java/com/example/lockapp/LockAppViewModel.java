@@ -94,14 +94,24 @@ public class LockAppViewModel extends BaseViewModel {
 
     private void openPasscodeDialog() {
         InputDialogModel model = new InputDialogModel.Builder()
-                .setTitle("New passcode")
+                .setTitle("Set passcode")
                 .setType(EInputType.NORMAL)
                 .setCurrentContent("")
+                .setCancelable(false)
                 .setSubmitButtonClickListener(passcode -> {
-                    this.passcode.postValue(passcode);
+                    if (isValidPasscode(passcode)) {
+                        this.passcode.postValue(passcode);
+                        this.successToastMessage.postValue("Passcode set successfully");
+                    } else {
+                        this.errorToastMessage.postValue("Failed to set passcode");
+                    }
                 })
                 .build();
         openInputDialog.postValue(model);
+    }
+
+    public static boolean isValidPasscode(String passcode) {
+        return !Utils.isEmpty(passcode) && passcode.length() == Utils.PASSCODE_DIGIT_COUNT;
     }
 
     public void toggleUnlockWithFingerprint() {

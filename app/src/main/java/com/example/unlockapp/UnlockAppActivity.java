@@ -50,6 +50,8 @@ public class UnlockAppActivity extends AppCompatActivity {
         preferenceManager = new PreferenceManager(getApplicationContext());
 
         setupObservers();
+
+        openUnlockWithFingerprint();
     }
 
     private void setupObservers() {
@@ -81,24 +83,8 @@ public class UnlockAppActivity extends AppCompatActivity {
         }
 
         Executor executor = ContextCompat.getMainExecutor(this);
-        biometricPrompt = new BiometricPrompt(UnlockAppActivity.this, executor, new BiometricPrompt.AuthenticationCallback() {
-            @Override
-            public void onAuthenticationError(int errorCode, @NonNull CharSequence errString) {
-                super.onAuthenticationError(errorCode, errString);
-            }
-
-            @Override
-            public void onAuthenticationSucceeded(@NonNull BiometricPrompt.AuthenticationResult result) {
-                super.onAuthenticationSucceeded(result);
-
-                navigationManager.navigateToHome(EAnimationType.FADE_OUT);
-            }
-
-            @Override
-            public void onAuthenticationFailed() {
-                super.onAuthenticationFailed();
-            }
-        });
+        biometricPrompt = new BiometricPrompt(UnlockAppActivity.this,
+                executor, viewModel.getBiometricAuthenticationCallback());
 
         promptInfo = new BiometricPrompt.PromptInfo.Builder()
                 .setTitle("Chat Hub")

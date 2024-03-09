@@ -30,6 +30,7 @@ public class Utils {
     public static final String KEY_AUTO_LOCK_TIME = "autoLockTime";
 
     public static final int PASSCODE_DIGIT_COUNT = 4;
+    public static final int PIN_DIGIT_COUNT = 6;
 
     public static long OTP_TIME_OUT_SECONDS = 60L;
     public static final String EXTRA_SELECTED_USER_ID = "selectedUserId";
@@ -130,5 +131,13 @@ public class Utils {
 
     public static boolean isEmpty(String text) {
         return text == null || text.isEmpty();
+    }
+
+    public static boolean isValidPasscode(String correctPasscode, String enteredPasscode) {
+        return enteredPasscode != null && enteredPasscode.equals(correctPasscode);
+    }
+
+    public static boolean isValidOtp(String text) {
+        return text != null && text.length() == PIN_DIGIT_COUNT;
     }
 }

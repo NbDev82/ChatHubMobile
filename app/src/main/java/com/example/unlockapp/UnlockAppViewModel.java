@@ -1,11 +1,16 @@
 package com.example.unlockapp;
 
+import android.os.Handler;
+
+import androidx.annotation.NonNull;
+import androidx.biometric.BiometricPrompt;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.example.infrastructure.BaseViewModel;
 import com.example.infrastructure.PreferenceManager;
 import com.example.infrastructure.Utils;
+import com.example.navigation.EAnimationType;
 
 public class UnlockAppViewModel extends BaseViewModel {
 
@@ -70,13 +75,15 @@ public class UnlockAppViewModel extends BaseViewModel {
     }
 
     private void verifyPasscode(String curEnteredPasscode) {
-        if (curEnteredPasscode == null || !curEnteredPasscode.equals(correctPasscode)) {
+        if (!Utils.isValidPasscode(correctPasscode, curEnteredPasscode)) {
             errorToastMessage.postValue("Entered passcode is wrong");
             return;
         }
 
         successToastMessage.postValue("Unlock successfully");
-        navigateToHome.postValue(true);
+        new Handler().postDelayed(() -> {
+            navigateToHome.postValue(true);
+        }, 50);
     }
 
     public void openFingerprint() {
@@ -91,5 +98,30 @@ public class UnlockAppViewModel extends BaseViewModel {
 
         curEnteredPasscode = curEnteredPasscode.substring(0, curEnteredPasscode.length() - 1);
         this.enteredPasscode.postValue(curEnteredPasscode);
+    }
+
+    public BiometricPrompt.AuthenticationCallback getBiometricAuthenticationCallback() {
+        return new BiometricPrompt.AuthenticationCallback() {
+            @Override
+            public void onAuthenticationError(int errorCode, @NonNull CharSequence errString) {
+                super.onAuthenticationError(errorCode, errString);
+            }
+
+            @Override
+            public void onAuthenticationSucceeded(@NonNull BiometricPrompt.AuthenticationResult result) {
+                super.onAuthenticationSucceeded(result);
+
+                enteredPasscode.postValue(correctPasscode);
+                successToastMessage.postValue("Unlock successfully");
+                new Handler().postDelayed(() -> {
+                    navigateToHome.postValue(true);
+                }, 50);
+            }
+
+            @Override
+            public void onAuthenticationFailed() {
+                super.onAuthenticationFailed();
+            }
+        };
     }
 }

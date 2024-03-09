@@ -21,7 +21,6 @@ public class VerifyOtpViewModel extends BaseViewModel {
 
     private final MutableLiveData<String> phoneNumber = new MutableLiveData<>();
     private final MutableLiveData<String> otp = new MutableLiveData<>();
-    private final MutableLiveData<String> otpError = new MutableLiveData<>();
     private final MutableLiveData<String> resendOtp = new MutableLiveData<>();
     private final MutableLiveData<String> resendContent = new MutableLiveData<>();
     private final MutableLiveData<Boolean> resendContentStatus = new MutableLiveData<>();
@@ -43,10 +42,6 @@ public class VerifyOtpViewModel extends BaseViewModel {
 
     public MutableLiveData<String> getOtp() {
         return otp;
-    }
-
-    public LiveData<String> getOtpError() {
-        return otpError;
     }
 
     public LiveData<String> getResendOtp() {

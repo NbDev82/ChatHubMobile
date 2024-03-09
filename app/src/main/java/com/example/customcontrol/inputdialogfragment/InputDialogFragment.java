@@ -85,6 +85,13 @@ public class InputDialogFragment extends AppCompatDialogFragment {
     }
 
     @Override
+    public void onStart() {
+        super.onStart();
+
+        setCancelable(model.isCancelable());
+    }
+
+    @Override
     public void onDismiss(@NonNull DialogInterface dialog) {
         super.onDismiss(dialog);
 
