@@ -26,9 +26,10 @@ import java.util.Date;
 public class Utils {
     public static final String KEY_PREFERENCE_NAME = "chatAppPreference";
     public static final String KEY_PASSCODE = "passcode";
-    public static final String KEY_PASSCODE_ENABLED = "passcodeEnabled";
     public static final String KEY_FINGERPRINT_UNLOCK_ENABLED = "fingerprintUnlockEnabled";
     public static final String KEY_AUTO_LOCK_TIME = "autoLockTime";
+
+    public static final int PASSCODE_DIGIT_COUNT = 4;
 
     public static long OTP_TIME_OUT_SECONDS = 60L;
     public static final String EXTRA_SELECTED_USER_ID = "selectedUserId";
@@ -125,5 +126,9 @@ public class Utils {
         } else {
             return "Just now";
         }
+    }
+
+    public static boolean isEmpty(String text) {
+        return text == null || text.isEmpty();
     }
 }

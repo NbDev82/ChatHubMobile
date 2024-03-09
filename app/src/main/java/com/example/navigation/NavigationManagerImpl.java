@@ -13,6 +13,7 @@ import com.example.friend.profileviewer.ProfileViewerActivity;
 import com.example.home.HomeActivity;
 import com.example.lockapp.LockAppActivity;
 import com.example.setting.SettingsActivity;
+import com.example.unlockapp.UnlockAppActivity;
 import com.example.user.accountlink.AccountLinkingActivity;
 import com.example.user.changepassword.ChangePasswordActivity;
 import com.example.user.emaildetails.EmailDetailsActivity;
@@ -125,6 +126,11 @@ public class NavigationManagerImpl implements NavigationManager {
     @Override
     public void navigateToLockApp(EAnimationType animationType) {
         navigateToActivity(LockAppActivity.class, animationType);
+    }
+
+    @Override
+    public void navigateToUnlockApp(EAnimationType animationType) {
+        navigateToActivity(UnlockAppActivity.class, animationType);
     }
 
     private void setResultAndFinish(Intent resultIntent, EAnimationType animationType) {

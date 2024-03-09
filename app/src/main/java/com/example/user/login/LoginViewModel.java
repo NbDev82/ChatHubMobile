@@ -143,10 +143,6 @@ public class LoginViewModel extends BaseViewModel {
         navigateToHome.postValue(true);
     }
 
-    public void navigateToFingerprintSignIn() {
-        errorToastMessage.postValue("Without implementation");
-    }
-
     public void navigateToSendOtp() {
         navigateToSendOtp.postValue(true);
     }

@@ -7,6 +7,8 @@ import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.example.R;
+import com.example.customcontrol.inputdialogfragment.InputDialogFragment;
+import com.example.customcontrol.inputdialogfragment.InputDialogModel;
 import com.example.databinding.ActivityLockAppBinding;
 import com.example.infrastructure.PreferenceManager;
 import com.example.infrastructure.Utils;
@@ -46,36 +48,30 @@ public class LockAppActivity extends AppCompatActivity {
             }
         });
 
-        viewModel.getIsPasscodeSet().observe(this, isPasscodeSet -> {
-            if (isPasscodeSet != null) {
-                preferenceManager.putBoolean(Utils.KEY_PASSCODE_ENABLED, isPasscodeSet);
-            }
+        viewModel.getPasscode().observe(this, passcode -> {
+            preferenceManager.putString(Utils.KEY_PASSCODE, passcode);
         });
 
         viewModel.getIsFingerprintUnlockEnabled().observe(this, isFingerprintUnlockEnabled -> {
-            if (isFingerprintUnlockEnabled != null) {
-                preferenceManager.putBoolean(Utils.KEY_FINGERPRINT_UNLOCK_ENABLED, isFingerprintUnlockEnabled);
-            }
+            preferenceManager.putBoolean(Utils.KEY_FINGERPRINT_UNLOCK_ENABLED, isFingerprintUnlockEnabled);
         });
 
         viewModel.getSelectedAutoLockTime().observe(this, selectedAutoLockTime -> {
-            if (selectedAutoLockTime != null) {
-                preferenceManager.putString(Utils.KEY_AUTO_LOCK_TIME, selectedAutoLockTime.toString());
-            }
+            preferenceManager.putString(Utils.KEY_AUTO_LOCK_TIME, selectedAutoLockTime.toString());
         });
+
+        viewModel.getOpenInputDialog().observe(this, this::openCustomInputDialog);
+    }
+
+    private void openCustomInputDialog(InputDialogModel inputDialogModel) {
+        InputDialogFragment dialog = new InputDialogFragment(inputDialogModel);
+        dialog.show(getSupportFragmentManager(), InputDialogFragment.TAG);
     }
 
     @Override
     protected void onStart() {
         super.onStart();
 
-        Boolean isPasscodeSet = preferenceManager.getBoolean(Utils.KEY_PASSCODE_ENABLED);
-        Boolean isFingerprintUnlockEnabled = preferenceManager
-                .getBoolean(Utils.KEY_FINGERPRINT_UNLOCK_ENABLED);
-        String selectedAutoLockTime = preferenceManager.getString(Utils.KEY_AUTO_LOCK_TIME);
-
-        viewModel.setIsPasscodeSet(isPasscodeSet);
-        viewModel.setIsFingerprintUnlockEnabled(isFingerprintUnlockEnabled);
-        viewModel.setSelectedAutoLockTime(selectedAutoLockTime);
+        viewModel.loadPreferences(preferenceManager);
     }
 }

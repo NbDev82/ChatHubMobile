@@ -23,4 +23,5 @@ public interface NavigationManager {
     void navigateBack(Bundle data, EAnimationType animationType);
     void navigateToFriends(EAnimationType animationType);
     void navigateToLockApp(EAnimationType animationType);
+    void navigateToUnlockApp(EAnimationType animationType);
 }
