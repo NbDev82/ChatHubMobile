@@ -1,12 +1,15 @@
 package com.example.customcontrol;
 
 import android.app.Activity;
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.TextView;
 
 import androidx.databinding.BindingAdapter;
 
+import com.chaos.view.PinView;
 import com.example.customcontrol.snackbar.CustomSnackbar;
 import com.example.customcontrol.snackbar.SnackbarModel;
 import com.example.infrastructure.Utils;
@@ -49,5 +52,12 @@ public class CustomBindingAdapters {
     public static void setTimeAgo(TextView textView, Date date) {
         String timeAgo = Utils.calculateTimeAgo(date);
         textView.setText(timeAgo);
+    }
+
+    @BindingAdapter("animation")
+    public static void setAnimation(PinView pinView, boolean animation) {
+        if (animation) {
+            pinView.setAnimationEnable(true);
+        }
     }
 }

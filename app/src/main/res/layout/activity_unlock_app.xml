@@ -58,11 +58,13 @@
                 android:layout_height="wrap_content"
                 android:layout_centerInParent="true"
                 android:layout_gravity="center"
+                android:cursorVisible="true"
                 android:gravity="center"
                 android:inputType="numberPassword"
                 android:text="@{viewModel.enteredPasscode}"
                 android:textSize="@dimen/primary_sub_title_size"
-                android:cursorVisible="true"
+                app:animation="@{true}"
+                app:cursorColor="@color/color_primary_light_blue"
                 app:hideLineWhenFilled="false"
                 app:itemCount="4"
                 app:itemHeight="@dimen/_45sdp"
@@ -70,7 +72,7 @@
                 app:itemSpacing="@dimen/edt_gap_between_passcode_cells"
                 app:itemWidth="@dimen/_45sdp"
                 app:lineColor="@drawable/pinview_line_color_selector"
-                app:lineWidth="1.3dp" />
+                app:lineWidth="@dimen/pin_view_line_width_default" />
         </RelativeLayout>
 
         <LinearLayout
