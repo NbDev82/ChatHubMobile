@@ -1,4 +1,4 @@
-package com.example.lockapp;
+package com.example.passcode.lockapp;
 
 import android.os.Bundle;
 

@@ -6,7 +6,7 @@
     <data>
         <variable
             name="viewModel"
-            type="com.example.lockapp.LockAppViewModel" />
+            type="com.example.passcode.lockapp.LockAppViewModel" />
     </data>
 
     <LinearLayout

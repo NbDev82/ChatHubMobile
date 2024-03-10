@@ -5,11 +5,11 @@
 
     <data>
         <import type="android.view.View"/>
-        <import type="com.example.unlockapp.ENumber"/>
+        <import type="com.example.passcode.unlockapp.ENumber"/>
 
         <variable
             name="viewModel"
-            type="com.example.unlockapp.UnlockAppViewModel" />
+            type="com.example.passcode.unlockapp.UnlockAppViewModel" />
     </data>
 
     <RelativeLayout

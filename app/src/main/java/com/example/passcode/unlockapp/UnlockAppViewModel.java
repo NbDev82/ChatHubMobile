@@ -1,4 +1,4 @@
-package com.example.unlockapp;
+package com.example.passcode.unlockapp;
 
 import android.os.Handler;
 
@@ -10,7 +10,6 @@ import androidx.lifecycle.MutableLiveData;
 import com.example.infrastructure.BaseViewModel;
 import com.example.infrastructure.PreferenceManager;
 import com.example.infrastructure.Utils;
-import com.example.navigation.EAnimationType;
 
 public class UnlockAppViewModel extends BaseViewModel {
 
