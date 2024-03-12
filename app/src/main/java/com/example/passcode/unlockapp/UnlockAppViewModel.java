@@ -76,6 +76,7 @@ public class UnlockAppViewModel extends BaseViewModel {
     private void verifyPasscode(String curEnteredPasscode) {
         if (!Utils.isCorrectPasscode(correctPasscode, curEnteredPasscode)) {
             errorToastMessage.postValue("Entered passcode is wrong");
+            this.enteredPasscode.postValue("");
             return;
         }
 

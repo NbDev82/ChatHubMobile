@@ -11,8 +11,8 @@ import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.example.R;
-import com.example.customcontrol.inputdialogfragment.InputDialogFragment;
-import com.example.customcontrol.inputdialogfragment.InputDialogModel;
+import com.example.customcontrol.customalertdialog.AlertDialogFragment;
+import com.example.customcontrol.customalertdialog.AlertDialogModel;
 import com.example.databinding.ActivityLockAppBinding;
 import com.example.infrastructure.PreferenceManagerRepos;
 import com.example.infrastructure.Utils;
@@ -20,7 +20,6 @@ import com.example.navigation.EAnimationType;
 import com.example.navigation.NavigationManager;
 import com.example.navigation.NavigationManagerImpl;
 import com.example.user.EGender;
-import com.example.user.profile.UserProfileActivity;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 public class LockAppActivity extends AppCompatActivity {
@@ -61,6 +60,16 @@ public class LockAppActivity extends AppCompatActivity {
                         setPasscodeLauncher, EAnimationType.FADE_IN);
             }
         });
+
+        viewModel.getNavigateToChangePasscode().observe(this, navigate -> {
+            if (navigate) {
+                navigationManager.navigateToChangePasscode(EAnimationType.FADE_IN);
+            }
+        });
+
+        viewModel.getOpenSingleChoiceAutoLockTime().observe(this, this::openSingleChoiceAutoLockTime);
+
+        viewModel.getOpenCustomAlertDialog().observe(this, this::openCustomAlertDialog);
     }
 
     private ActivityResultLauncher<Intent> setPasscodeLauncher = registerForActivityResult(
@@ -83,13 +92,13 @@ public class LockAppActivity extends AppCompatActivity {
             }
     );
 
-    private void openSingleChoiceGender(int selectedItem) {
+    private void openSingleChoiceAutoLockTime(int selectedItem) {
         viewModel.setSelectedAutoLockTimeIndex(selectedItem);
-        String[] genderStrs = EGender.getAllDisplays();
+        String[] genderStrs = EAutoLockTime.getAllDisplays();
 
         MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(this)
                 .setIcon(R.drawable.ic_gender)
-                .setTitle("Gender")
+                .setTitle("Auto-lock time")
                 .setSingleChoiceItems(genderStrs, selectedItem, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
@@ -105,6 +114,11 @@ public class LockAppActivity extends AppCompatActivity {
                     }
                 });
         builder.show();
+    }
+
+    private void openCustomAlertDialog(AlertDialogModel alertDialogModel) {
+        AlertDialogFragment dialog = new AlertDialogFragment(alertDialogModel);
+        dialog.show(getSupportFragmentManager(), AlertDialogFragment.TAG);
     }
 
     @Override

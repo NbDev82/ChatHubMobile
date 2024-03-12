@@ -5,7 +5,9 @@ import android.util.Log;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
+import com.example.customcontrol.customalertdialog.AlertDialogModel;
 import com.example.customcontrol.inputdialogfragment.InputDialogModel;
+import com.example.friend.FriendRequest;
 import com.example.infrastructure.BaseViewModel;
 import com.example.infrastructure.PreferenceManagerRepos;
 import com.example.infrastructure.Utils;
@@ -16,11 +18,12 @@ public class LockAppViewModel extends BaseViewModel {
 
     private final MutableLiveData<Boolean> navigateBack = new MutableLiveData<>();
     private final MutableLiveData<Boolean> navigateToSetPasscode = new MutableLiveData<>();
-    private final MutableLiveData<String> passcode = new MutableLiveData<>();
-    private final MutableLiveData<Boolean> isFingerprintUnlockEnabled = new MutableLiveData<>();
+    private final MutableLiveData<Boolean> navigateToChangePasscode = new MutableLiveData<>();
+    private final MutableLiveData<Boolean> isSetPasscodeChecked = new MutableLiveData<>();
+    private final MutableLiveData<Boolean> isFingerprintUnlockChecked = new MutableLiveData<>();
     private final MutableLiveData<EAutoLockTime> selectedAutoLockTime = new MutableLiveData<>();
-    private final MutableLiveData<InputDialogModel> openInputDialog = new MutableLiveData<>();
-    private final MutableLiveData<Integer> openSingleChoiceGender = new MutableLiveData<>();
+    private final MutableLiveData<Integer> openSingleChoiceAutoLockTime = new MutableLiveData<>();
+    private final MutableLiveData<AlertDialogModel> openCustomAlertDialog = new MutableLiveData<>();
     private final PreferenceManagerRepos preferenceManagerRepos;
     private int selectedAutoLockTimeIndex = 0;
 
@@ -32,48 +35,57 @@ public class LockAppViewModel extends BaseViewModel {
         return navigateToSetPasscode;
     }
 
-    public LiveData<String> getPasscode() {
-        return passcode;
+    public LiveData<Boolean> getNavigateToChangePasscode() {
+        return navigateToChangePasscode;
     }
 
-    public void setPasscode(String passcode) {
-        preferenceManagerRepos.putString(Utils.KEY_PASSCODE, passcode);
-        this.passcode.setValue(passcode);
+    public LiveData<Boolean> getIsSetPasscodeChecked() {
+        return isSetPasscodeChecked;
     }
 
-    public MutableLiveData<Boolean> getIsFingerprintUnlockEnabled() {
-        return isFingerprintUnlockEnabled;
+    public void setIsSetPasscodeChecked(String curPasscode) {
+        boolean isSetPasscodeChecked = Utils.isValidPasscode(curPasscode);
+        this.isSetPasscodeChecked.postValue(isSetPasscodeChecked);
     }
 
-    public void setIsFingerprintUnlockEnabled(boolean isFingerprintUnlockEnabled) {
-        this.isFingerprintUnlockEnabled.setValue(isFingerprintUnlockEnabled);
+    public LiveData<Boolean> getIsFingerprintUnlockChecked() {
+        return isFingerprintUnlockChecked;
+    }
+
+    public void setIsFingerprintUnlockChecked(boolean isFingerprintUnlockChecked) {
+        this.isFingerprintUnlockChecked.postValue(isFingerprintUnlockChecked);
     }
 
     public LiveData<EAutoLockTime> getSelectedAutoLockTime() {
         return selectedAutoLockTime;
     }
 
-    public LiveData<InputDialogModel> getOpenInputDialog() {
-        return openInputDialog;
+    public LiveData<Integer> getOpenSingleChoiceAutoLockTime() {
+        return openSingleChoiceAutoLockTime;
+    }
+
+    public LiveData<AlertDialogModel> getOpenCustomAlertDialog() {
+        return openCustomAlertDialog;
     }
 
     public void setSelectedAutoLockTime(String selectedAutoLockTimeStr) {
         if (selectedAutoLockTimeStr == null) {
             EAutoLockTime defaultSelected = EAutoLockTime.NONE;
-            this.selectedAutoLockTime.setValue(defaultSelected);
+            this.selectedAutoLockTime.postValue(defaultSelected);
             return;
         }
 
         try {
             EAutoLockTime selected = EAutoLockTime.valueOf(selectedAutoLockTimeStr);
-            this.selectedAutoLockTime.setValue(selected);
+            this.selectedAutoLockTime.postValue(selected);
         } catch (Exception e) {
             Log.e(TAG, e.getMessage(), e);
         }
     }
 
     public void setSelectedAutoLockTime(EAutoLockTime selectedAutoLockTime) {
-        this.selectedAutoLockTime.setValue(selectedAutoLockTime);
+        preferenceManagerRepos.putString(Utils.KEY_AUTO_LOCK_TIME, selectedAutoLockTime.toString());
+        this.selectedAutoLockTime.postValue(selectedAutoLockTime);
     }
 
     public LockAppViewModel(PreferenceManagerRepos preferenceManager) {
@@ -81,22 +93,22 @@ public class LockAppViewModel extends BaseViewModel {
     }
 
     public void loadPreferences() {
-        String passcode = preferenceManagerRepos.getString(Utils.KEY_PASSCODE);
+        String curPasscode = preferenceManagerRepos.getString(Utils.KEY_PASSCODE);
         Boolean isFingerprintUnlockEnabled = preferenceManagerRepos
                 .getBoolean(Utils.KEY_FINGERPRINT_UNLOCK_ENABLED);
         String selectedAutoLockTime = preferenceManagerRepos.getString(Utils.KEY_AUTO_LOCK_TIME);
 
-        setPasscode(passcode);
-        setIsFingerprintUnlockEnabled(isFingerprintUnlockEnabled);
+        setIsSetPasscodeChecked(curPasscode);
+        setIsFingerprintUnlockChecked(isFingerprintUnlockEnabled);
         setSelectedAutoLockTime(selectedAutoLockTime);
     }
 
     public void navigateBack() {
-        this.navigateBack.setValue(true);
+        this.navigateBack.postValue(true);
     }
 
     public void navigateToSetPasscode() {
-        this.navigateToSetPasscode.setValue(true);
+        this.navigateToSetPasscode.postValue(true);
     }
 
     public void toggleSetPasscode() {
@@ -106,17 +118,43 @@ public class LockAppViewModel extends BaseViewModel {
             return;
         }
 
+        showTurnOffPasscodeDialog();
+    }
+
+    private void showTurnOffPasscodeDialog() {
+        AlertDialogModel model = new AlertDialogModel.Builder()
+                .setTitle("Turn-off passcode")
+                .setMessage("Are you sure you want to turn off the passcode?\n" +
+                        "This action will remove the current passcode and disable " +
+                        "passcode protection for your app.")
+                .setPositiveButton("Ok", aVoid -> turnOffPasscode())
+                .setNegativeButton("Cancel", null)
+                .build();
+        openCustomAlertDialog.postValue(model);
+    }
+
+    private void turnOffPasscode() {
         preferenceManagerRepos.putString(Utils.KEY_PASSCODE, null);
-        this.passcode.setValue(null);
+        preferenceManagerRepos.putBoolean(Utils.KEY_FINGERPRINT_UNLOCK_ENABLED, false);
+        isFingerprintUnlockChecked.postValue(false);
+        isSetPasscodeChecked.postValue(false);
     }
 
     public void toggleUnlockWithFingerprint() {
-        boolean isFingerprintUnlockEnabled = this.isFingerprintUnlockEnabled.getValue();
-        preferenceManagerRepos.putBoolean(Utils.KEY_FINGERPRINT_UNLOCK_ENABLED, isFingerprintUnlockEnabled);
-        this.isFingerprintUnlockEnabled.setValue(!isFingerprintUnlockEnabled);
+        boolean isFingerprintUnlockEnabled = preferenceManagerRepos
+                .getBoolean(Utils.KEY_FINGERPRINT_UNLOCK_ENABLED);
+        preferenceManagerRepos.putBoolean(Utils.KEY_FINGERPRINT_UNLOCK_ENABLED, !isFingerprintUnlockEnabled);
+        this.isFingerprintUnlockChecked.postValue(!isFingerprintUnlockEnabled);
     }
 
-    public void openChangePasscodeDialog() {
+    public void navigateToChangePasscode() {
+        String passcode = preferenceManagerRepos.getString(Utils.KEY_PASSCODE);
+        if (Utils.isEmpty(passcode)) {
+            errorToastMessage.postValue("Your passcode does not exist");
+            return;
+        }
+
+        this.navigateToChangePasscode.postValue(true);
     }
 
     public void openSingleChoiceAutoLockTime() {
@@ -124,7 +162,7 @@ public class LockAppViewModel extends BaseViewModel {
 
         EAutoLockTime selectedAutoLockTime = this.selectedAutoLockTime.getValue();
         int curIndexSelected = EAutoLockTime.getCurrentIndex(selectedAutoLockTime);
-        openSingleChoiceGender.setValue(curIndexSelected);
+        openSingleChoiceAutoLockTime.postValue(curIndexSelected);
     }
 
     public int getSelectedAutoLockTimeIndex() {

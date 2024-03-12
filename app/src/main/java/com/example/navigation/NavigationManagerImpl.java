@@ -13,6 +13,7 @@ import com.example.friend.friendrequest.FriendRequestsActivity;
 import com.example.friend.myfriend.FriendsActivity;
 import com.example.friend.profileviewer.ProfileViewerActivity;
 import com.example.home.HomeActivity;
+import com.example.passcode.changepasscode.ChangePasscodeActivity;
 import com.example.passcode.lockapp.LockAppActivity;
 import com.example.passcode.setpasscode.SetPasscodeActivity;
 import com.example.setting.SettingsActivity;
@@ -143,6 +144,16 @@ public class NavigationManagerImpl implements NavigationManager {
 
         navigateToActivityWithActivityResultLauncher(SetPasscodeActivity.class,
                 launcher, null, animationType, DEFAULT_FLAGS);
+    }
+
+    @Override
+    public void navigateToSetPasscode(EAnimationType animationType, int flags) {
+        navigateToActivity(SetPasscodeActivity.class, null, animationType, flags);
+    }
+
+    @Override
+    public void navigateToChangePasscode(EAnimationType animationType) {
+        navigateToActivity(ChangePasscodeActivity.class, animationType);
     }
 
     private void setResultAndFinish(Intent resultIntent, EAnimationType animationType) {

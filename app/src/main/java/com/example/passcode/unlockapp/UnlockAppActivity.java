@@ -5,53 +5,47 @@ import static androidx.biometric.BiometricManager.Authenticators.BIOMETRIC_STRON
 import android.os.Bundle;
 import android.util.Log;
 
-import androidx.appcompat.app.AppCompatActivity;
+import androidx.annotation.LayoutRes;
 import androidx.biometric.BiometricManager;
 import androidx.biometric.BiometricPrompt;
 import androidx.core.content.ContextCompat;
-import androidx.databinding.DataBindingUtil;
-import androidx.lifecycle.ViewModelProvider;
 
 import com.example.R;
 import com.example.customcontrol.CustomToast;
 import com.example.databinding.ActivityUnlockAppBinding;
+import com.example.infrastructure.BaseActivity;
 import com.example.infrastructure.PreferenceManagerRepos;
 import com.example.infrastructure.Utils;
 import com.example.navigation.EAnimationType;
-import com.example.navigation.NavigationManager;
-import com.example.navigation.NavigationManagerImpl;
 
 import java.util.concurrent.Executor;
 
-public class UnlockAppActivity extends AppCompatActivity {
+public class UnlockAppActivity extends BaseActivity<UnlockAppViewModel, ActivityUnlockAppBinding> {
 
     private static final String TAG = UnlockAppActivity.class.getSimpleName();
 
-    private NavigationManager navigationManager;
-    private UnlockAppViewModel viewModel;
     private PreferenceManagerRepos preferenceManager;
     private BiometricPrompt biometricPrompt;
     private BiometricPrompt.PromptInfo promptInfo;
+
+    @Override
+    protected @LayoutRes int getLayout() {
+        return R.layout.activity_unlock_app;
+    }
+
+    @Override
+    protected Class<UnlockAppViewModel> getViewModel() {
+        return UnlockAppViewModel.class;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Utils.setStatusBarGradiant(this);
 
-        navigationManager = new NavigationManagerImpl(this);
-
-        viewModel = new ViewModelProvider(this).get(UnlockAppViewModel.class);
-
-        ActivityUnlockAppBinding binding = DataBindingUtil
-                .setContentView(this, R.layout.activity_unlock_app);
-
-        binding.setViewModel(viewModel);
-        binding.setLifecycleOwner(this);
-
         preferenceManager = new PreferenceManagerRepos(getApplicationContext());
 
         setupObservers();
-
         openUnlockWithFingerprint();
     }
 

@@ -30,4 +30,6 @@ public interface NavigationManager {
     void navigateToSetPasscodeWithActivityResultLauncher(
             ActivityResultLauncher<Intent> launcher,
             EAnimationType animationType);
+    void navigateToSetPasscode(EAnimationType animationType, int flags);
+    void navigateToChangePasscode(EAnimationType animationType);
 }

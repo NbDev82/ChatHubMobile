@@ -47,15 +47,21 @@ public class SetPasscodeViewModel extends BaseViewModel {
 
     public void confirmPasscode(CharSequence text) {
         String confirmPasscode = text.toString();
-        String newPasscode = this.newPasscode.getValue();
-
-        if (!Utils.isEmpty(confirmPasscode) && confirmPasscode.equals(newPasscode)) {
-            this.setPasscodeState.postValue(EPasscodeSetState.COMPLETED);
-
-            Bundle data = new Bundle();
-            data.putBoolean(Utils.EXTRA_PASSCODE_SET_SUCCESS, true);
-            this.navigateBack.postValue(data);
+        if (!Utils.isValidPasscode(confirmPasscode)) {
+            return;
         }
+
+        String newPasscode = this.newPasscode.getValue();
+        if (!confirmPasscode.equals(newPasscode)) {
+            this.errorToastMessage.postValue("Your confirm passcode is incorrect");
+            this.confirmPasscode.postValue("");
+            return;
+        }
+
+        this.setPasscodeState.postValue(EPasscodeSetState.COMPLETED);
+        Bundle data = new Bundle();
+        data.putBoolean(Utils.EXTRA_PASSCODE_SET_SUCCESS, true);
+        this.navigateBack.postValue(data);
     }
 
     public void saveNewPasscode(PreferenceManagerRepos preferenceManager) {
