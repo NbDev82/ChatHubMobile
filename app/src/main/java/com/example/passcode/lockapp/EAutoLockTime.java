@@ -24,4 +24,22 @@ public enum EAutoLockTime {
     public String getDisplayName() {
         return displayName;
     }
+
+    public static String[] getAllDisplays() {
+        EAutoLockTime[] values = values();
+        String[] displays = new String[values.length];
+        for (int i = 0; i < values.length; i++) {
+            displays[i] = values[i].displayName;
+        }
+        return displays;
+    }
+
+    public static int getCurrentIndex(EAutoLockTime currentAutoLockTime) {
+        for (int i = 0; i < values().length; i++) {
+            if (values()[i] == currentAutoLockTime) {
+                return i;
+            }
+        }
+        return -1;
+    }
 }

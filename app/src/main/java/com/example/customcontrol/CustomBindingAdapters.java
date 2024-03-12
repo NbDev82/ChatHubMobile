@@ -60,4 +60,23 @@ public class CustomBindingAdapters {
             pinView.setAnimationEnable(true);
         }
     }
+
+    @BindingAdapter("app:showKeyboardIfTrue")
+    public static void autoShowKeyboard(View view, boolean isKeyboardVisible) {
+        if (isKeyboardVisible) {
+            showKeyboard(view);
+        } else {
+            hideKeyboard(view);
+        }
+    }
+
+    private static void showKeyboard(View view) {
+        InputMethodManager imm = (InputMethodManager) view.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.showSoftInput(view, InputMethodManager.SHOW_IMPLICIT);
+    }
+
+    private static void hideKeyboard(View view) {
+        InputMethodManager imm = (InputMethodManager) view.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+    }
 }

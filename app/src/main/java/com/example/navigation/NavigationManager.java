@@ -1,6 +1,9 @@
 package com.example.navigation;
 
+import android.content.Intent;
 import android.os.Bundle;
+
+import androidx.activity.result.ActivityResultLauncher;
 
 public interface NavigationManager {
     int DEFAULT_FLAGS = 0;
@@ -24,4 +27,7 @@ public interface NavigationManager {
     void navigateToFriends(EAnimationType animationType);
     void navigateToLockApp(EAnimationType animationType);
     void navigateToUnlockApp(EAnimationType animationType);
+    void navigateToSetPasscodeWithActivityResultLauncher(
+            ActivityResultLauncher<Intent> launcher,
+            EAnimationType animationType);
 }

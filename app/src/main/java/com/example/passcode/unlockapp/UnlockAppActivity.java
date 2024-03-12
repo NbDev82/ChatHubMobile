@@ -15,7 +15,8 @@ import androidx.lifecycle.ViewModelProvider;
 import com.example.R;
 import com.example.customcontrol.CustomToast;
 import com.example.databinding.ActivityUnlockAppBinding;
-import com.example.infrastructure.PreferenceManager;
+import com.example.infrastructure.PreferenceManagerRepos;
+import com.example.infrastructure.Utils;
 import com.example.navigation.EAnimationType;
 import com.example.navigation.NavigationManager;
 import com.example.navigation.NavigationManagerImpl;
@@ -28,13 +29,14 @@ public class UnlockAppActivity extends AppCompatActivity {
 
     private NavigationManager navigationManager;
     private UnlockAppViewModel viewModel;
-    private PreferenceManager preferenceManager;
+    private PreferenceManagerRepos preferenceManager;
     private BiometricPrompt biometricPrompt;
     private BiometricPrompt.PromptInfo promptInfo;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Utils.setStatusBarGradiant(this);
 
         navigationManager = new NavigationManagerImpl(this);
 
@@ -46,7 +48,7 @@ public class UnlockAppActivity extends AppCompatActivity {
         binding.setViewModel(viewModel);
         binding.setLifecycleOwner(this);
 
-        preferenceManager = new PreferenceManager(getApplicationContext());
+        preferenceManager = new PreferenceManagerRepos(getApplicationContext());
 
         setupObservers();
 

@@ -8,7 +8,7 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.example.infrastructure.BaseViewModel;
-import com.example.infrastructure.PreferenceManager;
+import com.example.infrastructure.PreferenceManagerRepos;
 import com.example.infrastructure.Utils;
 
 public class UnlockAppViewModel extends BaseViewModel {
@@ -42,7 +42,7 @@ public class UnlockAppViewModel extends BaseViewModel {
     public UnlockAppViewModel() {
     }
 
-    public void loadPreferences(PreferenceManager preferenceManager) {
+    public void loadPreferences(PreferenceManagerRepos preferenceManager) {
         String passcode = preferenceManager.getString(Utils.KEY_PASSCODE);
         Boolean isFingerprintUnlockEnabled = preferenceManager
                 .getBoolean(Utils.KEY_FINGERPRINT_UNLOCK_ENABLED);
@@ -74,7 +74,7 @@ public class UnlockAppViewModel extends BaseViewModel {
     }
 
     private void verifyPasscode(String curEnteredPasscode) {
-        if (!Utils.isValidPasscode(correctPasscode, curEnteredPasscode)) {
+        if (!Utils.isCorrectPasscode(correctPasscode, curEnteredPasscode)) {
             errorToastMessage.postValue("Entered passcode is wrong");
             return;
         }

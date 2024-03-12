@@ -6,7 +6,7 @@ import android.os.Handler;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.R;
-import com.example.infrastructure.PreferenceManager;
+import com.example.infrastructure.PreferenceManagerRepos;
 import com.example.infrastructure.Utils;
 import com.example.navigation.EAnimationType;
 import com.example.navigation.NavigationManager;
@@ -20,7 +20,7 @@ public class SplashActivity extends AppCompatActivity {
 
     private static final int SPLASH_DURATION = 1500;
     private NavigationManager navigationManager;
-    private PreferenceManager preferenceManager;
+    private PreferenceManagerRepos preferenceManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,7 +32,7 @@ public class SplashActivity extends AppCompatActivity {
         UserRepos userRepos = new UserReposImpl();
         AuthRepos authRepos = new AuthReposImpl(userRepos);
 
-        preferenceManager = new PreferenceManager(getApplicationContext());
+        preferenceManager = new PreferenceManagerRepos(getApplicationContext());
 
         new Handler().postDelayed(new Runnable() {
             @Override

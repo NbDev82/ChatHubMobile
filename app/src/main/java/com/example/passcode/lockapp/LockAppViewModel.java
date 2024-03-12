@@ -5,10 +5,9 @@ import android.util.Log;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
-import com.example.customcontrol.inputdialogfragment.EInputType;
 import com.example.customcontrol.inputdialogfragment.InputDialogModel;
 import com.example.infrastructure.BaseViewModel;
-import com.example.infrastructure.PreferenceManager;
+import com.example.infrastructure.PreferenceManagerRepos;
 import com.example.infrastructure.Utils;
 
 public class LockAppViewModel extends BaseViewModel {
@@ -16,13 +15,21 @@ public class LockAppViewModel extends BaseViewModel {
     private static final String TAG = LockAppViewModel.class.getSimpleName();
 
     private final MutableLiveData<Boolean> navigateBack = new MutableLiveData<>();
+    private final MutableLiveData<Boolean> navigateToSetPasscode = new MutableLiveData<>();
     private final MutableLiveData<String> passcode = new MutableLiveData<>();
     private final MutableLiveData<Boolean> isFingerprintUnlockEnabled = new MutableLiveData<>();
     private final MutableLiveData<EAutoLockTime> selectedAutoLockTime = new MutableLiveData<>();
     private final MutableLiveData<InputDialogModel> openInputDialog = new MutableLiveData<>();
+    private final MutableLiveData<Integer> openSingleChoiceGender = new MutableLiveData<>();
+    private final PreferenceManagerRepos preferenceManagerRepos;
+    private int selectedAutoLockTimeIndex = 0;
 
     public LiveData<Boolean> getNavigateBack() {
         return navigateBack;
+    }
+
+    public LiveData<Boolean> getNavigateToSetPasscode() {
+        return navigateToSetPasscode;
     }
 
     public LiveData<String> getPasscode() {
@@ -30,7 +37,8 @@ public class LockAppViewModel extends BaseViewModel {
     }
 
     public void setPasscode(String passcode) {
-        this.passcode.postValue(passcode);
+        preferenceManagerRepos.putString(Utils.KEY_PASSCODE, passcode);
+        this.passcode.setValue(passcode);
     }
 
     public MutableLiveData<Boolean> getIsFingerprintUnlockEnabled() {
@@ -38,7 +46,7 @@ public class LockAppViewModel extends BaseViewModel {
     }
 
     public void setIsFingerprintUnlockEnabled(boolean isFingerprintUnlockEnabled) {
-        this.isFingerprintUnlockEnabled.postValue(isFingerprintUnlockEnabled);
+        this.isFingerprintUnlockEnabled.setValue(isFingerprintUnlockEnabled);
     }
 
     public LiveData<EAutoLockTime> getSelectedAutoLockTime() {
@@ -49,29 +57,34 @@ public class LockAppViewModel extends BaseViewModel {
         return openInputDialog;
     }
 
-    public void setSelectedAutoLockTime(String selectedAutoLockTime) {
-        if (selectedAutoLockTime == null) {
+    public void setSelectedAutoLockTime(String selectedAutoLockTimeStr) {
+        if (selectedAutoLockTimeStr == null) {
             EAutoLockTime defaultSelected = EAutoLockTime.NONE;
-            this.selectedAutoLockTime.postValue(defaultSelected);
+            this.selectedAutoLockTime.setValue(defaultSelected);
             return;
         }
 
         try {
-            EAutoLockTime selected = EAutoLockTime.valueOf(selectedAutoLockTime);
-            this.selectedAutoLockTime.postValue(selected);
+            EAutoLockTime selected = EAutoLockTime.valueOf(selectedAutoLockTimeStr);
+            this.selectedAutoLockTime.setValue(selected);
         } catch (Exception e) {
             Log.e(TAG, e.getMessage(), e);
         }
     }
 
-    public LockAppViewModel() {
+    public void setSelectedAutoLockTime(EAutoLockTime selectedAutoLockTime) {
+        this.selectedAutoLockTime.setValue(selectedAutoLockTime);
     }
 
-    public void loadPreferences(PreferenceManager preferenceManager) {
-        String passcode = preferenceManager.getString(Utils.KEY_PASSCODE);
-        Boolean isFingerprintUnlockEnabled = preferenceManager
+    public LockAppViewModel(PreferenceManagerRepos preferenceManager) {
+        this.preferenceManagerRepos = preferenceManager;
+    }
+
+    public void loadPreferences() {
+        String passcode = preferenceManagerRepos.getString(Utils.KEY_PASSCODE);
+        Boolean isFingerprintUnlockEnabled = preferenceManagerRepos
                 .getBoolean(Utils.KEY_FINGERPRINT_UNLOCK_ENABLED);
-        String selectedAutoLockTime = preferenceManager.getString(Utils.KEY_AUTO_LOCK_TIME);
+        String selectedAutoLockTime = preferenceManagerRepos.getString(Utils.KEY_AUTO_LOCK_TIME);
 
         setPasscode(passcode);
         setIsFingerprintUnlockEnabled(isFingerprintUnlockEnabled);
@@ -79,49 +92,46 @@ public class LockAppViewModel extends BaseViewModel {
     }
 
     public void navigateBack() {
-        this.navigateBack.postValue(true);
+        this.navigateBack.setValue(true);
+    }
+
+    public void navigateToSetPasscode() {
+        this.navigateToSetPasscode.setValue(true);
     }
 
     public void toggleSetPasscode() {
-        String passcode = this.passcode.getValue();
+        String passcode = preferenceManagerRepos.getString(Utils.KEY_PASSCODE);
         if (Utils.isEmpty(passcode)) {
-            openPasscodeDialog();
+            navigateToSetPasscode();
             return;
         }
 
-        this.passcode.postValue("");
-    }
-
-    private void openPasscodeDialog() {
-        InputDialogModel model = new InputDialogModel.Builder()
-                .setTitle("Set passcode")
-                .setType(EInputType.NORMAL)
-                .setCurrentContent("")
-                .setCancelable(false)
-                .setSubmitButtonClickListener(passcode -> {
-                    if (isValidPasscode(passcode)) {
-                        this.passcode.postValue(passcode);
-                        this.successToastMessage.postValue("Passcode set successfully");
-                    } else {
-                        this.errorToastMessage.postValue("Failed to set passcode");
-                    }
-                })
-                .build();
-        openInputDialog.postValue(model);
-    }
-
-    public static boolean isValidPasscode(String passcode) {
-        return !Utils.isEmpty(passcode) && passcode.length() == Utils.PASSCODE_DIGIT_COUNT;
+        preferenceManagerRepos.putString(Utils.KEY_PASSCODE, null);
+        this.passcode.setValue(null);
     }
 
     public void toggleUnlockWithFingerprint() {
         boolean isFingerprintUnlockEnabled = this.isFingerprintUnlockEnabled.getValue();
-        this.isFingerprintUnlockEnabled.postValue(!isFingerprintUnlockEnabled);
+        preferenceManagerRepos.putBoolean(Utils.KEY_FINGERPRINT_UNLOCK_ENABLED, isFingerprintUnlockEnabled);
+        this.isFingerprintUnlockEnabled.setValue(!isFingerprintUnlockEnabled);
     }
 
     public void openChangePasscodeDialog() {
     }
 
-    public void pickAutoLockTime() {
+    public void openSingleChoiceAutoLockTime() {
+        preferenceManagerRepos.putString(Utils.KEY_AUTO_LOCK_TIME, this.selectedAutoLockTime.toString());
+
+        EAutoLockTime selectedAutoLockTime = this.selectedAutoLockTime.getValue();
+        int curIndexSelected = EAutoLockTime.getCurrentIndex(selectedAutoLockTime);
+        openSingleChoiceGender.setValue(curIndexSelected);
+    }
+
+    public int getSelectedAutoLockTimeIndex() {
+        return selectedAutoLockTimeIndex;
+    }
+
+    public void setSelectedAutoLockTimeIndex(int selectedAutoLockTimeIndex) {
+        this.selectedAutoLockTimeIndex = selectedAutoLockTimeIndex;
     }
 }

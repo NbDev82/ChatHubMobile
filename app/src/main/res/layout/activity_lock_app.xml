@@ -79,7 +79,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:checked="@{viewModel.passcode != null}"
-                            android:onCheckedChanged="@{() -> viewModel.toggleSetPasscode()}"
+                            android:onClick="@{() -> viewModel.toggleSetPasscode()}"
                             android:layout_centerVertical="true"
                             android:layout_alignParentEnd="true"
                             app:thumbTint="@color/switch_thumb_color_selector"
@@ -157,7 +157,7 @@
                         android:paddingHorizontal="@dimen/profile_item_padding_horizontal"
                         android:background="@drawable/ripple_effect"
                         android:clickable="true"
-                        android:onClick="@{() -> viewModel.pickAutoLockTime()}">
+                        android:onClick="@{() -> viewModel.openSingleChoiceAutoLockTime()}">
 
                         <TextView
                             android:id="@+id/txv_auto_lock_title"

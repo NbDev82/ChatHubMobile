@@ -35,6 +35,7 @@ public class Utils {
     public static long OTP_TIME_OUT_SECONDS = 60L;
     public static final String EXTRA_SELECTED_USER_ID = "selectedUserId";
     public static final String EXTRA_SELECTED_FRIEND_REQUEST_ID = "selectedFriendRequestId";
+    public static final String EXTRA_PASSCODE_SET_SUCCESS = "newPasscodeSetSuccess";
 
     private static final String TAG = Utils.class.getSimpleName();
     private static final String DATE_PATTERN = "dd/MM/yyyy";
@@ -133,8 +134,12 @@ public class Utils {
         return text == null || text.isEmpty();
     }
 
-    public static boolean isValidPasscode(String correctPasscode, String enteredPasscode) {
-        return enteredPasscode != null && enteredPasscode.equals(correctPasscode);
+    public static boolean isValidPasscode(String passcode) {
+        return !Utils.isEmpty(passcode) && passcode.length() == Utils.PASSCODE_DIGIT_COUNT;
+    }
+
+    public static boolean isCorrectPasscode(String correctPasscode, String enteredPasscode) {
+        return !isEmpty(enteredPasscode) && enteredPasscode.equals(correctPasscode);
     }
 
     public static boolean isValidOtp(String text) {
