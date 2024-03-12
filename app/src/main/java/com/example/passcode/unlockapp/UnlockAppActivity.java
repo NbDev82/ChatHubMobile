@@ -9,6 +9,7 @@ import androidx.annotation.LayoutRes;
 import androidx.biometric.BiometricManager;
 import androidx.biometric.BiometricPrompt;
 import androidx.core.content.ContextCompat;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.example.R;
 import com.example.customcontrol.CustomToast;
@@ -34,14 +35,13 @@ public class UnlockAppActivity extends BaseActivity<UnlockAppViewModel, Activity
     }
 
     @Override
-    protected Class<UnlockAppViewModel> getViewModel() {
+    protected Class<UnlockAppViewModel> getViewModelClass() {
         return UnlockAppViewModel.class;
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Utils.setStatusBarGradiant(this);
 
         preferenceManager = new PreferenceManagerRepos(getApplicationContext());
 

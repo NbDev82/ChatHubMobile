@@ -13,6 +13,7 @@ import androidx.lifecycle.ViewModelProvider;
 import com.example.BR;
 import com.example.navigation.NavigationManager;
 import com.example.navigation.NavigationManagerImpl;
+import com.example.passcode.unlockapp.UnlockAppViewModel;
 
 public abstract class BaseActivity<VM extends BaseViewModel, B extends ViewDataBinding> extends AppCompatActivity {
 
@@ -22,20 +23,62 @@ public abstract class BaseActivity<VM extends BaseViewModel, B extends ViewDataB
 
     protected abstract @LayoutRes int getLayout();
 
-    protected abstract Class<VM> getViewModel();
+    protected abstract Class<VM> getViewModelClass();
+
+    protected ViewModelProvider.Factory getViewModelFactory() {
+        return null;
+    }
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Utils.setStatusBarGradiant(this);
         init();
+
+        viewModel.onCreate();
     }
 
     protected void init() {
+        ViewModelProvider.Factory factory = getViewModelFactory();
+        Class<VM> vmClass = getViewModelClass();
+        viewModel = factory == null
+                ? new ViewModelProvider(this).get(vmClass)
+                : new ViewModelProvider(this, factory).get(vmClass);
+
         binding = DataBindingUtil.setContentView(this, getLayout());
-        viewModel = new ViewModelProvider(this).get(getViewModel());
         binding.setLifecycleOwner(this);
         binding.setVariable(BR.viewModel, viewModel);
 
         navigationManager = new NavigationManagerImpl(this);
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        viewModel.onStart();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        viewModel.onResume();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        viewModel.onPause();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        viewModel.onStop();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        viewModel.onDestroy();
     }
 }
