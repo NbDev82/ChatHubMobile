@@ -4,16 +4,19 @@ import static androidx.biometric.BiometricManager.Authenticators.BIOMETRIC_STRON
 
 import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
 
 import androidx.annotation.LayoutRes;
 import androidx.biometric.BiometricManager;
 import androidx.biometric.BiometricPrompt;
 import androidx.core.content.ContextCompat;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.example.R;
 import com.example.customcontrol.CustomToast;
 import com.example.databinding.ActivityUnlockAppBinding;
 import com.example.infrastructure.BaseActivity;
+import com.example.infrastructure.PreferenceManagerRepos;
 import com.example.navigation.EAnimationType;
 
 import java.util.concurrent.Executor;
@@ -30,6 +33,12 @@ public class UnlockAppActivity extends BaseActivity<UnlockAppViewModel, Activity
     @Override
     protected Class<UnlockAppViewModel> getViewModelClass() {
         return UnlockAppViewModel.class;
+    }
+
+    @Override
+    protected ViewModelProvider.Factory getViewModelFactory() {
+        PreferenceManagerRepos preferenceManagerRepos = new PreferenceManagerRepos(this);
+        return new UnlockAppViewModelFactory(preferenceManagerRepos);
     }
 
     @Override
