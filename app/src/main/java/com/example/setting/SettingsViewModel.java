@@ -27,7 +27,7 @@ public class SettingsViewModel extends BaseViewModel {
     private final MutableLiveData<Boolean> navigateToMyQrCode = new MutableLiveData<>();
     private final MutableLiveData<Boolean> navigateToLockApp = new MutableLiveData<>();
     private final MutableLiveData<Boolean> navigateToChangePassword = new MutableLiveData<>();
-    private User mUser;
+    private User originalUser;
 
     public LiveData<Bitmap> getProfileImg() {
         return profileImg;
@@ -78,7 +78,7 @@ public class SettingsViewModel extends BaseViewModel {
     }
 
     public User getUser() {
-        return mUser;
+        return originalUser;
     }
 
     public SettingsViewModel(AuthRepos authRepos) {
@@ -87,13 +87,13 @@ public class SettingsViewModel extends BaseViewModel {
         this.authRepos.getCurrentUser()
                 .addOnSuccessListener(user -> {
                     if (user != null) {
-                        mUser = user;
+                        originalUser = user;
 
-                        Bitmap profileImg = Utils.decodeImage( user.getImageUrl() );
+                        Bitmap profileImg = Utils.decodeImage(user.getImageUrl());
                         this.profileImg.postValue(profileImg);
-                        fullName.postValue( user.getFullName() );
-                        phoneNumber.postValue( user.getPhoneNumber() );
-                        email.postValue( user.getEmail() );
+                        fullName.postValue(user.getFullName());
+                        phoneNumber.postValue(user.getPhoneNumber());
+                        email.postValue(user.getEmail());
                     }
                 })
                 .addOnFailureListener(e -> {

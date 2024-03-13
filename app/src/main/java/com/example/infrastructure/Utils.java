@@ -93,7 +93,7 @@ public class Utils {
     }
 
     public static String getFullPhoneNumber(@Nullable String countryCode,
-                                             @Nullable String localNumber) {
+                                            @Nullable String localNumber) {
         if (countryCode != null && localNumber != null) {
             return countryCode.concat(localNumber);
         }
@@ -117,9 +117,11 @@ public class Utils {
             return years + "y";
         } else if (weeks > 0) {
             return weeks + "w";
-        } if (months > 0) {
+        }
+        if (months > 0) {
             return months + "mo";
-        } if (days > 0) {
+        }
+        if (days > 0) {
             return days + "d";
         } else if (hours > 0) {
             return hours + "h";

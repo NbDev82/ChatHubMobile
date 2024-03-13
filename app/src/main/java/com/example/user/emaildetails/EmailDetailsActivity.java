@@ -2,42 +2,40 @@ package com.example.user.emaildetails;
 
 import android.os.Bundle;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.databinding.DataBindingUtil;
+import androidx.annotation.LayoutRes;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.example.R;
 import com.example.databinding.ActivityEmailDetailsBinding;
-import com.example.infrastructure.Utils;
+import com.example.infrastructure.BaseActivity;
 import com.example.navigation.EAnimationType;
-import com.example.navigation.NavigationManager;
-import com.example.navigation.NavigationManagerImpl;
 import com.example.user.repository.AuthRepos;
 import com.example.user.repository.AuthReposImpl;
 import com.example.user.repository.UserRepos;
 import com.example.user.repository.UserReposImpl;
 
-public class EmailDetailsActivity extends AppCompatActivity {
+public class EmailDetailsActivity extends BaseActivity<EmailDetailsViewModel, ActivityEmailDetailsBinding> {
 
-    private NavigationManager navigationManager;
-    private EmailDetailsViewModel viewModel;
+    @Override
+    protected @LayoutRes int getLayout() {
+        return R.layout.activity_email_details;
+    }
+
+    @Override
+    protected Class<EmailDetailsViewModel> getViewModelClass() {
+        return EmailDetailsViewModel.class;
+    }
+
+    @Override
+    protected ViewModelProvider.Factory getViewModelFactory() {
+        UserRepos userRepos = new UserReposImpl();
+        AuthRepos authRepos = new AuthReposImpl(userRepos);
+        return new EmailDetailsViewModelFactory(authRepos);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Utils.setStatusBarGradiant(this);
-
-        navigationManager = new NavigationManagerImpl(this);
-
-        UserRepos userRepos = new UserReposImpl();
-        AuthRepos authRepos = new AuthReposImpl(userRepos);
-        EmailDetailsViewModelFactory factory = new EmailDetailsViewModelFactory(authRepos);
-        viewModel = new ViewModelProvider(this, factory).get(EmailDetailsViewModel.class);
-
-        ActivityEmailDetailsBinding binding =
-                DataBindingUtil.setContentView(this, R.layout.activity_email_details);
-        binding.setViewModel(viewModel);
-        binding.setLifecycleOwner(this);
 
         setupObservers();
     }

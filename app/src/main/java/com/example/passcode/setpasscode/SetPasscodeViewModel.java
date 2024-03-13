@@ -15,6 +15,7 @@ public class SetPasscodeViewModel extends BaseViewModel {
     private final MutableLiveData<EPasscodeSetState> setPasscodeState = new MutableLiveData<>();
     private final MutableLiveData<String> newPasscode = new MutableLiveData<>();
     private final MutableLiveData<String> confirmPasscode = new MutableLiveData<>();
+    private final PreferenceManagerRepos preferenceManagerRepos;
 
     public LiveData<Bundle> getNavigateBack() {
         return navigateBack;
@@ -32,7 +33,8 @@ public class SetPasscodeViewModel extends BaseViewModel {
         return confirmPasscode;
     }
 
-    public SetPasscodeViewModel() {
+    public SetPasscodeViewModel(PreferenceManagerRepos preferenceManagerRepos) {
+        this.preferenceManagerRepos = preferenceManagerRepos;
         this.setPasscodeState.postValue(EPasscodeSetState.NEW_PASSCODE);
     }
 
@@ -64,12 +66,12 @@ public class SetPasscodeViewModel extends BaseViewModel {
         this.navigateBack.postValue(data);
     }
 
-    public void saveNewPasscode(PreferenceManagerRepos preferenceManager) {
+    public void saveNewPasscode() {
         String passcode = this.getNewPasscode().getValue();
         if (passcode == null) {
             return;
         }
-        preferenceManager.putString(Utils.KEY_PASSCODE, passcode);
+        preferenceManagerRepos.putString(Utils.KEY_PASSCODE, passcode);
     }
 
     public void navigateBack() {

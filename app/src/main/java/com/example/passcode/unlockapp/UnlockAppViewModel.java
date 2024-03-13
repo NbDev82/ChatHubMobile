@@ -17,6 +17,7 @@ public class UnlockAppViewModel extends BaseViewModel {
     private final MutableLiveData<String> enteredPasscode = new MutableLiveData<>();
     private final MutableLiveData<Boolean> isFingerprintUnlockEnabled = new MutableLiveData<>();
     private final MutableLiveData<Boolean> isOpenFingerprint = new MutableLiveData<>();
+    private final PreferenceManagerRepos preferenceManagerRepos;
     private String correctPasscode;
 
     public LiveData<Boolean> getNavigateToHome() {
@@ -39,12 +40,20 @@ public class UnlockAppViewModel extends BaseViewModel {
         return isOpenFingerprint;
     }
 
-    public UnlockAppViewModel() {
+    public UnlockAppViewModel(PreferenceManagerRepos preferenceManagerRepos) {
+        this.preferenceManagerRepos = preferenceManagerRepos;
     }
 
-    public void loadPreferences(PreferenceManagerRepos preferenceManager) {
-        String passcode = preferenceManager.getString(Utils.KEY_PASSCODE);
-        Boolean isFingerprintUnlockEnabled = preferenceManager
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+        loadPreferences();
+    }
+
+    public void loadPreferences() {
+        String passcode = preferenceManagerRepos.getString(Utils.KEY_PASSCODE);
+        Boolean isFingerprintUnlockEnabled = preferenceManagerRepos
                 .getBoolean(Utils.KEY_FINGERPRINT_UNLOCK_ENABLED);
 
         setCorrectPasscode(passcode);

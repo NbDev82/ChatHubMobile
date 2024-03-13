@@ -142,7 +142,8 @@ public class FriendRequestsViewModel extends BaseViewModel implements FriendRequ
 
                     friendRequestRepos
                             .updateFriendRequestStatus(request.getFriendRequest().getId(), status)
-                            .addOnSuccessListener(aVoid -> {})
+                            .addOnSuccessListener(aVoid -> {
+                            })
                             .addOnFailureListener(e -> {
                                 Log.e(TAG, "Error: " + e.getMessage(), e);
                             });

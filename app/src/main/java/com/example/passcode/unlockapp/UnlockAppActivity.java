@@ -9,14 +9,11 @@ import androidx.annotation.LayoutRes;
 import androidx.biometric.BiometricManager;
 import androidx.biometric.BiometricPrompt;
 import androidx.core.content.ContextCompat;
-import androidx.lifecycle.ViewModelProvider;
 
 import com.example.R;
 import com.example.customcontrol.CustomToast;
 import com.example.databinding.ActivityUnlockAppBinding;
 import com.example.infrastructure.BaseActivity;
-import com.example.infrastructure.PreferenceManagerRepos;
-import com.example.infrastructure.Utils;
 import com.example.navigation.EAnimationType;
 
 import java.util.concurrent.Executor;
@@ -24,10 +21,6 @@ import java.util.concurrent.Executor;
 public class UnlockAppActivity extends BaseActivity<UnlockAppViewModel, ActivityUnlockAppBinding> {
 
     private static final String TAG = UnlockAppActivity.class.getSimpleName();
-
-    private PreferenceManagerRepos preferenceManager;
-    private BiometricPrompt biometricPrompt;
-    private BiometricPrompt.PromptInfo promptInfo;
 
     @Override
     protected @LayoutRes int getLayout() {
@@ -42,8 +35,6 @@ public class UnlockAppActivity extends BaseActivity<UnlockAppViewModel, Activity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        preferenceManager = new PreferenceManagerRepos(getApplicationContext());
 
         setupObservers();
         openUnlockWithFingerprint();
@@ -78,10 +69,10 @@ public class UnlockAppActivity extends BaseActivity<UnlockAppViewModel, Activity
         }
 
         Executor executor = ContextCompat.getMainExecutor(this);
-        biometricPrompt = new BiometricPrompt(UnlockAppActivity.this,
+        BiometricPrompt biometricPrompt = new BiometricPrompt(UnlockAppActivity.this,
                 executor, viewModel.getBiometricAuthenticationCallback());
 
-        promptInfo = new BiometricPrompt.PromptInfo.Builder()
+        BiometricPrompt.PromptInfo promptInfo = new BiometricPrompt.PromptInfo.Builder()
                 .setTitle("Chat Hub")
                 .setDescription("Use your fingerprint to authenticate")
                 .setAllowedAuthenticators(BIOMETRIC_STRONG)
@@ -93,12 +84,5 @@ public class UnlockAppActivity extends BaseActivity<UnlockAppViewModel, Activity
         } catch (Exception e) {
             Log.e(TAG, e.getMessage(), e);
         }
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-
-        viewModel.loadPreferences(preferenceManager);
     }
 }

@@ -20,7 +20,7 @@ public class SplashActivity extends AppCompatActivity {
 
     private static final int SPLASH_DURATION = 1500;
     private NavigationManager navigationManager;
-    private PreferenceManagerRepos preferenceManager;
+    private PreferenceManagerRepos preferenceManagerRepos;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,7 +32,7 @@ public class SplashActivity extends AppCompatActivity {
         UserRepos userRepos = new UserReposImpl();
         AuthRepos authRepos = new AuthReposImpl(userRepos);
 
-        preferenceManager = new PreferenceManagerRepos(getApplicationContext());
+        preferenceManagerRepos = new PreferenceManagerRepos(getApplicationContext());
 
         new Handler().postDelayed(new Runnable() {
             @Override
@@ -43,7 +43,7 @@ public class SplashActivity extends AppCompatActivity {
                     return;
                 }
 
-                String passcode = preferenceManager.getString(Utils.KEY_PASSCODE);
+                String passcode = preferenceManagerRepos.getString(Utils.KEY_PASSCODE);
                 if (Utils.isEmpty(passcode)) {
                     navigationManager.navigateToHome(EAnimationType.FADE_IN);
                     finish();

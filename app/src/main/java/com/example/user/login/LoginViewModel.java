@@ -93,8 +93,8 @@ public class LoginViewModel extends BaseViewModel {
                     new Handler().postDelayed(new Runnable() {
                         @Override
                         public void run() {
-                                                    navigateToHome();
-                                                                     }
+                            navigateToHome();
+                        }
                     }, 100);
                 })
                 .addOnFailureListener(e -> {
@@ -102,8 +102,8 @@ public class LoginViewModel extends BaseViewModel {
                     new Handler().postDelayed(new Runnable() {
                         @Override
                         public void run() {
-                                                    isLogging.postValue(false);
-                                                                               }
+                            isLogging.postValue(false);
+                        }
                     }, 500);
                     Log.e(TAG, "Error: " + e);
                 });

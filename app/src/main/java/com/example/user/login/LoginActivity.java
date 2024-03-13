@@ -2,46 +2,43 @@ package com.example.user.login;
 
 import android.os.Bundle;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.databinding.DataBindingUtil;
+import androidx.annotation.LayoutRes;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.example.R;
 import com.example.databinding.ActivityLoginBinding;
-import com.example.infrastructure.Utils;
+import com.example.infrastructure.BaseActivity;
 import com.example.navigation.EAnimationType;
-import com.example.navigation.NavigationManager;
-import com.example.navigation.NavigationManagerImpl;
 import com.example.user.repository.AuthRepos;
 import com.example.user.repository.AuthReposImpl;
 import com.example.user.repository.UserRepos;
 import com.example.user.repository.UserReposImpl;
 
-public class LoginActivity extends AppCompatActivity {
+public class LoginActivity extends BaseActivity<LoginViewModel, ActivityLoginBinding> {
 
-    private NavigationManager navigationManager;
-    private LoginViewModel viewModel;
+    @Override
+    protected @LayoutRes int getLayout() {
+        return R.layout.activity_login;
+    }
+
+    @Override
+    protected Class<LoginViewModel> getViewModelClass() {
+        return LoginViewModel.class;
+    }
+
+    @Override
+    protected ViewModelProvider.Factory getViewModelFactory() {
+        UserRepos userRepos = new UserReposImpl();
+        AuthRepos authRepos = new AuthReposImpl(userRepos);
+        return new LoginViewModelFactory(authRepos);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Utils.setStatusBarGradiant(this);
-
-        navigationManager = new NavigationManagerImpl(this);
-
-        ActivityLoginBinding binding = DataBindingUtil
-                .setContentView(this, R.layout.activity_login);
-
-        UserRepos userRepos = new UserReposImpl();
-        AuthRepos authRepos = new AuthReposImpl(userRepos);
-        LoginViewModelFactory factory = new LoginViewModelFactory(authRepos);
-        viewModel = new ViewModelProvider(this, factory).get(LoginViewModel.class);
-        binding.setViewModel(viewModel);
-        binding.setLifecycleOwner(this);
-
-        setupObservers();
 
         viewModel.navigateIfAuthenticated();
+        setupObservers();
     }
 
     private void setupObservers() {

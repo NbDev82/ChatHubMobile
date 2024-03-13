@@ -36,16 +36,16 @@ public class CustomToast {
     }
 
     public static void showToastMessage(Activity activity,
-                                         String message,
-                                         Consumer<ImageView> customIcon) {
+                                        String message,
+                                        Consumer<ImageView> customIcon) {
         int duration = getDurationByMessageLength(message);
         showToastMessage(activity, duration, customIcon, messageTxv -> messageTxv.setText(message));
     }
 
     public static void showToastMessage(Activity activity,
                                         @BaseTransientBottomBar.Duration int duration,
-                                         Consumer<ImageView> customIcon,
-                                         Consumer<TextView> customMessage) {
+                                        Consumer<ImageView> customIcon,
+                                        Consumer<TextView> customMessage) {
         LayoutInflater inflater = activity.getLayoutInflater();
         View layout = inflater.inflate(R.layout.custom_toast_message,
                 activity.findViewById(R.id.toastLayoutRoot));

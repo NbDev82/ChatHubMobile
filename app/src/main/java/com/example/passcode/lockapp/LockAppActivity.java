@@ -6,43 +6,40 @@ import android.os.Bundle;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.databinding.DataBindingUtil;
+import androidx.annotation.LayoutRes;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.example.R;
 import com.example.customcontrol.customalertdialog.AlertDialogFragment;
 import com.example.customcontrol.customalertdialog.AlertDialogModel;
 import com.example.databinding.ActivityLockAppBinding;
+import com.example.infrastructure.BaseActivity;
 import com.example.infrastructure.PreferenceManagerRepos;
 import com.example.infrastructure.Utils;
 import com.example.navigation.EAnimationType;
-import com.example.navigation.NavigationManager;
-import com.example.navigation.NavigationManagerImpl;
-import com.example.user.EGender;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
-public class LockAppActivity extends AppCompatActivity {
+public class LockAppActivity extends BaseActivity<LockAppViewModel, ActivityLockAppBinding> {
 
-    private NavigationManager navigationManager;
-    private LockAppViewModel viewModel;
+    @Override
+    protected @LayoutRes int getLayout() {
+        return R.layout.activity_lock_app;
+    }
+
+    @Override
+    protected Class<LockAppViewModel> getViewModelClass() {
+        return LockAppViewModel.class;
+    }
+
+    @Override
+    protected ViewModelProvider.Factory getViewModelFactory() {
+        PreferenceManagerRepos preferenceManagerRepos = new PreferenceManagerRepos(getApplicationContext());
+        return new LockAppViewModelFactory(preferenceManagerRepos);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Utils.setStatusBarGradiant(this);
-
-        navigationManager = new NavigationManagerImpl(this);
-
-        PreferenceManagerRepos preferenceManagerRepos = new PreferenceManagerRepos(getApplicationContext());
-        LockAppViewModelFactory factory = new LockAppViewModelFactory(preferenceManagerRepos);
-        viewModel = new ViewModelProvider(this, factory).get(LockAppViewModel.class);
-
-        ActivityLockAppBinding binding = DataBindingUtil
-                .setContentView(this, R.layout.activity_lock_app);
-        binding.setViewModel(viewModel);
-        binding.setLifecycleOwner(this);
-
 
         setupObservers();
     }
@@ -119,12 +116,5 @@ public class LockAppActivity extends AppCompatActivity {
     private void openCustomAlertDialog(AlertDialogModel alertDialogModel) {
         AlertDialogFragment dialog = new AlertDialogFragment(alertDialogModel);
         dialog.show(getSupportFragmentManager(), AlertDialogFragment.TAG);
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-
-        viewModel.loadPreferences();
     }
 }

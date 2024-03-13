@@ -63,8 +63,8 @@ public class AlertDialogFragment extends AppCompatDialogFragment {
     }
 
     private void setupContents() {
-        txvTitle.setText( model.getTitle() );
-        txvMessage.setText( model.getMessage() );
+        txvTitle.setText(model.getTitle());
+        txvMessage.setText(model.getMessage());
         setupButton(btnPositive, model.getPositiveBtnTitle(), model.getPositiveButtonClickListener());
         setupButton(btnNegative, model.getNegativeBtnTitle(), model.getNegativeButtonClickListener());
     }

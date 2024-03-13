@@ -13,8 +13,6 @@ import android.widget.DatePicker;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.example.R;
@@ -23,10 +21,8 @@ import com.example.customcontrol.customalertdialog.AlertDialogModel;
 import com.example.customcontrol.inputdialogfragment.InputDialogFragment;
 import com.example.customcontrol.inputdialogfragment.InputDialogModel;
 import com.example.databinding.ActivityUserProfileBinding;
-import com.example.infrastructure.Utils;
+import com.example.infrastructure.BaseActivity;
 import com.example.navigation.EAnimationType;
-import com.example.navigation.NavigationManager;
-import com.example.navigation.NavigationManagerImpl;
 import com.example.user.EGender;
 import com.example.user.repository.AuthRepos;
 import com.example.user.repository.AuthReposImpl;
@@ -38,55 +34,56 @@ import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.Calendar;
 
-public class UserProfileActivity extends AppCompatActivity {
+public class UserProfileActivity extends BaseActivity<UserProfileViewModel, ActivityUserProfileBinding> {
 
     private static final String TAG = UserProfileActivity.class.getSimpleName();
 
-    private NavigationManager navigationManager;
-    private UserProfileViewModel profileViewModel;
     private int selectedItem = 0;
+
+    @Override
+    protected int getLayout() {
+        return R.layout.activity_user_profile;
+    }
+
+    @Override
+    protected Class<UserProfileViewModel> getViewModelClass() {
+        return UserProfileViewModel.class;
+    }
+
+    @Override
+    protected ViewModelProvider.Factory getViewModelFactory() {
+        UserRepos userRepos = new UserReposImpl();
+        AuthRepos authRepos = new AuthReposImpl(userRepos);
+        return new UserProfileViewModelFactory(userRepos, authRepos);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Utils.setStatusBarGradiant(this);
-
-        navigationManager = new NavigationManagerImpl(this);
-
-        ActivityUserProfileBinding binding = DataBindingUtil
-                .setContentView(this, R.layout.activity_user_profile);
-
-        UserRepos userRepos = new UserReposImpl();
-        AuthRepos authRepos = new AuthReposImpl(userRepos);
-        UserProfileViewModelFactory factory = new UserProfileViewModelFactory(userRepos, authRepos);
-        profileViewModel = new ViewModelProvider(this, factory).get(UserProfileViewModel.class);
-
-        binding.setViewModel(profileViewModel);
-        binding.setLifecycleOwner(this);
 
         setupObservers();
     }
 
     private void setupObservers() {
-        profileViewModel.getNavigateBack().observe(this, navigate -> {
+        viewModel.getNavigateBack().observe(this, navigate -> {
             if (navigate) {
                 navigationManager.navigateBack(null, EAnimationType.FADE_IN);
             }
         });
 
-        profileViewModel.getOpenImagePicker().observe(this, pick -> {
+        viewModel.getOpenImagePicker().observe(this, pick -> {
             if (pick) {
                 openImagePicker();
             }
         });
 
-        profileViewModel.getOpenCustomInputDialog().observe(this, this::openCustomInputDialog);
+        viewModel.getOpenCustomInputDialog().observe(this, this::openCustomInputDialog);
 
-        profileViewModel.getOpenDatePickerDialog().observe(this, this::openDatePickerDialog);
+        viewModel.getOpenDatePickerDialog().observe(this, this::openDatePickerDialog);
 
-        profileViewModel.getOpenCustomAlertDialog().observe(this, this::openCustomAlertDialog);
+        viewModel.getOpenCustomAlertDialog().observe(this, this::openCustomAlertDialog);
 
-        profileViewModel.getOpenSingleChoiceGender().observe(this, this::openSingleChoiceGender);
+        viewModel.getOpenSingleChoiceGender().observe(this, this::openSingleChoiceGender);
     }
 
     private void openImagePicker() {
@@ -108,7 +105,7 @@ public class UserProfileActivity extends AppCompatActivity {
                             Log.e(TAG, "Error: " + e);
                         }
                         Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
-                        profileViewModel.setImageBitmap(bitmap);
+                        viewModel.setImageBitmap(bitmap);
                     }
                 }
             }
@@ -129,7 +126,7 @@ public class UserProfileActivity extends AppCompatActivity {
             public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
                 Calendar selectedDate = Calendar.getInstance();
                 selectedDate.set(year, month, dayOfMonth);
-                profileViewModel.setBirthday(selectedDate.getTime());
+                viewModel.setBirthday(selectedDate.getTime());
             }
         }, year, month, dayOfMonth);
 
@@ -158,7 +155,7 @@ public class UserProfileActivity extends AppCompatActivity {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         EGender curSelected = EGender.values()[UserProfileActivity.this.selectedItem];
-                        profileViewModel.setGender(curSelected);
+                        viewModel.setGender(curSelected);
                         dialog.dismiss();
                     }
                 });

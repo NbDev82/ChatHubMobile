@@ -44,7 +44,7 @@ public class CustomBindingAdapters {
 
     @BindingAdapter("imageBase64")
     public static void setImageBase64(RoundedImageView imageView, String base64String) {
-        Bitmap bitmap = Utils.decodeImage(base64String);;
+        Bitmap bitmap = Utils.decodeImage(base64String);
         imageView.setImageBitmap(bitmap);
     }
 

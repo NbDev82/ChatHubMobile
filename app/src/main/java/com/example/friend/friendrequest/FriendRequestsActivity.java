@@ -3,8 +3,6 @@ package com.example.friend.friendrequest;
 import android.os.Bundle;
 
 import androidx.annotation.LayoutRes;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.example.R;
@@ -13,10 +11,7 @@ import com.example.friend.friendrequest.adapter.FriendRequestAdapter;
 import com.example.friend.repository.FriendRequestRepos;
 import com.example.friend.repository.FriendRequestReposImpl;
 import com.example.infrastructure.BaseActivity;
-import com.example.infrastructure.Utils;
 import com.example.navigation.EAnimationType;
-import com.example.navigation.NavigationManager;
-import com.example.navigation.NavigationManagerImpl;
 import com.example.user.repository.AuthRepos;
 import com.example.user.repository.AuthReposImpl;
 import com.example.user.repository.UserRepos;

@@ -1,40 +1,36 @@
 package com.example.passcode.setpasscode;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.databinding.DataBindingUtil;
-import androidx.lifecycle.ViewModelProvider;
-
 import android.os.Bundle;
+
+import androidx.lifecycle.ViewModelProvider;
 
 import com.example.R;
 import com.example.databinding.ActivitySetPasscodeBinding;
+import com.example.infrastructure.BaseActivity;
 import com.example.infrastructure.PreferenceManagerRepos;
-import com.example.infrastructure.Utils;
 import com.example.navigation.EAnimationType;
-import com.example.navigation.NavigationManager;
-import com.example.navigation.NavigationManagerImpl;
 
-public class SetPasscodeActivity extends AppCompatActivity {
+public class SetPasscodeActivity extends BaseActivity<SetPasscodeViewModel, ActivitySetPasscodeBinding> {
 
-    private NavigationManager navigationManager;
-    private SetPasscodeViewModel viewModel;
-    private PreferenceManagerRepos preferenceManager;
+    @Override
+    protected int getLayout() {
+        return R.layout.activity_set_passcode;
+    }
+
+    @Override
+    protected Class<SetPasscodeViewModel> getViewModelClass() {
+        return SetPasscodeViewModel.class;
+    }
+
+    @Override
+    protected ViewModelProvider.Factory getViewModelFactory() {
+        PreferenceManagerRepos preferenceManagerRepos = new PreferenceManagerRepos(getApplicationContext());
+        return new SetPasscodeViewModelFactory(preferenceManagerRepos);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Utils.setStatusBarGradiant(this);
-
-        navigationManager = new NavigationManagerImpl(this);
-
-        viewModel = new ViewModelProvider(this).get(SetPasscodeViewModel.class);
-
-        ActivitySetPasscodeBinding binding = DataBindingUtil
-                .setContentView(this, R.layout.activity_set_passcode);
-        binding.setViewModel(viewModel);
-        binding.setLifecycleOwner(this);
-
-        preferenceManager = new PreferenceManagerRepos(getApplicationContext());
 
         setupObservers();
     }
@@ -46,7 +42,7 @@ public class SetPasscodeActivity extends AppCompatActivity {
 
         viewModel.getSetPasscodeState().observe(this, passcodeSetState -> {
             if (passcodeSetState == EPasscodeSetState.COMPLETED) {
-                viewModel.saveNewPasscode(preferenceManager);
+                viewModel.saveNewPasscode();
             }
         });
     }

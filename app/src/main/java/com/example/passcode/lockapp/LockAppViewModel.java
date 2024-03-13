@@ -6,8 +6,6 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.example.customcontrol.customalertdialog.AlertDialogModel;
-import com.example.customcontrol.inputdialogfragment.InputDialogModel;
-import com.example.friend.FriendRequest;
 import com.example.infrastructure.BaseViewModel;
 import com.example.infrastructure.PreferenceManagerRepos;
 import com.example.infrastructure.Utils;
@@ -90,6 +88,13 @@ public class LockAppViewModel extends BaseViewModel {
 
     public LockAppViewModel(PreferenceManagerRepos preferenceManager) {
         this.preferenceManagerRepos = preferenceManager;
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+        loadPreferences();
     }
 
     public void loadPreferences() {

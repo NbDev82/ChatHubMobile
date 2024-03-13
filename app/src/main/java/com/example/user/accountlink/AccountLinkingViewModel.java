@@ -140,7 +140,7 @@ public class AccountLinkingViewModel extends BaseViewModel {
         EmailPasswordDialogModel model = new EmailPasswordDialogModel.Builder()
                 .setTitle("In-app password")
                 .setSubTitle("Enter your information for password setup")
-                .setEmail( authRepos.getCurrentEmail() )
+                .setEmail(authRepos.getCurrentEmail())
                 .setPassword("")
                 .setSubmitButtonClickListener((email, password) -> {
                     isInAppAdding.postValue(true);

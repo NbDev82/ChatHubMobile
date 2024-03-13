@@ -153,7 +153,7 @@ public class UserProfileViewModel extends BaseViewModel {
     public void openCustomInputDialog() {
         InputDialogModel model = new InputDialogModel.Builder()
                 .setTitle("Full name")
-                .setCurrentContent( fullName.getValue() )
+                .setCurrentContent(fullName.getValue())
                 .setSubmitButtonClickListener(newName -> {
                     if (!newName.isEmpty()) {
                         fullName.postValue(newName);
@@ -166,14 +166,14 @@ public class UserProfileViewModel extends BaseViewModel {
 
     public void openDatePickerDialog() {
         Calendar calendar = Calendar.getInstance();
-        calendar.setTime( originalUser.getBirthday() );
+        calendar.setTime(originalUser.getBirthday());
         openDatePickerDialog.postValue(calendar);
     }
 
     private void checkChangeStatus() {
         if (!originalUser.getImageUrl().equals(encodedImage) ||
-                !originalUser.getFullName().equals( fullName.getValue() ) ||
-                !originalUser.getGender().equals( gender.getValue() ) ||
+                !originalUser.getFullName().equals(fullName.getValue()) ||
+                !originalUser.getGender().equals(gender.getValue()) ||
                 !Utils.compareDateWithDateStr(originalUser.getBirthday(), birthdayStr.getValue())
         ) {
             isDataChanged.postValue(true);
@@ -200,9 +200,9 @@ public class UserProfileViewModel extends BaseViewModel {
         isUserUpdating.postValue(true);
 
         originalUser.setImageUrl(encodedImage);
-        originalUser.setFullName( fullName.getValue() );
-        originalUser.setGender( gender.getValue() );
-        Date birthday = Utils.stringToDate( birthdayStr.getValue() );
+        originalUser.setFullName(fullName.getValue());
+        originalUser.setGender(gender.getValue());
+        Date birthday = Utils.stringToDate(birthdayStr.getValue());
         originalUser.setBirthday(birthday);
 
         String uid = authRepos.getCurrentUid();
