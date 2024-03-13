@@ -3,42 +3,39 @@ package com.example.user.signup;
 import android.os.Bundle;
 
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.example.R;
 import com.example.databinding.ActivitySignUpBinding;
-import com.example.infrastructure.Utils;
+import com.example.infrastructure.BaseActivity;
 import com.example.navigation.EAnimationType;
-import com.example.navigation.NavigationManager;
-import com.example.navigation.NavigationManagerImpl;
 import com.example.user.repository.AuthRepos;
 import com.example.user.repository.AuthReposImpl;
 import com.example.user.repository.UserRepos;
 import com.example.user.repository.UserReposImpl;
 
-public class SignUpActivity extends AppCompatActivity {
+public class SignUpActivity extends BaseActivity<SignUpViewModel, ActivitySignUpBinding> {
 
-    private NavigationManager navigationManager;
-    private SignUpViewModel viewModel;
+    @Override
+    protected int getLayout() {
+        return R.layout.activity_sign_up;
+    }
+
+    @Override
+    protected Class<SignUpViewModel> getViewModelClass() {
+        return SignUpViewModel.class;
+    }
+
+    @Override
+    protected ViewModelProvider.Factory getViewModelFactory() {
+        UserRepos userRepos = new UserReposImpl();
+        AuthRepos authRepos = new AuthReposImpl(userRepos);
+        return new SignUpViewModelFactory(authRepos);
+    }
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Utils.setStatusBarGradiant(this);
-
-        navigationManager = new NavigationManagerImpl(this);
-
-        ActivitySignUpBinding binding = DataBindingUtil
-                .setContentView(this, R.layout.activity_sign_up);
-
-        UserRepos userRepos = new UserReposImpl();
-        AuthRepos authRepos = new AuthReposImpl(userRepos);
-        SignUpViewModelFactory factory = new SignUpViewModelFactory(authRepos);
-        viewModel = new ViewModelProvider(this, factory).get(SignUpViewModel.class);
-        binding.setViewModel(viewModel);
-        binding.setLifecycleOwner(this);
 
         setupObservers();
     }

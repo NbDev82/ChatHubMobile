@@ -2,43 +2,40 @@ package com.example.setting;
 
 import android.os.Bundle;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.example.R;
 import com.example.customcontrol.CustomToast;
 import com.example.databinding.ActivitySettingsBinding;
-import com.example.infrastructure.Utils;
+import com.example.infrastructure.BaseActivity;
 import com.example.navigation.EAnimationType;
-import com.example.navigation.NavigationManager;
-import com.example.navigation.NavigationManagerImpl;
 import com.example.user.repository.AuthRepos;
 import com.example.user.repository.AuthReposImpl;
 import com.example.user.repository.UserRepos;
 import com.example.user.repository.UserReposImpl;
 
-public class SettingsActivity extends AppCompatActivity {
+public class SettingsActivity extends BaseActivity<SettingsViewModel, ActivitySettingsBinding> {
 
-    private NavigationManager navigationManager;
-    private SettingsViewModel viewModel;
+    @Override
+    protected int getLayout() {
+        return R.layout.activity_settings;
+    }
+
+    @Override
+    protected Class<SettingsViewModel> getViewModelClass() {
+        return SettingsViewModel.class;
+    }
+
+    @Override
+    protected ViewModelProvider.Factory getViewModelFactory() {
+        UserRepos userRepos = new UserReposImpl();
+        AuthRepos authRepos = new AuthReposImpl(userRepos);
+        return new SettingsViewModelFactory(authRepos);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Utils.setStatusBarGradiant(this);
-
-        navigationManager = new NavigationManagerImpl(this);
-
-        ActivitySettingsBinding binding = DataBindingUtil
-                .setContentView(this, R.layout.activity_settings);
-
-        UserRepos userRepos = new UserReposImpl();
-        AuthRepos authRepos = new AuthReposImpl(userRepos);
-        SettingsViewModelFactory factory = new SettingsViewModelFactory(authRepos);
-        viewModel = new ViewModelProvider(this, factory).get(SettingsViewModel.class);
-        binding.setViewModel(viewModel);
-        binding.setLifecycleOwner(this);
 
         setupObservers();
     }
@@ -80,9 +77,9 @@ public class SettingsActivity extends AppCompatActivity {
             }
         });
 
-        viewModel.getNavigateToLockMyApp().observe(this, navigate -> {
+        viewModel.getNavigateToLockApp().observe(this, navigate -> {
             if (navigate) {
-                showNotImplementToast();
+                navigationManager.navigateToLockApp(EAnimationType.FADE_IN);
             }
         });
 

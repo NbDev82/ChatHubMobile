@@ -36,4 +36,13 @@
     <dimen name="item_gap">@dimen/_30sdp</dimen>
 
     <dimen name="button_primary_corner_radius">@dimen/_16sdp</dimen>
+
+    <dimen name="edt_gap_between_passcode_cells">@dimen/_5sdp</dimen>
+
+    <dimen name="btn_circle_size">@dimen/_60sdp</dimen>
+    <dimen name="btn_circle_radius">@dimen/_30sdp</dimen>
+
+    <dimen name="btn_text_custom_input_passcode">@dimen/_20ssp</dimen>
+
+    <dimen name="pin_view_line_width_default">1.5dp</dimen>
 </resources>

@@ -21,7 +21,6 @@ public class VerifyOtpViewModel extends BaseViewModel {
 
     private final MutableLiveData<String> phoneNumber = new MutableLiveData<>();
     private final MutableLiveData<String> otp = new MutableLiveData<>();
-    private final MutableLiveData<String> otpError = new MutableLiveData<>();
     private final MutableLiveData<String> resendOtp = new MutableLiveData<>();
     private final MutableLiveData<String> resendContent = new MutableLiveData<>();
     private final MutableLiveData<Boolean> resendContentStatus = new MutableLiveData<>();
@@ -43,10 +42,6 @@ public class VerifyOtpViewModel extends BaseViewModel {
 
     public MutableLiveData<String> getOtp() {
         return otp;
-    }
-
-    public LiveData<String> getOtpError() {
-        return otpError;
     }
 
     public LiveData<String> getResendOtp() {
@@ -95,6 +90,10 @@ public class VerifyOtpViewModel extends BaseViewModel {
 
     public void verifyOtp() {
         String enteredOtp = otp.getValue() != null ? otp.getValue() : "";
+        verifyOtp(enteredOtp);
+    }
+
+    private void verifyOtp(String enteredOtp) {
         try {
             PhoneAuthCredential phoneCredential = PhoneAuthProvider.getCredential(verificationId, enteredOtp);
             signIn(phoneCredential);
@@ -135,13 +134,20 @@ public class VerifyOtpViewModel extends BaseViewModel {
                 .addOnSuccessListener(aVoid -> {
                     this.isOtpVerifying.postValue(false);
                     successToastMessage.postValue("Verify successfully");
-                    new Handler().postDelayed(this::navigateToHome, 500);
+                    new Handler().postDelayed(this::navigateToHome, 200);
                 })
                 .addOnFailureListener(e -> {
                     this.isOtpVerifying.postValue(false);
                     errorToastMessage.postValue("Verify unsuccessfully");
                     Log.e(PhoneNumberInputActivity.class.getSimpleName(), "Error: ", e);
                 });
+    }
+
+    public void onOtpChanged(CharSequence text) {
+        String otp = text.toString();
+        if (Utils.isValidOtp(otp)) {
+            verifyOtp(otp);
+        }
     }
 
     public void navigateToHome() {

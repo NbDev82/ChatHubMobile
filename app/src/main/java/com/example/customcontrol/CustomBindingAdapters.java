@@ -1,12 +1,15 @@
 package com.example.customcontrol;
 
 import android.app.Activity;
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.TextView;
 
 import androidx.databinding.BindingAdapter;
 
+import com.chaos.view.PinView;
 import com.example.customcontrol.snackbar.CustomSnackbar;
 import com.example.customcontrol.snackbar.SnackbarModel;
 import com.example.infrastructure.Utils;
@@ -41,7 +44,7 @@ public class CustomBindingAdapters {
 
     @BindingAdapter("imageBase64")
     public static void setImageBase64(RoundedImageView imageView, String base64String) {
-        Bitmap bitmap = Utils.decodeImage(base64String);;
+        Bitmap bitmap = Utils.decodeImage(base64String);
         imageView.setImageBitmap(bitmap);
     }
 
@@ -49,5 +52,31 @@ public class CustomBindingAdapters {
     public static void setTimeAgo(TextView textView, Date date) {
         String timeAgo = Utils.calculateTimeAgo(date);
         textView.setText(timeAgo);
+    }
+
+    @BindingAdapter("animation")
+    public static void setAnimation(PinView pinView, boolean animation) {
+        if (animation) {
+            pinView.setAnimationEnable(true);
+        }
+    }
+
+    @BindingAdapter("app:showKeyboardIfTrue")
+    public static void autoShowKeyboard(View view, boolean isKeyboardVisible) {
+        if (isKeyboardVisible) {
+            showKeyboard(view);
+        } else {
+            hideKeyboard(view);
+        }
+    }
+
+    private static void showKeyboard(View view) {
+        InputMethodManager imm = (InputMethodManager) view.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.showSoftInput(view, InputMethodManager.SHOW_IMPLICIT);
+    }
+
+    private static void hideKeyboard(View view) {
+        InputMethodManager imm = (InputMethodManager) view.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
     }
 }

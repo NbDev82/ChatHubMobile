@@ -3,10 +3,10 @@ package com.example.infrastructure;
 import android.content.Context;
 import android.content.SharedPreferences;
 
-public class PreferenceManager {
+public class PreferenceManagerRepos {
     private final SharedPreferences sharedPreferences;
 
-    public PreferenceManager(Context context) {
+    public PreferenceManagerRepos(Context context) {
         sharedPreferences = context.getSharedPreferences(Utils.KEY_PREFERENCE_NAME, Context.MODE_PRIVATE);
     }
 

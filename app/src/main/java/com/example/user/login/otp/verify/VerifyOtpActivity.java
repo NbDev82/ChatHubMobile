@@ -2,16 +2,12 @@ package com.example.user.login.otp.verify;
 
 import android.os.Bundle;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.example.R;
 import com.example.databinding.ActivityVerifyOtpBinding;
-import com.example.infrastructure.Utils;
+import com.example.infrastructure.BaseActivity;
 import com.example.navigation.EAnimationType;
-import com.example.navigation.NavigationManager;
-import com.example.navigation.NavigationManagerImpl;
 import com.example.user.EUserField;
 import com.example.user.repository.AuthRepos;
 import com.example.user.repository.AuthReposImpl;
@@ -21,23 +17,30 @@ import com.example.user.repository.UserReposImpl;
 import java.util.Timer;
 import java.util.TimerTask;
 
-public class VerifyOtpActivity extends AppCompatActivity {
+public class VerifyOtpActivity extends BaseActivity<VerifyOtpViewModel, ActivityVerifyOtpBinding> {
 
-    private NavigationManager navigationManager;
     private AuthRepos authRepos;
-    private VerifyOtpViewModel viewModel;
+
+    @Override
+    protected int getLayout() {
+        return R.layout.activity_verify_otp;
+    }
+
+    @Override
+    protected Class<VerifyOtpViewModel> getViewModelClass() {
+        return VerifyOtpViewModel.class;
+    }
+
+    @Override
+    protected ViewModelProvider.Factory getViewModelFactory() {
+        UserRepos userRepos = new UserReposImpl();
+        authRepos = new AuthReposImpl(userRepos);
+        return new VerifyOtpViewModelFactory(authRepos);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Utils.setStatusBarGradiant(this);
-
-        navigationManager = new NavigationManagerImpl(this);
-
-        UserRepos userRepos = new UserReposImpl();
-        authRepos = new AuthReposImpl(userRepos);
-        VerifyOtpViewModelFactory factory = new VerifyOtpViewModelFactory(authRepos);
-        viewModel = new ViewModelProvider(this, factory).get(VerifyOtpViewModel.class);
 
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
@@ -45,11 +48,6 @@ public class VerifyOtpActivity extends AppCompatActivity {
             viewModel.setPhoneNumber(phoneNumber);
             sendOtp(phoneNumber, false);
         }
-
-        ActivityVerifyOtpBinding binding =
-                DataBindingUtil.setContentView(this, R.layout.activity_verify_otp);
-        binding.setViewModel(viewModel);
-        binding.setLifecycleOwner(this);
 
         setupObservers();
     }

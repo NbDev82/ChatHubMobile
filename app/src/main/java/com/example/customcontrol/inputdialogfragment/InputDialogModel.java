@@ -8,6 +8,7 @@ public class InputDialogModel {
     private String title;
     private EInputType type = EInputType.NORMAL;
     private String curContent;
+    private boolean cancelable = true;
     private Consumer<String> submitButtonClickListener;
     private DialogDismissListener dismissListener;
 
@@ -26,6 +27,10 @@ public class InputDialogModel {
         return curContent;
     }
 
+    public boolean isCancelable() {
+        return cancelable;
+    }
+
     public Consumer<String> getSubmitButtonClickListener() {
         return submitButtonClickListener;
     }
@@ -38,6 +43,7 @@ public class InputDialogModel {
         private String title;
         private EInputType type;
         private String curContent;
+        private boolean cancelable = true;
         private Consumer<String> submitButtonClickListener;
         private DialogDismissListener dismissListener;
 
@@ -56,6 +62,11 @@ public class InputDialogModel {
             return this;
         }
 
+        public Builder setCancelable(boolean cancelable) {
+            this.cancelable = cancelable;
+            return this;
+        }
+
         public Builder setSubmitButtonClickListener(Consumer<String> submitButtonClickListener) {
             this.submitButtonClickListener = submitButtonClickListener;
             return this;
@@ -71,6 +82,7 @@ public class InputDialogModel {
             dialogModel.title = this.title;
             dialogModel.type = type;
             dialogModel.curContent = this.curContent;
+            dialogModel.cancelable = this.cancelable;
             dialogModel.submitButtonClickListener = this.submitButtonClickListener;
             dialogModel.dismissListener = dismissListener;
             return dialogModel;

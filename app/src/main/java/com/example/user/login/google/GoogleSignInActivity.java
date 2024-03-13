@@ -12,10 +12,7 @@ import androidx.lifecycle.ViewModelProvider;
 import com.example.R;
 import com.example.customcontrol.CustomToast;
 import com.example.customcontrol.LoadingDialog;
-import com.example.infrastructure.Utils;
 import com.example.navigation.EAnimationType;
-import com.example.navigation.NavigationManager;
-import com.example.navigation.NavigationManagerImpl;
 import com.example.user.login.LoginActivity;
 import com.example.user.repository.AuthRepos;
 import com.example.user.repository.AuthReposImpl;
@@ -29,16 +26,12 @@ import com.google.android.gms.tasks.Task;
 
 public class GoogleSignInActivity extends LoginActivity {
 
-    private NavigationManager navigationManager;
     private GoogleSignInViewModel viewModel;
     private LoadingDialog loadingDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Utils.setStatusBarGradiant(this);
-
-        navigationManager = new NavigationManagerImpl(this);
 
         UserRepos userRepos = new UserReposImpl();
         AuthRepos authRepos = new AuthReposImpl(userRepos);
@@ -81,10 +74,10 @@ public class GoogleSignInActivity extends LoginActivity {
         GoogleSignInClient googleSignInClient = GoogleSignIn.getClient(GoogleSignInActivity.this, gso);
         googleSignInClient.signOut();
         Intent intent = googleSignInClient.getSignInIntent();
-        loginWithGoogle.launch(intent);
+        loginWithGoogleLauncher.launch(intent);
     }
 
-    private ActivityResultLauncher<Intent> loginWithGoogle = registerForActivityResult(
+    private ActivityResultLauncher<Intent> loginWithGoogleLauncher = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
             result -> {
                 if (result.getResultCode() == Activity.RESULT_OK) {

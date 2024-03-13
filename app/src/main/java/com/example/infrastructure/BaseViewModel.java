@@ -22,4 +22,22 @@ public abstract class BaseViewModel extends ViewModel {
 
     public BaseViewModel() {
     }
+
+    protected void onCreate() {
+    }
+
+    protected void onStart() {
+    }
+
+    protected void onResume() {
+    }
+
+    protected void onPause() {
+    }
+
+    protected void onStop() {
+    }
+
+    protected void onDestroy() {
+    }
 }

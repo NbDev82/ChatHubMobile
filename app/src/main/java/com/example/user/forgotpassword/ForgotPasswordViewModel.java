@@ -44,8 +44,8 @@ public class ForgotPasswordViewModel extends BaseViewModel {
             errorToastMessage.postValue("Enter your email");
             return;
         }
-        
-        this.email.postValue( email.trim() );
+
+        this.email.postValue(email.trim());
         authRepos.sendPasswordResetEmail(email)
                 .addOnSuccessListener(aVoid -> {
                     successToastMessage.postValue("Password reset link sent to your Email");

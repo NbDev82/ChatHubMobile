@@ -78,4 +78,10 @@ dependencies {
 
     // Swipe down to refresh page
     implementation "androidx.swiperefreshlayout:swiperefreshlayout:1.0.0"
+
+    // Pin view
+    implementation 'io.github.chaosleung:pinview:1.4.4'
+
+    // Biometric
+    implementation 'androidx.biometric:biometric:1.1.0'
 }

@@ -2,8 +2,7 @@ package com.example.friend.profileviewer;
 
 import android.os.Bundle;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.databinding.DataBindingUtil;
+import androidx.annotation.LayoutRes;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.example.R;
@@ -12,6 +11,7 @@ import com.example.customcontrol.customalertdialog.AlertDialogModel;
 import com.example.databinding.ActivityProfileViewerBinding;
 import com.example.friend.repository.FriendRequestRepos;
 import com.example.friend.repository.FriendRequestReposImpl;
+import com.example.infrastructure.BaseActivity;
 import com.example.infrastructure.Utils;
 import com.example.navigation.EAnimationType;
 import com.example.navigation.NavigationManager;
@@ -21,10 +21,27 @@ import com.example.user.repository.AuthReposImpl;
 import com.example.user.repository.UserRepos;
 import com.example.user.repository.UserReposImpl;
 
-public class ProfileViewerActivity extends AppCompatActivity {
+public class ProfileViewerActivity extends BaseActivity<ProfileViewerViewModel, ActivityProfileViewerBinding> {
 
     private NavigationManager navigationManager;
-    private ProfileViewerViewModel viewModel;
+
+    @Override
+    protected @LayoutRes int getLayout() {
+        return R.layout.activity_profile_viewer;
+    }
+
+    @Override
+    protected Class<ProfileViewerViewModel> getViewModelClass() {
+        return ProfileViewerViewModel.class;
+    }
+
+    @Override
+    protected ViewModelProvider.Factory getViewModelFactory() {
+        UserRepos userRepos = new UserReposImpl();
+        AuthRepos authRepos = new AuthReposImpl(userRepos);
+        FriendRequestRepos friendRequestRepos = new FriendRequestReposImpl(userRepos, authRepos);
+        return new ProfileViewerViewModelFactory(userRepos, authRepos, friendRequestRepos);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,19 +49,7 @@ public class ProfileViewerActivity extends AppCompatActivity {
         Utils.setStatusBarGradiant(this);
 
         navigationManager = new NavigationManagerImpl(this);
-
-        UserRepos userRepos = new UserReposImpl();
-        AuthRepos authRepos = new AuthReposImpl(userRepos);
-        FriendRequestRepos friendRequestRepos = new FriendRequestReposImpl(userRepos, authRepos);
-        ProfileViewerViewModelFactory factory =
-                new ProfileViewerViewModelFactory(userRepos, authRepos, friendRequestRepos);
-        viewModel = new ViewModelProvider(this, factory).get(ProfileViewerViewModel.class);
-
-        ActivityProfileViewerBinding binding = DataBindingUtil
-                .setContentView(this, R.layout.activity_profile_viewer);
-
         binding.setViewModel(viewModel);
-        binding.setLifecycleOwner(this);
 
         setupObservers();
 

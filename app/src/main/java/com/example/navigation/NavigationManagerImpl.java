@@ -6,11 +6,17 @@ import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 
+import androidx.activity.result.ActivityResultLauncher;
+
 import com.example.R;
 import com.example.friend.friendrequest.FriendRequestsActivity;
 import com.example.friend.myfriend.FriendsActivity;
 import com.example.friend.profileviewer.ProfileViewerActivity;
 import com.example.home.HomeActivity;
+import com.example.passcode.changepasscode.ChangePasscodeActivity;
+import com.example.passcode.lockapp.LockAppActivity;
+import com.example.passcode.setpasscode.SetPasscodeActivity;
+import com.example.passcode.unlockapp.UnlockAppActivity;
 import com.example.setting.SettingsActivity;
 import com.example.user.accountlink.AccountLinkingActivity;
 import com.example.user.changepassword.ChangePasswordActivity;
@@ -121,6 +127,35 @@ public class NavigationManagerImpl implements NavigationManager {
         navigateToActivity(FriendsActivity.class, animationType);
     }
 
+    @Override
+    public void navigateToLockApp(EAnimationType animationType) {
+        navigateToActivity(LockAppActivity.class, animationType);
+    }
+
+    @Override
+    public void navigateToUnlockApp(EAnimationType animationType) {
+        navigateToActivity(UnlockAppActivity.class, animationType);
+    }
+
+    @Override
+    public void navigateToSetPasscodeWithActivityResultLauncher(
+            ActivityResultLauncher<Intent> launcher,
+            EAnimationType animationType) {
+
+        navigateToActivityWithActivityResultLauncher(SetPasscodeActivity.class,
+                launcher, null, animationType, DEFAULT_FLAGS);
+    }
+
+    @Override
+    public void navigateToSetPasscode(EAnimationType animationType, int flags) {
+        navigateToActivity(SetPasscodeActivity.class, null, animationType, flags);
+    }
+
+    @Override
+    public void navigateToChangePasscode(EAnimationType animationType) {
+        navigateToActivity(ChangePasscodeActivity.class, animationType);
+    }
+
     private void setResultAndFinish(Intent resultIntent, EAnimationType animationType) {
         if (context instanceof Activity) {
             Activity activity = (Activity) context;
@@ -181,5 +216,21 @@ public class NavigationManagerImpl implements NavigationManager {
         intent.setFlags(flags);
         overridePendingTransitionForAnimation(animationType);
         context.startActivity(intent);
+    }
+
+    private void navigateToActivityWithActivityResultLauncher(
+            Class<? extends Activity> activityClass,
+            ActivityResultLauncher<Intent> launcher,
+            Bundle data,
+            EAnimationType animationType,
+            int flags) {
+
+        Intent intent = new Intent(context, activityClass);
+        if (data != null) {
+            intent.putExtras(data);
+        }
+        intent.setFlags(flags);
+        overridePendingTransitionForAnimation(animationType);
+        launcher.launch(intent);
     }
 }

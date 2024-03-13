@@ -8,10 +8,16 @@ import java.util.List;
 
 public interface FriendRequestRepos {
     Task<List<FriendRequestView>> getPendingFriendRequestsBySenderId(String senderId);
+
     Task<List<FriendRequestView>> getPendingFriendRequestsByRecipientId(String recipientId);
+
     Task<FriendRequest.EStatus> getFriendRequestStatus(String senderId, String recipientId);
+
     Task<Void> addFriendRequest(FriendRequest request);
+
     Task<Void> updateFriendRequestStatus(String friendRequestId, FriendRequest.EStatus status);
+
     Task<FriendRequest> getFriendRequest(String senderId, String recipientId);
+
     Task<List<FriendRequestView>> getAcceptedFriendRequests(String userId);
 }

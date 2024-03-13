@@ -25,9 +25,17 @@ import java.util.Date;
 
 public class Utils {
     public static final String KEY_PREFERENCE_NAME = "chatAppPreference";
+    public static final String KEY_PASSCODE = "passcode";
+    public static final String KEY_FINGERPRINT_UNLOCK_ENABLED = "fingerprintUnlockEnabled";
+    public static final String KEY_AUTO_LOCK_TIME = "autoLockTime";
+
+    public static final int PASSCODE_DIGIT_COUNT = 4;
+    public static final int PIN_DIGIT_COUNT = 6;
+
     public static long OTP_TIME_OUT_SECONDS = 60L;
     public static final String EXTRA_SELECTED_USER_ID = "selectedUserId";
     public static final String EXTRA_SELECTED_FRIEND_REQUEST_ID = "selectedFriendRequestId";
+    public static final String EXTRA_PASSCODE_SET_SUCCESS = "newPasscodeSetSuccess";
 
     private static final String TAG = Utils.class.getSimpleName();
     private static final String DATE_PATTERN = "dd/MM/yyyy";
@@ -85,7 +93,7 @@ public class Utils {
     }
 
     public static String getFullPhoneNumber(@Nullable String countryCode,
-                                             @Nullable String localNumber) {
+                                            @Nullable String localNumber) {
         if (countryCode != null && localNumber != null) {
             return countryCode.concat(localNumber);
         }
@@ -109,9 +117,11 @@ public class Utils {
             return years + "y";
         } else if (weeks > 0) {
             return weeks + "w";
-        } if (months > 0) {
+        }
+        if (months > 0) {
             return months + "mo";
-        } if (days > 0) {
+        }
+        if (days > 0) {
             return days + "d";
         } else if (hours > 0) {
             return hours + "h";
@@ -120,5 +130,21 @@ public class Utils {
         } else {
             return "Just now";
         }
+    }
+
+    public static boolean isEmpty(String text) {
+        return text == null || text.isEmpty();
+    }
+
+    public static boolean isValidPasscode(String passcode) {
+        return !Utils.isEmpty(passcode) && passcode.length() == Utils.PASSCODE_DIGIT_COUNT;
+    }
+
+    public static boolean isCorrectPasscode(String correctPasscode, String enteredPasscode) {
+        return !isEmpty(enteredPasscode) && enteredPasscode.equals(correctPasscode);
+    }
+
+    public static boolean isValidOtp(String text) {
+        return text != null && text.length() == PIN_DIGIT_COUNT;
     }
 }

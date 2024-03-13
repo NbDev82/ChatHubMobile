@@ -61,8 +61,8 @@ public class InputDialogFragment extends AppCompatDialogFragment {
         edtText = view.findViewById(R.id.edt_text);
         btnSubmit = view.findViewById(R.id.btn_submit);
 
-        txvTitle.setText( model.getTitle() );
-        edtText.setText( model.getCurContent() );
+        txvTitle.setText(model.getTitle());
+        edtText.setText(model.getCurContent());
 
         switch (model.getType()) {
             case EMAIL:
@@ -82,6 +82,13 @@ public class InputDialogFragment extends AppCompatDialogFragment {
                 dismiss();
             }
         });
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+
+        setCancelable(model.isCancelable());
     }
 
     @Override

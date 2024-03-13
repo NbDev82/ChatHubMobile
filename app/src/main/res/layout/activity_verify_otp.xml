@@ -5,6 +5,8 @@
 
     <data>
         <import type="android.view.View"/>
+        <import type="com.example.infrastructure.Utils"/>
+
         <variable
             name="viewModel"
             type="com.example.user.login.otp.verify.VerifyOtpViewModel" />
@@ -15,7 +17,6 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/color_background_primary"
-        android:paddingHorizontal="@dimen/profile_item_padding_horizontal"
         tools:successToastMessage="@{viewModel.successToastMessage}"
         tools:errorToastMessage="@{viewModel.errorToastMessage}">
 
@@ -61,36 +62,39 @@
                 tools:text="+84-123912049"/>
         </LinearLayout>
 
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/til_phone_number"
-            style="@style/CustomTextInputLayoutPrimary"
-            android:layout_width="match_parent"
+        <com.chaos.view.PinView
+            android:id="@+id/pinview_otp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@id/ll_otp_title"
+            android:layout_centerInParent="true"
+            android:layout_gravity="center"
             android:layout_marginTop="@dimen/_20sdp"
-            app:counterEnabled="true"
-            app:counterMaxLength="6"
-            android:hint="OTP"
-            app:endIconMode="clear_text"
-            app:errorEnabled="true"
-            app:errorIconDrawable="@drawable/ic_circle_xmark_solid"
-            app:error="@{viewModel.otpError}">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:inputType="phone"
-                android:maxLines="1"
-                android:text="@={viewModel.otp}"
-                android:textSize="@dimen/primary_text_size" />
-
-        </com.google.android.material.textfield.TextInputLayout>
+            android:clickable="true"
+            android:cursorVisible="true"
+            android:digits="1234567890"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            android:gravity="center"
+            android:inputType="number"
+            android:onTextChanged="@{(text, start, before, count) -> viewModel.onOtpChanged(text)}"
+            android:text="@={viewModel.otp}"
+            app:animation="@{true}"
+            app:hideLineWhenFilled="false"
+            app:itemCount="6"
+            app:itemHeight="@dimen/_40sdp"
+            app:itemRadius="@dimen/_12sdp"
+            app:itemSpacing="@dimen/edt_gap_between_passcode_cells"
+            app:itemWidth="@dimen/_40sdp"
+            app:lineColor="@drawable/pinview_line_color_selector"
+            app:lineWidth="@dimen/pin_view_line_width_default" />
 
         <TextView
             android:id="@+id/txv_resend"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@id/til_phone_number"
+            android:layout_below="@id/pinview_otp"
+            android:layout_marginTop="@dimen/_10sdp"
             android:layout_centerHorizontal="true"
             android:enabled="@{viewModel.resendContentStatus}"
             android:onClick="@{() -> viewModel.resendOtp()}"
@@ -104,6 +108,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@id/txv_resend"
+            android:paddingHorizontal="@dimen/profile_item_padding_horizontal"
             android:layout_marginTop="@dimen/_20sdp"
             android:animateLayoutChanges="true">
 
@@ -113,10 +118,9 @@
                 android:layout_height="@dimen/_45sdp"
                 android:text="Verify"
                 android:onClick="@{()-> viewModel.verifyOtp()}"
-                android:enabled="@{viewModel.otpError == null}"
+                android:enabled="@{Utils.isValidOtp(viewModel.otp)}"
                 android:visibility="@{viewModel.isOtpVerifying ? View.INVISIBLE : View.VISIBLE}"
                 app:cornerRadius="@dimen/button_primary_corner_radius" />
-
 
             <ProgressBar
                 android:layout_width="@dimen/_25sdp"

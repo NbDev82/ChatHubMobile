@@ -10,7 +10,8 @@ public class AlertDialogModel {
     private Consumer<Void> positiveButtonClickListener;
     private Consumer<Void> negativeButtonClickListener;
 
-    private AlertDialogModel() {}
+    private AlertDialogModel() {
+    }
 
     public String getTitle() {
         return title;
