@@ -5,8 +5,6 @@ import android.util.Log;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
-import com.example.chat.conversation.repos.ConversationRepos;
-import com.example.chat.conversation.repos.ConversationReposImpl;
 import com.example.chat.enums.Evisible;
 import com.example.chat.message.Message;
 import com.example.chat.message.repos.MessageRepos;
@@ -16,19 +14,23 @@ import com.example.infrastructure.BaseViewModel;
 import com.example.infrastructure.PreferenceManager;
 import com.example.user.repository.AuthRepos;
 import com.example.user.repository.UserRepos;
+import com.google.firebase.firestore.DocumentChange;
+import com.google.firebase.firestore.EventListener;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 public class ChatViewModel extends BaseViewModel {
 
     private static final String TAG = ChatViewModel.class.getSimpleName();
-    private final PreferenceManager preferenceManager;
 
     private final UserRepos userRepos;
     private final MessageRepos messageRepos;
-    private final ConversationRepos conversationRepos;
     private final AuthRepos authRepos;
 
     private final MutableLiveData<String> curSenderUid = new MutableLiveData<>("");
@@ -70,7 +72,7 @@ public class ChatViewModel extends BaseViewModel {
         return curConversationName;
     }
 
-    public LiveData<String> getMessageInput() {
+    public MutableLiveData<String> getMessageInput() {
         return messageInput;
     }
 
@@ -84,14 +86,10 @@ public class ChatViewModel extends BaseViewModel {
     }
 
     public ChatViewModel(PreferenceManager preferenceManager, UserRepos userRepos, AuthRepos authRepos) {
-        this.preferenceManager = preferenceManager;
         this.userRepos = userRepos;
         this.authRepos = authRepos;
 
         messageRepos = new MessageReposImpl();
-        conversationRepos = new ConversationReposImpl();
-
-        curSenderUid.postValue(preferenceManager.getString(Utils.KEY_USER_ID));
 
         this.authRepos.getCurrentUser()
                 .addOnSuccessListener(user -> {
@@ -104,37 +102,11 @@ public class ChatViewModel extends BaseViewModel {
 
                         String receivedUid = preferenceManager.getString(Utils.KEY_RECEIVER_ID);
                         curReceivedUid.postValue(receivedUid);
-
-                        fetchConversation(conversationId);
-                        fetchMessages(conversationId);
                     } else {
                         Log.d(TAG, "Unauthorize: ");
                     }
                 })
                 .addOnFailureListener(e -> {
-                    Log.e(TAG, "Error: " + e);
-                });
-    }
-
-    public void fetchMessages(String conversationId) {
-        messageRepos.getListMessageFromConversationId(conversationId)
-                .addOnSuccessListener(messages -> {
-                    this.messages.postValue(messages);
-                })
-                .addOnFailureListener(e -> {
-                    openConversationNotFoundDialog();
-                    Log.e(TAG, "Error: " + e);
-                });
-    }
-
-
-    public void fetchConversation(String conversationId) {
-        conversationRepos.getConversationById(conversationId)
-                .addOnSuccessListener(conversation -> {
-                    curConversationName.postValue(conversation.getName());
-                })
-                .addOnFailureListener(e -> {
-                    openConversationNotFoundDialog();
                     Log.e(TAG, "Error: " + e);
                 });
     }
@@ -158,18 +130,66 @@ public class ChatViewModel extends BaseViewModel {
         Message message = new Message();
 
         message.setMessage(messageInput.getValue());
+        message.setSenderId(curSenderUid.getValue());
         message.setConversationId(curConversationId.getValue());
-        message.setSendingTime(LocalDateTime.now());
+        message.setSendingTime(formatLocalDateTime(LocalDateTime.now()));
         message.setVisibility(Evisible.ACTIVE);
 
         messageRepos.sendMessage(message);
-
-        List<Message> currentMessages = messages.getValue();
-        if (currentMessages == null)
-            currentMessages = new ArrayList<>();
-        currentMessages.add(message);
-        messages.postValue(currentMessages);
+        messageInput.postValue("");
 
         Log.i(TAG, "Send button clicked");
     }
+
+    private String formatLocalDateTime(LocalDateTime now) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm");
+        return formatter.format(now);
+    }
+
+    public void listenMessages() {
+        messageRepos.listenMessages(
+                curConversationId.getValue(),
+                eventListener);
+
+        messageRepos.listenMessages(
+                curConversationId.getValue(),
+                eventConversationListener);
+    }
+
+    private final EventListener<QuerySnapshot> eventListener = (value, error) -> {
+        if (error != null) {
+            return;
+        }
+        if (value != null) {
+            List<Message> newMessages = new ArrayList<>();
+            for (DocumentChange documentChange : value.getDocumentChanges()) {
+                if (documentChange.getType() == DocumentChange.Type.ADDED) {
+                    Message chatMessage = new Message();
+                    chatMessage.convertDocumentChangeToModel(documentChange);
+                    newMessages.add(chatMessage);
+                }
+            }
+
+            List<Message> currentMessages = messages.getValue();
+            if (currentMessages == null)
+                currentMessages = new ArrayList<>();
+            currentMessages.addAll(newMessages);
+            Collections.sort(currentMessages, Comparator.comparing(Message::getDateObject));
+
+            messages.postValue(currentMessages);
+        }
+    };
+
+    private final EventListener<QuerySnapshot> eventConversationListener = (value, error) -> {
+        if (error != null) {
+            return;
+        }
+        if (value != null) {
+            for (DocumentChange documentChange : value.getDocumentChanges()) {
+                if (documentChange.getType() == DocumentChange.Type.MODIFIED) {
+                    curConversationName.postValue(documentChange.getDocument().getString(Utils.KEY_CONVERSATION_NAME));
+                }
+            }
+        }
+    };
 }

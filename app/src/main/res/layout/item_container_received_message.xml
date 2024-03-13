@@ -12,6 +12,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/_8sdp"
         android:padding="@dimen/_4sdp">
 
         <com.makeramen.roundedimageview.RoundedImageView
@@ -35,6 +36,7 @@
             android:textColor="@color/color_background_primary"
             android:textSize="@dimen/_13ssp"
 
+            app:layout_constraintWidth_max="wrap"
             app:layout_constraintStart_toEndOf="@id/imageProfile"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintWidth_percent="0.75"/>
@@ -45,7 +47,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/_4sdp"
             android:textColor="@color/design_default_color_on_secondary"
-            android:textSize="@dimen/_10ssp"
+            android:textSize="@dimen/_8ssp"
             app:layout_constraintStart_toStartOf="@id/textMessage"
             app:layout_constraintTop_toBottomOf="@id/textMessage"/>
     </androidx.constraintlayout.widget.ConstraintLayout>

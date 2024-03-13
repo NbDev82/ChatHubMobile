@@ -12,6 +12,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/_8sdp"
         android:padding="@dimen/_4sdp">
 
         <TextView
@@ -23,6 +24,7 @@
             android:textColor="@color/color_background_primary"
             android:textSize="@dimen/_13ssp"
 
+            app:layout_constraintWidth_max="wrap"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintWidth_percent="0.8"/>
@@ -33,7 +35,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/_4sdp"
             android:textColor="@color/design_default_color_on_secondary"
-            android:textSize="@dimen/_10ssp"
+            android:textSize="@dimen/_8ssp"
 
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/textMessage"/>

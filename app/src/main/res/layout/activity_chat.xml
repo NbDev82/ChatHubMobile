@@ -92,6 +92,7 @@
             android:id="@+id/viewSupporter"
             android:layout_width="match_parent"
             android:layout_height="1dp"
+            android:background="@color/color_background_primary"
             android:layout_marginTop="@dimen/_12sdp"
 
             app:layout_constraintTop_toBottomOf="@id/imageBack"/>
@@ -104,7 +105,8 @@
             android:orientation="vertical"
             android:overScrollMode="never"
             android:padding="@dimen/_20sdp"
-            android:adapter="@{chatAdapter}"
+            app:stackFromEnd="true"
+            android:visibility="visible"
 
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             app:layout_constraintBottom_toBottomOf="@id/viewBackground"
@@ -164,7 +166,7 @@
             android:inputType="text"
             android:paddingStart="@dimen/_16sdp"
             android:paddingEnd="@dimen/_16sdp"
-            android:text="@{viewModel.messageInput}"
+            android:text="@={viewModel.messageInput}"
             android:textColor="@color/color_text_primary_title"
             android:textColorHint="@color/design_default_color_on_secondary"
 

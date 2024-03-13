@@ -5,8 +5,6 @@ import com.example.chat.Utils;
 
 import java.util.HashMap;
 
-import javax.annotation.Nullable;
-
 public class Conversation {
 
     private Long id;
