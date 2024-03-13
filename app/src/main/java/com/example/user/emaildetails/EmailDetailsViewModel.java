@@ -12,15 +12,15 @@ public class EmailDetailsViewModel extends BaseViewModel {
 
     private static final String TAG = EmailDetailsViewModel.class.getSimpleName();
 
-    private final MutableLiveData<Boolean> navigateToSettings = new MutableLiveData<>();
+    private final MutableLiveData<Boolean> navigateBack = new MutableLiveData<>();
     private final MutableLiveData<Boolean> isRefreshing = new MutableLiveData<>();
     private final MutableLiveData<String> email = new MutableLiveData<>();
     private final MutableLiveData<Boolean> isEmailVerified = new MutableLiveData<>();
     private final MutableLiveData<Boolean> isVerifyingEmail = new MutableLiveData<>();
     private final AuthRepos authRepos;
 
-    public LiveData<Boolean> getNavigateToSettings() {
-        return navigateToSettings;
+    public LiveData<Boolean> getNavigateBack() {
+        return navigateBack;
     }
 
     public LiveData<Boolean> getIsRefreshing() {
@@ -61,7 +61,7 @@ public class EmailDetailsViewModel extends BaseViewModel {
     }
 
     public void navigateToSettings() {
-        navigateToSettings.postValue(true);
+        navigateBack.postValue(true);
     }
 
     public void sendEmailVerification() {

@@ -24,30 +24,6 @@
         tools:errorToastMessage="@{viewModel.errorToastMessage}"
         app:customSnackbar="@{viewModel.snackbarModel}">
 
-        <androidx.appcompat.widget.Toolbar
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/toolbar_height"
-            android:background="@drawable/gradient_color_primary">
-
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/ic_nav_arrow_left"
-                app:tint="@android:color/white"
-                android:onClickListener="@{() -> viewModel.navigateToHome()}"
-                android:contentDescription="Back to home"/>
-
-            <TextView
-                android:id="@+id/toolbar_title"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:text="Friend requests"
-                android:textColor="@android:color/white"
-                android:textStyle="bold"
-                android:textSize="@dimen/primary_title_size" />
-        </androidx.appcompat.widget.Toolbar>
-
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

@@ -18,7 +18,7 @@ public class ChangePasswordViewModel extends BaseViewModel {
     private static final String TAG = ChangePasswordViewModel.class.getSimpleName();
 
     private final MutableLiveData<Boolean> navigateToAccountLinking = new MutableLiveData<>();
-    private final MutableLiveData<Boolean> navigateToSettings = new MutableLiveData<>();
+    private final MutableLiveData<Boolean> navigateBack = new MutableLiveData<>();
     private final MutableLiveData<Boolean> isPasswordSet = new MutableLiveData<>();
     private final MutableLiveData<String> oldPassword = new MutableLiveData<>();
     private final MutableLiveData<String> oldPasswordError = new MutableLiveData<>();
@@ -34,8 +34,8 @@ public class ChangePasswordViewModel extends BaseViewModel {
         return navigateToAccountLinking;
     }
 
-    public LiveData<Boolean> getNavigateToSettings() {
-        return navigateToSettings;
+    public LiveData<Boolean> getNavigateBack() {
+        return navigateBack;
     }
 
     public MutableLiveData<Boolean> getIsPasswordSet() {
@@ -97,7 +97,7 @@ public class ChangePasswordViewModel extends BaseViewModel {
     }
 
     public void navigateToSettings() {
-        navigateToSettings.postValue(true);
+        navigateBack.postValue(true);
     }
 
     public void validateOldPassword(CharSequence s) {

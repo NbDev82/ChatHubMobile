@@ -9,7 +9,6 @@ import android.os.Bundle;
 import androidx.activity.result.ActivityResultLauncher;
 
 import com.example.R;
-import com.example.friend.friendrequest.FriendRequestsActivity;
 import com.example.friend.myfriend.FriendsActivity;
 import com.example.friend.profileviewer.ProfileViewerActivity;
 import com.example.home.HomeActivity;
@@ -17,7 +16,6 @@ import com.example.passcode.changepasscode.ChangePasscodeActivity;
 import com.example.passcode.lockapp.LockAppActivity;
 import com.example.passcode.setpasscode.SetPasscodeActivity;
 import com.example.passcode.unlockapp.UnlockAppActivity;
-import com.example.setting.SettingsActivity;
 import com.example.user.accountlink.AccountLinkingActivity;
 import com.example.user.changepassword.ChangePasswordActivity;
 import com.example.user.emaildetails.EmailDetailsActivity;
@@ -41,11 +39,6 @@ public class NavigationManagerImpl implements NavigationManager {
     @Override
     public void navigateToHome(EAnimationType animationType) {
         navigateToActivity(HomeActivity.class, animationType);
-    }
-
-    @Override
-    public void navigateToSettings(EAnimationType animationType) {
-        navigateToActivity(SettingsActivity.class, animationType);
     }
 
     @Override
@@ -101,11 +94,6 @@ public class NavigationManagerImpl implements NavigationManager {
     @Override
     public void navigateToVerifyOtp(Bundle data, EAnimationType animationType) {
         navigateToActivity(VerifyOtpActivity.class, data, animationType);
-    }
-
-    @Override
-    public void navigateToFriendRequests(EAnimationType animationType) {
-        navigateToActivity(FriendRequestsActivity.class, animationType);
     }
 
     @Override

@@ -10,8 +10,6 @@ public interface NavigationManager {
 
     void navigateToHome(EAnimationType animationType);
 
-    void navigateToSettings(EAnimationType animationType);
-
     void navigateToUserProfile(EAnimationType animationType);
 
     void navigateToLogin(EAnimationType animationType);
@@ -33,8 +31,6 @@ public interface NavigationManager {
     void navigateToPhoneNumberInput(EAnimationType animationType);
 
     void navigateToVerifyOtp(Bundle data, EAnimationType animationType);
-
-    void navigateToFriendRequests(EAnimationType animationType);
 
     void navigateToProfileViewer(Bundle data, EAnimationType animationType);
 
