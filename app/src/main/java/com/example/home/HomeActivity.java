@@ -5,7 +5,6 @@ import android.view.MenuItem;
 
 import androidx.annotation.LayoutRes;
 import androidx.annotation.NonNull;
-import androidx.lifecycle.ViewModelProvider;
 import androidx.viewpager2.widget.ViewPager2;
 
 import com.example.R;
@@ -13,12 +12,7 @@ import com.example.chat.message.MessagesFragment;
 import com.example.databinding.ActivityHomeBinding;
 import com.example.friend.friendrequest.FriendRequestsFragment;
 import com.example.infrastructure.BaseActivity;
-import com.example.navigation.EAnimationType;
 import com.example.setting.SettingsFragment;
-import com.example.user.repository.AuthRepos;
-import com.example.user.repository.AuthReposImpl;
-import com.example.user.repository.UserRepos;
-import com.example.user.repository.UserReposImpl;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 public class HomeActivity extends BaseActivity<HomeViewModel, ActivityHomeBinding> {
@@ -33,13 +27,6 @@ public class HomeActivity extends BaseActivity<HomeViewModel, ActivityHomeBindin
     @Override
     protected Class<HomeViewModel> getViewModelClass() {
         return HomeViewModel.class;
-    }
-
-    @Override
-    protected ViewModelProvider.Factory getViewModelFactory() {
-        UserRepos userRepos = new UserReposImpl();
-        AuthRepos authRepos = new AuthReposImpl(userRepos);
-        return new HomeViewModelFactory(authRepos);
     }
 
     @Override
@@ -79,16 +66,7 @@ public class HomeActivity extends BaseActivity<HomeViewModel, ActivityHomeBindin
             }
         });
 
-        setupObservers();
         setupViewPager();
-    }
-
-    private void setupObservers() {
-        viewModel.getNavigateToLogin().observe(this, navigate -> {
-            if (navigate) {
-                navigationManager.navigateToLogin(EAnimationType.FADE_OUT);
-            }
-        });
     }
 
     private void setupViewPager() {

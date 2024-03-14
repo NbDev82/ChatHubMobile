@@ -21,13 +21,13 @@ public abstract class BaseFragment<VM extends BaseViewModel, B extends ViewDataB
     protected B binding;
     protected NavigationManager navigationManager;
 
+    protected abstract B getViewDataBinding(LayoutInflater inflater, ViewGroup container);
+
     protected abstract Class<VM> getViewModelClass();
 
     protected ViewModelProvider.Factory getViewModelFactory() {
         return null;
     }
-
-    protected abstract B getViewDataBinding(LayoutInflater inflater, ViewGroup container);
 
     @Nullable
     @Override

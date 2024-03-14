@@ -1,8 +1,12 @@
 package com.example.friend.friendrequest;
 
+import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.example.databinding.FragmentFriendRequestsBinding;
@@ -23,6 +27,11 @@ public class FriendRequestsFragment extends BaseFragment<FriendRequestsViewModel
     private FriendRequestAdapter friendRequestsAdapter;
 
     @Override
+    protected FragmentFriendRequestsBinding getViewDataBinding(LayoutInflater inflater, ViewGroup container) {
+        return FragmentFriendRequestsBinding.inflate(inflater, container, false);
+    }
+
+    @Override
     protected Class<FriendRequestsViewModel> getViewModelClass() {
         return FriendRequestsViewModel.class;
     }
@@ -36,38 +45,40 @@ public class FriendRequestsFragment extends BaseFragment<FriendRequestsViewModel
     }
 
     @Override
-    protected FragmentFriendRequestsBinding getViewDataBinding(LayoutInflater inflater, ViewGroup container) {
-        return FragmentFriendRequestsBinding.inflate(inflater, container, false);
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        setupFriendRequestAdapter();
+        setupObservers();
     }
 
     @Override
     public void onStart() {
         super.onStart();
 
-        friendRequestsAdapter = new FriendRequestAdapter(new ArrayList<>(), viewModel);
-
-        binding.setFriendRequestAdapter(friendRequestsAdapter);
-
-        setupObservers();
-
         viewModel.loadFriendRequests();
     }
 
     private void setupObservers() {
-        viewModel.getNavigateToFriends().observe(this, navigate -> {
+        viewModel.getNavigateToFriends().observe(requireActivity(), navigate -> {
             if (navigate) {
                 navigationManager.navigateToFriends(EAnimationType.FADE_IN);
             }
         });
 
-        viewModel.getNavigateToProfileViewer().observe(this, data -> {
+        viewModel.getNavigateToProfileViewer().observe(requireActivity(), data -> {
             navigationManager.navigateToProfileViewer(data, EAnimationType.FADE_OUT);
         });
 
-        viewModel.getFriendRequests().observe(this, newFriendRequests -> {
+        viewModel.getFriendRequests().observe(requireActivity(), newFriendRequests -> {
             if (newFriendRequests != null) {
                 friendRequestsAdapter.setFriendRequests(newFriendRequests);
             }
         });
+    }
+
+    private void setupFriendRequestAdapter() {
+        friendRequestsAdapter = new FriendRequestAdapter(new ArrayList<>(), viewModel);
+        binding.setFriendRequestAdapter(friendRequestsAdapter);
     }
 }

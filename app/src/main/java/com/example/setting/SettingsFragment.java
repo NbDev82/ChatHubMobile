@@ -21,6 +21,11 @@ import com.example.user.repository.UserReposImpl;
 public class SettingsFragment extends BaseFragment<SettingsViewModel, FragmentSettingsBinding> {
 
     @Override
+    protected FragmentSettingsBinding getViewDataBinding(LayoutInflater inflater, ViewGroup container) {
+        return FragmentSettingsBinding.inflate(inflater, container, false);
+    }
+
+    @Override
     protected Class<SettingsViewModel> getViewModelClass() {
         return SettingsViewModel.class;
     }
@@ -30,11 +35,6 @@ public class SettingsFragment extends BaseFragment<SettingsViewModel, FragmentSe
         UserRepos userRepos = new UserReposImpl();
         AuthRepos authRepos = new AuthReposImpl(userRepos);
         return new SettingsViewModelFactory(authRepos);
-    }
-
-    @Override
-    protected FragmentSettingsBinding getViewDataBinding(LayoutInflater inflater, ViewGroup container) {
-        return FragmentSettingsBinding.inflate(inflater, container, false);
     }
 
     @Override
@@ -84,6 +84,12 @@ public class SettingsFragment extends BaseFragment<SettingsViewModel, FragmentSe
         viewModel.getNavigateToChangePassword().observe(requireActivity(), navigate -> {
             if (navigate) {
                 navigationManager.navigateToChangePassword(EAnimationType.FADE_IN);
+            }
+        });
+
+        viewModel.getNavigateToLogin().observe(requireActivity(), navigate -> {
+            if (navigate) {
+                navigationManager.navigateToLogin(EAnimationType.FADE_OUT);
             }
         });
     }

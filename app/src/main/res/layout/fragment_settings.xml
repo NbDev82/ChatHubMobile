@@ -4,6 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
+        <import type="android.view.View"/>
+
         <variable
             name="viewModel"
             type="com.example.setting.SettingsViewModel" />
@@ -68,7 +70,24 @@
                                     android:background="@drawable/background_image"
                                     android:scaleType="centerCrop"
                                     app:imageBitmap="@{viewModel.profileImg}"
+                                    android:visibility="@{viewModel.profileImg == null ? View.INVISIBLE : View.VISIBLE}"
                                     app:riv_oval="true" />
+
+                                <com.facebook.shimmer.ShimmerFrameLayout
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_centerVertical="true"
+                                    android:visibility="@{viewModel.profileImg == null ? View.VISIBLE : View.GONE}"
+                                    tools:visibility="gone">
+
+                                    <com.makeramen.roundedimageview.RoundedImageView
+                                        android:layout_width="@dimen/settings_item_height"
+                                        android:layout_height="@dimen/settings_item_height"
+                                        android:background="@drawable/background_image"
+                                        android:scaleType="centerCrop"
+                                        app:riv_oval="true" />
+
+                                </com.facebook.shimmer.ShimmerFrameLayout>
 
                                 <LinearLayout
                                     android:layout_width="match_parent"
@@ -86,14 +105,30 @@
                                         android:textSize="@dimen/primary_sub_title_size" />
 
                                     <TextView
-                                        android:layout_width="wrap_content"
+                                        android:layout_width="match_parent"
                                         android:layout_height="wrap_content"
                                         android:ellipsize="end"
                                         android:maxLines="1"
                                         android:textStyle="bold"
                                         android:text="@{viewModel.fullName.isEmpty() ? `(None)` : viewModel.fullName}"
                                         android:textSize="@dimen/primary_text_size"
+                                        android:visibility="@{viewModel.fullName == null ? View.GONE : View.VISIBLE}"
                                         tools:text="Văn An" />
+
+                                    <com.facebook.shimmer.ShimmerFrameLayout
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:visibility="@{viewModel.fullName == null ? View.VISIBLE : View.GONE}"
+                                        tools:visibility="gone">
+
+                                        <TextView
+                                            android:layout_width="match_parent"
+                                            android:layout_height="match_parent"
+                                            android:layout_marginStart="@dimen/_20sdp"
+                                            android:layout_marginEnd="@dimen/_5sdp"
+                                            android:background="@color/color_input_background" />
+
+                                    </com.facebook.shimmer.ShimmerFrameLayout>
                                 </LinearLayout>
 
                                 <ImageView
@@ -150,7 +185,26 @@
                             android:textSize="@dimen/primary_text_size"
                             android:maxLines="1"
                             android:ellipsize="end"
+                            android:visibility="@{viewModel.phoneNumber == null ? View.GONE : View.VISIBLE}"
                             tools:text="09123819238"/>
+
+                        <com.facebook.shimmer.ShimmerFrameLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_centerVertical="true"
+                            android:layout_toEndOf="@id/txv_phone_title"
+                            android:layout_toStartOf="@id/icon_edit_phone"
+                            android:visibility="@{viewModel.phoneNumber == null ? View.VISIBLE : View.GONE}"
+                            tools:visibility="gone">
+
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:layout_marginStart="@dimen/_20sdp"
+                                android:layout_marginEnd="@dimen/_5sdp"
+                                android:background="@color/color_input_background" />
+
+                        </com.facebook.shimmer.ShimmerFrameLayout>
 
                         <ImageView
                             android:id="@+id/icon_edit_phone"
@@ -209,7 +263,27 @@
                             android:textSize="@dimen/primary_text_size"
                             android:maxLines="1"
                             android:ellipsize="end"
+                            android:visibility="@{viewModel.email == null ? View.GONE : View.VISIBLE}"
                             tools:text="info.abc@gmail.com"/>
+
+                        <com.facebook.shimmer.ShimmerFrameLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_centerVertical="true"
+                            android:layout_toEndOf="@id/txv_email_title"
+                            android:layout_toStartOf="@id/icon_edit_name"
+                            android:visibility="@{viewModel.email == null ? View.VISIBLE : View.GONE}"
+                            tools:visibility="gone">
+
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:layout_marginStart="@dimen/_20sdp"
+                                android:layout_marginEnd="@dimen/_5sdp"
+                                android:background="@color/color_input_background" />
+
+                        </com.facebook.shimmer.ShimmerFrameLayout>
+
 
                         <ImageView
                             android:id="@+id/icon_edit_name"
@@ -406,23 +480,16 @@
                             android:src="@drawable/ic_right_chevron" />
                     </RelativeLayout>
 
-                </LinearLayout>
-
-                <LinearLayout
-                    android:id="@+id/ll_delete_account"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:background="@android:color/white"
-                    android:layout_marginTop="@dimen/settings_section_distance">
-
-                    <TextView
-                        android:layout_width="wrap_content"
+                    <com.google.android.material.button.MaterialButton
+                        style="@style/ButtonPrimaryNeutral"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:textStyle="bold"
-                        android:textColor="@color/color_error"
-                        android:layout_margin="@dimen/settings_sub_title_margin"
-                        android:text="Delete account"/>
-
+                        android:layout_marginVertical="@dimen/_10sdp"
+                        android:layout_marginHorizontal="@dimen/profile_item_padding_horizontal"
+                        android:text="Log out"
+                        android:onClick="@{()-> viewModel.signOut()}"
+                        app:icon="@drawable/ic_log_out"
+                        app:cornerRadius="@dimen/button_primary_corner_radius" />
                 </LinearLayout>
             </LinearLayout>
         </ScrollView>

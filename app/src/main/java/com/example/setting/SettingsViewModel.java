@@ -11,6 +11,8 @@ import com.example.infrastructure.Utils;
 import com.example.user.User;
 import com.example.user.repository.AuthRepos;
 
+import android.os.Handler;
+
 public class SettingsViewModel extends BaseViewModel {
 
     private static final String TAG = SettingsViewModel.class.getSimpleName();
@@ -26,6 +28,7 @@ public class SettingsViewModel extends BaseViewModel {
     private final MutableLiveData<Boolean> navigateToMyQrCode = new MutableLiveData<>();
     private final MutableLiveData<Boolean> navigateToLockApp = new MutableLiveData<>();
     private final MutableLiveData<Boolean> navigateToChangePassword = new MutableLiveData<>();
+    private final MutableLiveData<Boolean> navigateToLogin = new MutableLiveData<>();
     private User originalUser;
 
     public LiveData<Bitmap> getProfileImg() {
@@ -70,6 +73,10 @@ public class SettingsViewModel extends BaseViewModel {
 
     public LiveData<Boolean> getNavigateToChangePassword() {
         return navigateToChangePassword;
+    }
+
+    public LiveData<Boolean> getNavigateToLogin() {
+        return navigateToLogin;
     }
 
     public User getUser() {
@@ -122,5 +129,15 @@ public class SettingsViewModel extends BaseViewModel {
 
     public void navigateToChangePassword() {
         navigateToChangePassword.postValue(true);
+    }
+
+    public void signOut() {
+        authRepos.signOut();
+        successToastMessage.postValue("Sign out");
+        new Handler().postDelayed(() -> navigateToLogin(), 100);
+    }
+
+    private void navigateToLogin() {
+        this.navigateToLogin.postValue(true);
     }
 }
