@@ -59,9 +59,9 @@ public class AccountLinkingActivity extends BaseActivity<AccountLinkingViewModel
     }
 
     private void setupObservers() {
-        viewModel.getNavigateToSettings().observe(this, navigate -> {
+        viewModel.getNavigateBack().observe(this, navigate -> {
             if (navigate) {
-                navigationManager.navigateToSettings(EAnimationType.FADE_OUT);
+                navigationManager.navigateBack(null, EAnimationType.FADE_OUT);
             }
         });
 

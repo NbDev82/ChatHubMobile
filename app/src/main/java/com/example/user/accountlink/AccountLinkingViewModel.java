@@ -24,7 +24,7 @@ public class AccountLinkingViewModel extends BaseViewModel {
 
     private static final String TAG = AccountLinkingViewModel.class.getSimpleName();
 
-    private final MutableLiveData<Boolean> navigateToSettings = new MutableLiveData<>();
+    private final MutableLiveData<Boolean> navigateBack = new MutableLiveData<>();
     private final MutableLiveData<Boolean> isInAppPasswordLinked = new MutableLiveData<>();
     private final MutableLiveData<Boolean> isInAppAdding = new MutableLiveData<>();
     private final MutableLiveData<Boolean> isGoogleAccountLinked = new MutableLiveData<>();
@@ -40,8 +40,8 @@ public class AccountLinkingViewModel extends BaseViewModel {
     private final MutableLiveData<String> openGithubLinkingFlow = new MutableLiveData<>();
     private final AuthRepos authRepos;
 
-    public LiveData<Boolean> getNavigateToSettings() {
-        return navigateToSettings;
+    public LiveData<Boolean> getNavigateBack() {
+        return navigateBack;
     }
 
     public LiveData<Boolean> getIsInAppPasswordLinked() {
@@ -133,7 +133,7 @@ public class AccountLinkingViewModel extends BaseViewModel {
     }
 
     public void navigateToSettings() {
-        navigateToSettings.postValue(true);
+        navigateBack.postValue(true);
     }
 
     public void addInAppPassword() {

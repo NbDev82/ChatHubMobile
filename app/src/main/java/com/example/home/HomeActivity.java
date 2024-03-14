@@ -1,20 +1,23 @@
 package com.example.home;
 
 import android.os.Bundle;
+import android.view.MenuItem;
 
 import androidx.annotation.LayoutRes;
-import androidx.lifecycle.ViewModelProvider;
+import androidx.annotation.NonNull;
+import androidx.viewpager2.widget.ViewPager2;
 
 import com.example.R;
+import com.example.chat.message.MessagesFragment;
 import com.example.databinding.ActivityHomeBinding;
+import com.example.friend.friendrequest.FriendRequestsFragment;
 import com.example.infrastructure.BaseActivity;
-import com.example.navigation.EAnimationType;
-import com.example.user.repository.AuthRepos;
-import com.example.user.repository.AuthReposImpl;
-import com.example.user.repository.UserRepos;
-import com.example.user.repository.UserReposImpl;
+import com.example.setting.SettingsFragment;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 public class HomeActivity extends BaseActivity<HomeViewModel, ActivityHomeBinding> {
+
+    private MenuItem prevMenuItem;
 
     @Override
     protected @LayoutRes int getLayout() {
@@ -27,42 +30,55 @@ public class HomeActivity extends BaseActivity<HomeViewModel, ActivityHomeBindin
     }
 
     @Override
-    protected ViewModelProvider.Factory getViewModelFactory() {
-        UserRepos userRepos = new UserReposImpl();
-        AuthRepos authRepos = new AuthReposImpl(userRepos);
-        return new HomeViewModelFactory(authRepos);
-    }
-
-    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        setupObservers();
+        binding.bottomNavigation.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                int itemId = item.getItemId();
+                if (itemId == R.id.bottom_messages) {
+                    binding.viewPager.setCurrentItem(0);
+                    return true;
+                }
+                if (itemId == R.id.bottom_friends) {
+                    binding.viewPager.setCurrentItem(1);
+                    return true;
+                }
+                if (itemId == R.id.bottom_settings) {
+                    binding.viewPager.setCurrentItem(2);
+                    return true;
+                }
+                return false;
+            }
+        });
+
+        binding.viewPager.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
+            @Override
+            public void onPageSelected(int position) {
+                if (prevMenuItem != null) {
+                    prevMenuItem.setChecked(false);
+                } else {
+                    binding.bottomNavigation.getMenu().getItem(0).setChecked(false);
+                }
+                binding.bottomNavigation.getMenu().getItem(position).setChecked(true);
+                prevMenuItem = binding.bottomNavigation.getMenu().getItem(position);
+            }
+        });
+
+        setupViewPager();
     }
 
-    public void setupObservers() {
-        viewModel.getNavigateToSettings().observe(this, navigate -> {
-            if (navigate) {
-                navigationManager.navigateToSettings(EAnimationType.FADE_IN);
-            }
-        });
+    private void setupViewPager() {
+        MessagesFragment messagesFragment = new MessagesFragment();
+        FriendRequestsFragment friendRequestsFragment = new FriendRequestsFragment();
+        SettingsFragment settingsFragment = new SettingsFragment();
 
-        viewModel.getNavigateToUserProfile().observe(this, navigate -> {
-            if (navigate) {
-                navigationManager.navigateToUserProfile(EAnimationType.FADE_IN);
-            }
-        });
+        ViewPagerAdapter adapter = new ViewPagerAdapter(this);
+        adapter.addFragment(messagesFragment);
+        adapter.addFragment(friendRequestsFragment);
+        adapter.addFragment(settingsFragment);
 
-        viewModel.getNavigateToFriendRequests().observe(this, navigate -> {
-            if (navigate) {
-                navigationManager.navigateToFriendRequests(EAnimationType.FADE_IN);
-            }
-        });
-
-        viewModel.getNavigateToLogin().observe(this, navigate -> {
-            if (navigate) {
-                navigationManager.navigateToLogin(EAnimationType.FADE_OUT);
-            }
-        });
+        binding.setViewPagerAdapter(adapter);
     }
 }

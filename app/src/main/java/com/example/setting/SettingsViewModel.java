@@ -11,6 +11,8 @@ import com.example.infrastructure.Utils;
 import com.example.user.User;
 import com.example.user.repository.AuthRepos;
 
+import android.os.Handler;
+
 public class SettingsViewModel extends BaseViewModel {
 
     private static final String TAG = SettingsViewModel.class.getSimpleName();
@@ -19,7 +21,6 @@ public class SettingsViewModel extends BaseViewModel {
     private final MutableLiveData<String> fullName = new MutableLiveData<>();
     private final MutableLiveData<String> phoneNumber = new MutableLiveData<>();
     private final MutableLiveData<String> email = new MutableLiveData<>();
-    private final MutableLiveData<Boolean> navigateToHome = new MutableLiveData<>();
     private final MutableLiveData<Boolean> navigateToUserProfile = new MutableLiveData<>();
     private final MutableLiveData<Boolean> navigateToChangePhoneNumber = new MutableLiveData<>();
     private final MutableLiveData<Boolean> navigateToChangeEmail = new MutableLiveData<>();
@@ -27,6 +28,7 @@ public class SettingsViewModel extends BaseViewModel {
     private final MutableLiveData<Boolean> navigateToMyQrCode = new MutableLiveData<>();
     private final MutableLiveData<Boolean> navigateToLockApp = new MutableLiveData<>();
     private final MutableLiveData<Boolean> navigateToChangePassword = new MutableLiveData<>();
+    private final MutableLiveData<Boolean> navigateToLogin = new MutableLiveData<>();
     private User originalUser;
 
     public LiveData<Bitmap> getProfileImg() {
@@ -43,10 +45,6 @@ public class SettingsViewModel extends BaseViewModel {
 
     public LiveData<String> getEmail() {
         return email;
-    }
-
-    public MutableLiveData<Boolean> getNavigateToHome() {
-        return navigateToHome;
     }
 
     public MutableLiveData<Boolean> getNavigateToUserProfile() {
@@ -77,6 +75,10 @@ public class SettingsViewModel extends BaseViewModel {
         return navigateToChangePassword;
     }
 
+    public LiveData<Boolean> getNavigateToLogin() {
+        return navigateToLogin;
+    }
+
     public User getUser() {
         return originalUser;
     }
@@ -99,10 +101,6 @@ public class SettingsViewModel extends BaseViewModel {
                 .addOnFailureListener(e -> {
                     Log.e(TAG, "Error: ", e);
                 });
-    }
-
-    public void navigateToHome() {
-        navigateToHome.postValue(true);
     }
 
     public void navigateToUserProfile() {
@@ -131,5 +129,15 @@ public class SettingsViewModel extends BaseViewModel {
 
     public void navigateToChangePassword() {
         navigateToChangePassword.postValue(true);
+    }
+
+    public void signOut() {
+        authRepos.signOut();
+        successToastMessage.postValue("Sign out");
+        new Handler().postDelayed(() -> navigateToLogin(), 100);
+    }
+
+    private void navigateToLogin() {
+        this.navigateToLogin.postValue(true);
     }
 }

@@ -24,7 +24,6 @@ public class FriendRequestsViewModel extends BaseViewModel implements FriendRequ
 
     private static final String TAG = FriendRequestsViewModel.class.getSimpleName();
 
-    private final MutableLiveData<Boolean> navigateToHome = new MutableLiveData<>();
     private final MutableLiveData<Boolean> navigateToFriends = new MutableLiveData<>();
     private final MutableLiveData<Boolean> navigateToFriendSuggestions = new MutableLiveData<>();
     private final MutableLiveData<Bundle> navigateToProfileViewer = new MutableLiveData<>();
@@ -33,10 +32,6 @@ public class FriendRequestsViewModel extends BaseViewModel implements FriendRequ
     private final MutableLiveData<SnackbarModel> snackbarModel = new MutableLiveData<>();
     private final AuthRepos authRepos;
     private final FriendRequestRepos friendRequestRepos;
-
-    public LiveData<Boolean> getNavigateToHome() {
-        return navigateToHome;
-    }
 
     public LiveData<Boolean> getNavigateToFriends() {
         return navigateToFriends;
@@ -80,10 +75,6 @@ public class FriendRequestsViewModel extends BaseViewModel implements FriendRequ
                     this.isRequestsLoading.postValue(false);
                     Log.e(TAG, "Error: " + e.getMessage(), e);
                 });
-    }
-
-    public void navigateToHome() {
-        this.navigateToHome.postValue(true);
     }
 
     public void navigateToFriendSuggestions() {

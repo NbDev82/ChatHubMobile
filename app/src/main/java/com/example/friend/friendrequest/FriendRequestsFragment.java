@@ -1,16 +1,19 @@
 package com.example.friend.friendrequest;
 
 import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 
-import androidx.annotation.LayoutRes;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.lifecycle.ViewModelProvider;
 
-import com.example.R;
-import com.example.databinding.ActivityFriendRequestsBinding;
+import com.example.databinding.FragmentFriendRequestsBinding;
 import com.example.friend.friendrequest.adapter.FriendRequestAdapter;
 import com.example.friend.repository.FriendRequestRepos;
 import com.example.friend.repository.FriendRequestReposImpl;
-import com.example.infrastructure.BaseActivity;
+import com.example.infrastructure.BaseFragment;
 import com.example.navigation.EAnimationType;
 import com.example.user.repository.AuthRepos;
 import com.example.user.repository.AuthReposImpl;
@@ -19,13 +22,13 @@ import com.example.user.repository.UserReposImpl;
 
 import java.util.ArrayList;
 
-public class FriendRequestsActivity extends BaseActivity<FriendRequestsViewModel, ActivityFriendRequestsBinding> {
+public class FriendRequestsFragment extends BaseFragment<FriendRequestsViewModel, FragmentFriendRequestsBinding> {
 
     private FriendRequestAdapter friendRequestsAdapter;
 
     @Override
-    protected @LayoutRes int getLayout() {
-        return R.layout.activity_friend_requests;
+    protected FragmentFriendRequestsBinding getViewDataBinding(LayoutInflater inflater, ViewGroup container) {
+        return FragmentFriendRequestsBinding.inflate(inflater, container, false);
     }
 
     @Override
@@ -42,39 +45,40 @@ public class FriendRequestsActivity extends BaseActivity<FriendRequestsViewModel
     }
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
 
-        friendRequestsAdapter = new FriendRequestAdapter(new ArrayList<>(), viewModel);
-
-        binding.setFriendRequestAdapter(friendRequestsAdapter);
-
+        setupFriendRequestAdapter();
         setupObservers();
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
 
         viewModel.loadFriendRequests();
     }
 
     private void setupObservers() {
-        viewModel.getNavigateToHome().observe(this, navigate -> {
-            if (navigate) {
-                navigationManager.navigateToHome(EAnimationType.FADE_OUT);
-            }
-        });
-
-        viewModel.getNavigateToFriends().observe(this, navigate -> {
+        viewModel.getNavigateToFriends().observe(requireActivity(), navigate -> {
             if (navigate) {
                 navigationManager.navigateToFriends(EAnimationType.FADE_IN);
             }
         });
 
-        viewModel.getNavigateToProfileViewer().observe(this, data -> {
+        viewModel.getNavigateToProfileViewer().observe(requireActivity(), data -> {
             navigationManager.navigateToProfileViewer(data, EAnimationType.FADE_OUT);
         });
 
-        viewModel.getFriendRequests().observe(this, newFriendRequests -> {
+        viewModel.getFriendRequests().observe(requireActivity(), newFriendRequests -> {
             if (newFriendRequests != null) {
                 friendRequestsAdapter.setFriendRequests(newFriendRequests);
             }
         });
+    }
+
+    private void setupFriendRequestAdapter() {
+        friendRequestsAdapter = new FriendRequestAdapter(new ArrayList<>(), viewModel);
+        binding.setFriendRequestAdapter(friendRequestsAdapter);
     }
 }

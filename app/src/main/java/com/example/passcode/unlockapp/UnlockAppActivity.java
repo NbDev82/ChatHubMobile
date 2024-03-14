@@ -4,7 +4,6 @@ import static androidx.biometric.BiometricManager.Authenticators.BIOMETRIC_STRON
 
 import android.os.Bundle;
 import android.util.Log;
-import android.view.LayoutInflater;
 
 import androidx.annotation.LayoutRes;
 import androidx.biometric.BiometricManager;
