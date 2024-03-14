@@ -48,7 +48,7 @@ public abstract class BaseFragment<VM extends BaseViewModel, B extends ViewDataB
         binding.setLifecycleOwner(this);
         binding.setVariable(BR.viewModel, viewModel);
 
-        navigationManager = new NavigationManagerImpl(requireContext());
+        navigationManager = new NavigationManagerImpl(requireActivity());
     }
 
     @Override
