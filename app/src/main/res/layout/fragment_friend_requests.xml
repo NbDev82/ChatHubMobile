@@ -98,6 +98,7 @@
                 android:clipToPadding="false"
                 android:orientation="vertical"
                 android:overScrollMode="never"
+                app:setupOverScroll="@{true}"
                 android:padding="@dimen/_5sdp"
                 android:adapter="@{friendRequestAdapter}"
                 android:visibility="@{viewModel.isRequestsLoading ? View.GONE : View.VISIBLE}"

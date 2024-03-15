@@ -5,9 +5,14 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.GridView;
+import android.widget.HorizontalScrollView;
+import android.widget.ListView;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import androidx.databinding.BindingAdapter;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.chaos.view.PinView;
 import com.example.customcontrol.snackbar.CustomSnackbar;
@@ -16,6 +21,8 @@ import com.example.infrastructure.Utils;
 import com.makeramen.roundedimageview.RoundedImageView;
 
 import java.util.Date;
+
+import me.everything.android.ui.overscroll.OverScrollDecoratorHelper;
 
 public class CustomBindingAdapters {
     @BindingAdapter({"successToastMessage"})
@@ -67,6 +74,50 @@ public class CustomBindingAdapters {
             showKeyboard(view);
         } else {
             hideKeyboard(view);
+        }
+    }
+
+    @BindingAdapter("setupOverScroll")
+    public static void setupOverScroll(RecyclerView recyclerView, boolean setup) {
+        if (setup) {
+            OverScrollDecoratorHelper.setUpOverScroll(recyclerView, OverScrollDecoratorHelper.ORIENTATION_VERTICAL);
+        }
+    }
+
+    @BindingAdapter("setupOverScroll")
+    public static void setupOverScroll(GridView gridView, boolean setup) {
+        if (setup) {
+            OverScrollDecoratorHelper.setUpOverScroll(gridView);
+        }
+    }
+
+    @BindingAdapter("setupOverScroll")
+    public static void setupOverScroll(ListView listView, boolean setup) {
+        if (setup) {
+            OverScrollDecoratorHelper.setUpOverScroll(listView);
+        }
+    }
+
+    @BindingAdapter("setupOverScroll")
+    public static void setupOverScroll(ScrollView scrollView, boolean setup) {
+        if (setup) {
+            OverScrollDecoratorHelper.setUpOverScroll(scrollView);
+        }
+    }
+
+    @BindingAdapter("setupOverScroll")
+    public static void setupOverScroll(HorizontalScrollView horizontalScrollView, boolean setup) {
+        if (setup) {
+            OverScrollDecoratorHelper.setUpOverScroll(horizontalScrollView);
+        }
+    }
+
+    @BindingAdapter("setupStaticOverScroll")
+    public static void setupStaticOverScroll(View view, int orientation) {
+        if (orientation == OverScrollDecoratorHelper.ORIENTATION_HORIZONTAL) {
+            OverScrollDecoratorHelper.setUpStaticOverScroll(view, OverScrollDecoratorHelper.ORIENTATION_HORIZONTAL);
+        } else if (orientation == OverScrollDecoratorHelper.ORIENTATION_VERTICAL) {
+            OverScrollDecoratorHelper.setUpStaticOverScroll(view, OverScrollDecoratorHelper.ORIENTATION_VERTICAL);
         }
     }
 
