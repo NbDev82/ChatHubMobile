@@ -98,4 +98,14 @@
         <item name="iconSize">@dimen/_20sdp</item>
         <item name="iconGravity">textStart</item>
     </style>
+
+    <style name="ButtonTertiaryNeutral">
+        <item name="android:textSize">@dimen/primary_text_size</item>
+        <item name="android:textColor">@color/color_button_primary_neutral_text</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:backgroundTint">@android:color/transparent</item>
+        <item name="iconTint">@color/color_button_primary_neutral_text</item>
+        <item name="iconSize">@dimen/_20sdp</item>
+        <item name="iconGravity">textStart</item>
+    </style>
 </resources>

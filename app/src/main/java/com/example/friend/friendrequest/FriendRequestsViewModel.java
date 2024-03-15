@@ -63,7 +63,14 @@ public class FriendRequestsViewModel extends BaseViewModel implements FriendRequ
         this.friendRequestRepos = friendRequestRepos;
     }
 
-    public void loadFriendRequests() {
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+        loadFriendRequests();
+    }
+
+    private void loadFriendRequests() {
         this.isRequestsLoading.postValue(true);
         String uid = authRepos.getCurrentUid();
         friendRequestRepos.getPendingFriendRequestsByRecipientId(uid)

@@ -87,6 +87,7 @@
                     android:text="@{requestView.mutualFriends > 0 ? String.valueOf(requestView.mutualFriends + ` mutualFriend`) : ``}"
                     android:textColor="@color/color_text_secondary"
                     android:textSize="@dimen/primary_text_size"
+                    android:visibility="@{requestView.mutualFriends > 0 ? View.VISIBLE : View.GONE}"
                     tools:text="1 mutual friend"/>
 
                 <FrameLayout

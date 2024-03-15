@@ -57,5 +57,15 @@ public class FriendsActivity extends BaseActivity<FriendsViewModel, ActivityFrie
                 navigationManager.navigateBack(null, EAnimationType.FADE_OUT);
             }
         });
+
+        viewModel.getNavigateToProfileViewer().observe(this, data -> {
+            navigationManager.navigateToProfileViewer(data, EAnimationType.FADE_IN);
+        });
+
+        viewModel.getFriendRequests().observe(this, newFriendRequests -> {
+            if (newFriendRequests != null) {
+                friendsAdapter.setItems(newFriendRequests);
+            }
+        });
     }
 }

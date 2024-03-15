@@ -52,13 +52,6 @@ public class FriendRequestsFragment extends BaseFragment<FriendRequestsViewModel
         setupObservers();
     }
 
-    @Override
-    public void onStart() {
-        super.onStart();
-
-        viewModel.loadFriendRequests();
-    }
-
     private void setupObservers() {
         viewModel.getNavigateToFriends().observe(requireActivity(), navigate -> {
             if (navigate) {

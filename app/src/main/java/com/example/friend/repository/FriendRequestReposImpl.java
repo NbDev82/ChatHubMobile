@@ -80,9 +80,9 @@ public class FriendRequestReposImpl implements FriendRequestRepos {
                 .whereEqualTo(EFriendRequestField.RECIPIENT_ID.getName(), recipientId)
                 .whereEqualTo(EFriendRequestField.STATUS.getName(), FriendRequest.EStatus.PENDING)
                 .get()
-                .addOnSuccessListener(documentSnapshots -> {
+                .addOnSuccessListener(querySnapshot -> {
                     List<FriendRequest> friendRequests =
-                            convertQueryDocumentSnapshotsToFriendRequests(documentSnapshots);
+                            convertQueryDocumentSnapshotsToFriendRequests(querySnapshot);
 
                     Task<List<FriendRequestView>> conversionTask = convertModelsToModelViews(friendRequests);
                     conversionTask.addOnSuccessListener(friendRequestViews -> {
@@ -249,31 +249,30 @@ public class FriendRequestReposImpl implements FriendRequestRepos {
 
         Task<QuerySnapshot> senderTask = senderQuery.get();
         Task<QuerySnapshot> recipientTask = recipientQuery.get();
+        TaskCompletionSource<List<FriendRequestView>> taskCompletionSource = new TaskCompletionSource<>();
 
-        return Tasks.whenAllSuccess(senderTask, recipientTask)
-                .continueWith(task -> {
-                    if (task.isSuccessful()) {
-                        List<FriendRequestView> acceptedRequests = new ArrayList<>();
-                        for (Object object : task.getResult()) {
-                            if (object instanceof QuerySnapshot) {
-                                QuerySnapshot querySnapshot = (QuerySnapshot) object;
-                                for (QueryDocumentSnapshot document : querySnapshot) {
-                                    FriendRequest friendRequest = convertDocumentToModel(document);
-                                    convertModelToModelView(friendRequest)
-                                            .addOnSuccessListener(friendRequestView -> {
-                                                acceptedRequests.add(friendRequestView);
-                                            })
-                                            .addOnFailureListener(e -> {
+        Tasks.whenAllSuccess(senderTask, recipientTask)
+                .addOnSuccessListener(objects -> {
+                    List<FriendRequest> friendRequests = new ArrayList<>();
+                    for (Object object : objects) {
+                        if (object instanceof QuerySnapshot) {
+                            QuerySnapshot querySnapshot = (QuerySnapshot) object;
+                            List<FriendRequest> fetchedFriendRequests =
+                                    convertQueryDocumentSnapshotsToFriendRequests(querySnapshot);
+                            friendRequests.addAll(fetchedFriendRequests);
 
-                                            });
-                                }
-                            }
                         }
-                        return acceptedRequests;
-                    } else {
-                        throw task.getException();
                     }
+                    Task<List<FriendRequestView>> conversionTask = convertModelsToModelViews(friendRequests);
+                    conversionTask.addOnSuccessListener(friendRequestViews -> {
+                        taskCompletionSource.setResult(friendRequestViews);
+                    }).addOnFailureListener(e -> {
+                        Log.e(TAG, "Error converting FriendRequests to FriendRequestViews: " + e.getMessage(), e);
+                        taskCompletionSource.setException(e);
+                    });
                 });
+
+        return taskCompletionSource.getTask();
     }
 
     private CollectionReference getFriendRequestsRef() {
