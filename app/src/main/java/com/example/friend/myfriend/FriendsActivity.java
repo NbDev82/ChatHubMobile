@@ -37,7 +37,7 @@ public class FriendsActivity extends BaseActivity<FriendsViewModel, ActivityFrie
     protected ViewModelProvider.Factory getViewModelFactory() {
         UserRepos userRepos = new UserReposImpl();
         AuthRepos authRepos = new AuthReposImpl(userRepos);
-        FriendRequestRepos friendRequestRepos = new FriendRequestReposImpl(userRepos, authRepos);
+        FriendRequestRepos friendRequestRepos = new FriendRequestReposImpl(userRepos);
         return new FriendsViewModelFactory(authRepos, friendRequestRepos);
     }
 

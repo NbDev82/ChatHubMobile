@@ -39,7 +39,7 @@ public class ProfileViewerActivity extends BaseActivity<ProfileViewerViewModel, 
     protected ViewModelProvider.Factory getViewModelFactory() {
         UserRepos userRepos = new UserReposImpl();
         AuthRepos authRepos = new AuthReposImpl(userRepos);
-        FriendRequestRepos friendRequestRepos = new FriendRequestReposImpl(userRepos, authRepos);
+        FriendRequestRepos friendRequestRepos = new FriendRequestReposImpl(userRepos);
         return new ProfileViewerViewModelFactory(userRepos, authRepos, friendRequestRepos);
     }
 

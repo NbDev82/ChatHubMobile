@@ -14,9 +14,13 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -32,8 +36,7 @@ public class UserReposImpl implements UserRepos {
 
     @Override
     public Task<Void> addUser(String uid, User user) {
-        DocumentReference userRef = db
-                .collection(EUserField.COLLECTION_NAME.getName())
+        DocumentReference userRef = getUserRef()
                 .document(uid);
 
         Map<String, Object> data = new HashMap<>();
@@ -51,28 +54,28 @@ public class UserReposImpl implements UserRepos {
 
     @Override
     public Task<Void> updateOnlineStatus(String uid, boolean isOnline) {
-        DocumentReference userRef = db.collection(EUserField.COLLECTION_NAME.getName())
+        DocumentReference userRef = getUserRef()
                 .document(uid);
         return userRef.update(EUserField.IS_ONLINE.getName(), isOnline);
     }
 
     @Override
     public Task<Void> updateEmail(String uid, String email) {
-        DocumentReference userRef = db.collection(EUserField.COLLECTION_NAME.getName())
+        DocumentReference userRef = getUserRef()
                 .document(uid);
         return userRef.update(EUserField.EMAIL.getName(), email);
     }
 
     @Override
     public Task<Void> updatePhoneNumber(String uid, String phoneNumber) {
-        DocumentReference userRef = db.collection(EUserField.COLLECTION_NAME.getName())
+        DocumentReference userRef = getUserRef()
                 .document(uid);
         return userRef.update(EUserField.PHONE_NUMBER.getName(), phoneNumber);
     }
 
     @Override
     public Task<Boolean> checkUserExistsByEmail(String email) {
-        CollectionReference usersRef = db.collection(EUserField.COLLECTION_NAME.getName());
+        CollectionReference usersRef = getUserRef();
 
         Query query = usersRef.whereEqualTo(EUserField.EMAIL.getName(), email);
         return query.get()
@@ -87,7 +90,7 @@ public class UserReposImpl implements UserRepos {
 
     @Override
     public Task<Void> updateBasicUser(String uid, User user) {
-        CollectionReference usersRef = db.collection(EUserField.COLLECTION_NAME.getName());
+        CollectionReference usersRef = getUserRef();
         DocumentReference userRef = usersRef.document(uid);
 
         Map<String, Object> updates = new HashMap<>();
@@ -103,7 +106,7 @@ public class UserReposImpl implements UserRepos {
     public Task<Boolean> existsByPhoneNumber(String phoneNumber) {
         TaskCompletionSource<Boolean> source = new TaskCompletionSource<>();
 
-        CollectionReference usersRef = db.collection(EUserField.COLLECTION_NAME.getName());
+        CollectionReference usersRef = getUserRef();
         Query query = usersRef.whereEqualTo(EUserField.PHONE_NUMBER.getName(), phoneNumber)
                 .limit(1);
         query.get().addOnCompleteListener(task -> {
@@ -125,7 +128,7 @@ public class UserReposImpl implements UserRepos {
             return Tasks.forException(new IllegalArgumentException("Invalid UID"));
         }
 
-        return db.collection(EUserField.COLLECTION_NAME.getName())
+        return getUserRef()
                 .document(uid)
                 .get()
                 .continueWith(task -> {
@@ -136,6 +139,25 @@ public class UserReposImpl implements UserRepos {
                             throw new UserNotFoundException("Could not find any user with uid=" + uid);
                         }
                         return user;
+                    } else {
+                        throw task.getException();
+                    }
+                });
+    }
+
+    @Override
+    public Task<List<User>> getAll() {
+        return getUserRef()
+                .get()
+                .continueWith(task -> {
+                    if (task.isSuccessful()) {
+                        QuerySnapshot querySnapshot = task.getResult();
+                        List<User> users = new ArrayList<>();
+                        for (QueryDocumentSnapshot documentSnapshot : querySnapshot) {
+                            User user = convertDocumentToModel(documentSnapshot);
+                            users.add(user);
+                        }
+                        return users;
                     } else {
                         throw task.getException();
                     }
@@ -166,5 +188,9 @@ public class UserReposImpl implements UserRepos {
     private boolean getBooleanField(DocumentSnapshot documentSnapshot, EUserField field) {
         Object value = documentSnapshot.get(field.getName());
         return value instanceof Boolean ? (Boolean) value : false;
+    }
+
+    private CollectionReference getUserRef() {
+        return db.collection(EUserField.COLLECTION_NAME.getName());
     }
 }

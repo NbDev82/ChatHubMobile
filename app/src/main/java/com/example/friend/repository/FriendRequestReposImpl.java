@@ -5,7 +5,7 @@ import android.util.Log;
 import com.example.friend.EFriendRequestField;
 import com.example.friend.FriendRequest;
 import com.example.friend.FriendRequestView;
-import com.example.user.repository.AuthRepos;
+import com.example.user.User;
 import com.example.user.repository.UserRepos;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.TaskCompletionSource;
@@ -25,18 +25,17 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class FriendRequestReposImpl implements FriendRequestRepos {
 
     private static final String TAG = FriendRequestReposImpl.class.getSimpleName();
 
     private final UserRepos userRepos;
-    private final AuthRepos authRepos;
     private final FirebaseFirestore db;
 
-    public FriendRequestReposImpl(UserRepos userRepos, AuthRepos authRepos) {
+    public FriendRequestReposImpl(UserRepos userRepos) {
         this.userRepos = userRepos;
-        this.authRepos = authRepos;
         db = FirebaseFirestore.getInstance();
     }
 
@@ -260,7 +259,6 @@ public class FriendRequestReposImpl implements FriendRequestRepos {
                             List<FriendRequest> fetchedFriendRequests =
                                     convertQueryDocumentSnapshotsToFriendRequests(querySnapshot);
                             friendRequests.addAll(fetchedFriendRequests);
-
                         }
                     }
                     Task<List<FriendRequestView>> conversionTask = convertModelsToModelViews(friendRequests);
@@ -271,6 +269,85 @@ public class FriendRequestReposImpl implements FriendRequestRepos {
                         taskCompletionSource.setException(e);
                     });
                 });
+
+        return taskCompletionSource.getTask();
+    }
+
+    @Override
+    public Task<List<FriendRequestView>> getRecommendedFriends(String userId) {
+        TaskCompletionSource<List<FriendRequestView>> taskCompletionSource = new TaskCompletionSource<>();
+
+        userRepos.getAll()
+            .addOnSuccessListener(users -> {
+                List<Task<FriendRequest.EStatus>> tasks = new ArrayList<>();
+                List<FriendRequestView> friendRequestViews = new ArrayList<>();
+
+                for (User potentialFriend : users) {
+                    String potentialFriendId = potentialFriend.getId();
+                    Task<FriendRequest.EStatus> task = getFriendRequestStatus(userId, potentialFriendId)
+                            .addOnSuccessListener(status -> {
+                                if (status != FriendRequest.EStatus.ACCEPTED
+                                        && status != FriendRequest.EStatus.PENDING) {
+                                    FriendRequestView friendRequestView =
+                                            convertUserToFriendRequestView(userId, potentialFriend);
+                                    friendRequestViews.add(friendRequestView);
+                                }
+                            });
+                    tasks.add(task);
+                }
+                Tasks.whenAllSuccess(tasks)
+                        .addOnFailureListener(aVoid -> taskCompletionSource.setResult(friendRequestViews))
+                        .addOnFailureListener(taskCompletionSource::setException);
+            })
+            .addOnFailureListener(taskCompletionSource::setException);
+
+        return taskCompletionSource.getTask();
+    }
+
+    private FriendRequestView convertUserToFriendRequestView(String curUserId, User potentialFriend) {
+        FriendRequest friendRequest = new FriendRequest(curUserId, potentialFriend.getId(), FriendRequest.EStatus.NONE, null);
+        int mutualFriends = 0;
+        return new FriendRequestView(friendRequest, potentialFriend.getImageUrl(), potentialFriend.getFullName(), mutualFriends, false);
+    }
+
+    public Task<Boolean> isFriendConnectionRecommendationAllowed(String requesterUserId, String potentialFriendUserId) {
+        CollectionReference friendRequestsRef = getFriendRequestsRef();
+
+        Query firstQuery = friendRequestsRef
+                .whereEqualTo(EFriendRequestField.SENDER_ID.getName(), requesterUserId)
+                .whereEqualTo(EFriendRequestField.RECIPIENT_ID.getName(), potentialFriendUserId);
+
+        Query secondQuery = friendRequestsRef
+                .whereEqualTo(EFriendRequestField.SENDER_ID.getName(), potentialFriendUserId)
+                .whereEqualTo(EFriendRequestField.RECIPIENT_ID.getName(), requesterUserId);
+
+        Task<QuerySnapshot> senderTask = firstQuery.get();
+        Task<QuerySnapshot> recipientTask = secondQuery.get();
+        TaskCompletionSource<Boolean> taskCompletionSource = new TaskCompletionSource<>();
+
+        Tasks.whenAllSuccess(senderTask, recipientTask)
+                .addOnSuccessListener(objects -> {
+                    List<FriendRequest> friendRequests = new ArrayList<>();
+                    for (Object object : objects) {
+                        if (object instanceof QuerySnapshot) {
+                            QuerySnapshot querySnapshot = (QuerySnapshot) object;
+                            List<FriendRequest> fetchedFriendRequests =
+                                    convertQueryDocumentSnapshotsToFriendRequests(querySnapshot);
+                            friendRequests.addAll(fetchedFriendRequests);
+                        }
+                    }
+
+                    boolean isRecommendationAllowed = false;
+                    for (FriendRequest friendRequest : friendRequests) {
+                        FriendRequest.EStatus status = friendRequest.getStatus();
+                        if (status != FriendRequest.EStatus.ACCEPTED && status != FriendRequest.EStatus.PENDING) {
+                            isRecommendationAllowed = true;
+                        }
+                    }
+
+                    taskCompletionSource.setResult(isRecommendationAllowed);
+                })
+                .addOnFailureListener(taskCompletionSource::setException);
 
         return taskCompletionSource.getTask();
     }

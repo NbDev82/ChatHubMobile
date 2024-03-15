@@ -70,28 +70,6 @@ public class FriendRequestsViewModel extends BaseViewModel implements FriendRequ
         loadFriendRequests();
     }
 
-    private void loadFriendRequests() {
-        this.isRequestsLoading.postValue(true);
-        String uid = authRepos.getCurrentUid();
-        friendRequestRepos.getPendingFriendRequestsByRecipientId(uid)
-                .addOnSuccessListener(friendRequests -> {
-                    this.isRequestsLoading.postValue(false);
-                    this.friendRequests.postValue(friendRequests);
-                })
-                .addOnFailureListener(e -> {
-                    this.isRequestsLoading.postValue(false);
-                    Log.e(TAG, "Error: " + e.getMessage(), e);
-                });
-    }
-
-    public void navigateToFriendSuggestions() {
-        this.navigateToFriendSuggestions.postValue(true);
-    }
-
-    public void navigateToFriends() {
-        this.navigateToFriends.postValue(true);
-    }
-
     @Override
     public void onItemClick(int position) {
         FriendRequestView request = this.friendRequests.getValue().get(position);
@@ -148,5 +126,27 @@ public class FriendRequestsViewModel extends BaseViewModel implements FriendRequ
                 })
                 .build();
         snackbarModel.postValue(model);
+    }
+
+    private void loadFriendRequests() {
+        this.isRequestsLoading.postValue(true);
+        String uid = authRepos.getCurrentUid();
+        friendRequestRepos.getPendingFriendRequestsByRecipientId(uid)
+                .addOnSuccessListener(friendRequests -> {
+                    this.isRequestsLoading.postValue(false);
+                    this.friendRequests.postValue(friendRequests);
+                })
+                .addOnFailureListener(e -> {
+                    this.isRequestsLoading.postValue(false);
+                    Log.e(TAG, "Error: " + e.getMessage(), e);
+                });
+    }
+
+    public void navigateToFriendSuggestions() {
+        this.navigateToFriendSuggestions.postValue(true);
+    }
+
+    public void navigateToFriends() {
+        this.navigateToFriends.postValue(true);
     }
 }

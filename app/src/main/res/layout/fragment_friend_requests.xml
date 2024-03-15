@@ -88,6 +88,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginTop="@dimen/_8sdp"
+            android:animateLayoutChanges="true"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintTop_toBottomOf="@id/img_profile">
 
@@ -95,21 +96,45 @@
                 android:id="@+id/rv_friend_requests"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:adapter="@{friendRequestAdapter}"
                 android:clipToPadding="false"
                 android:orientation="vertical"
-                app:setupOverScroll="@{true}"
                 android:padding="@dimen/_5sdp"
-                android:adapter="@{friendRequestAdapter}"
                 android:visibility="@{viewModel.isRequestsLoading ? View.GONE : View.VISIBLE}"
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                app:setupOverScroll="@{true}"
                 tools:visibility="gone" />
 
             <ProgressBar
                 android:layout_width="@dimen/_25sdp"
                 android:layout_height="@dimen/_25sdp"
-                android:visibility="@{viewModel.isRequestsLoading ? View.VISIBLE : View.GONE}"
-                android:layout_gravity="center" />
+                android:layout_gravity="center"
+                android:visibility="@{viewModel.isRequestsLoading ? View.VISIBLE : View.GONE}" />
 
+            <LinearLayout
+                android:id="@+id/ll_empty"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:visibility="@{viewModel.isRequestsLoading || viewModel.friendRequests.size() > 0  ? View.GONE : View.VISIBLE}"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:id="@+id/icon_send"
+                    android:layout_width="@dimen/_150sdp"
+                    android:layout_height="@dimen/_150sdp"
+                    android:background="@drawable/ic_empty" />
+
+                <TextView
+                    android:id="@+id/title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/opensans_condensed_bold"
+                    android:text="@string/empty_title"
+                    android:textColor="@color/color_text_secondary" />
+
+            </LinearLayout>
         </FrameLayout>
     </LinearLayout>
 </layout>

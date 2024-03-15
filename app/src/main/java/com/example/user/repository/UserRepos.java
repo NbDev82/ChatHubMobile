@@ -2,6 +2,9 @@ package com.example.user.repository;
 
 import com.example.user.User;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.CollectionReference;
+
+import java.util.List;
 
 public interface UserRepos {
     Task<Void> addUser(String uid, User user);
@@ -19,4 +22,6 @@ public interface UserRepos {
     Task<Boolean> existsByPhoneNumber(String phoneNumber);
 
     Task<User> getUserByUid(String uid);
+
+    Task<List<User>> getAll();
 }

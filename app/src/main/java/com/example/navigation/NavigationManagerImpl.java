@@ -9,6 +9,7 @@ import android.os.Bundle;
 import androidx.activity.result.ActivityResultLauncher;
 
 import com.example.R;
+import com.example.friend.friendsuggestion.FriendSuggestionsActivity;
 import com.example.friend.myfriend.FriendsActivity;
 import com.example.friend.profileviewer.ProfileViewerActivity;
 import com.example.home.HomeActivity;
@@ -142,6 +143,11 @@ public class NavigationManagerImpl implements NavigationManager {
     @Override
     public void navigateToChangePasscode(EAnimationType animationType) {
         navigateToActivity(ChangePasscodeActivity.class, animationType);
+    }
+
+    @Override
+    public void navigateToFriendSuggestions(EAnimationType animationType) {
+        navigateToActivity(FriendSuggestionsActivity.class, animationType);
     }
 
     private void setResultAndFinish(Intent resultIntent, EAnimationType animationType) {
