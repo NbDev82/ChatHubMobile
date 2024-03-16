@@ -7,6 +7,7 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.example.customcontrol.snackbar.SnackbarModel;
+import com.example.friend.FriendRequest;
 import com.example.friend.FriendRequestView;
 import com.example.friend.myfriend.adapter.FriendListener;
 import com.example.friend.repository.FriendRequestRepos;
@@ -61,6 +62,21 @@ public class FriendsViewModel extends BaseViewModel implements FriendListener {
         loadAcceptedFriendRequests();
     }
 
+    @Override
+    public void onItemClick(int position) {
+        FriendRequestView requestView = this.friendRequests.getValue().get(position);
+        FriendRequest friendRequest = requestView.getFriendRequest();
+        Bundle data = new Bundle();
+        data.putString(Utils.EXTRA_SELECTED_USER_ID, friendRequest.getSenderId());
+        data.putString(Utils.EXTRA_SELECTED_FRIEND_REQUEST_ID, friendRequest.getId());
+        this.navigateToProfileViewer.postValue(data);
+    }
+
+    @Override
+    public void onOpenChatClick(int position) {
+        errorToastMessage.postValue("Feature is under development");
+    }
+
     public void navigateBack() {
         this.navigateBack.postValue(true);
     }
@@ -77,19 +93,5 @@ public class FriendsViewModel extends BaseViewModel implements FriendListener {
                     this.isFriendsLoading.postValue(false);
                     Log.e(TAG, "Error: " + e.getMessage(), e);
                 });
-    }
-
-    @Override
-    public void onItemClick(int position) {
-        FriendRequestView request = this.friendRequests.getValue().get(position);
-        Bundle data = new Bundle();
-        data.putString(Utils.EXTRA_SELECTED_USER_ID, request.getFriendRequest().getSenderId());
-        data.putString(Utils.EXTRA_SELECTED_FRIEND_REQUEST_ID, request.getFriendRequest().getSenderId());
-        this.navigateToProfileViewer.postValue(data);
-    }
-
-    @Override
-    public void onOpenChatClick(int position) {
-        errorToastMessage.postValue("Feature is under development");
     }
 }

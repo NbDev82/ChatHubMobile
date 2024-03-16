@@ -109,7 +109,7 @@
                             android:layout_width="0dp"
                             android:layout_height="@dimen/_36sdp"
                             android:layout_weight="1"
-                            android:text="Add friend"
+                            android:text="@string/title_add_friend"
                             android:onClick="@{() -> listener.onAddFriendClick(position)}"
                             android:visibility="@{requestView.isLoading ? View.GONE : View.VISIBLE}"
                             app:cornerRadius="@dimen/button_primary_corner_radius" />
@@ -120,7 +120,7 @@
                             android:layout_height="@dimen/_36sdp"
                             android:layout_weight="1"
                             android:layout_marginStart="@dimen/_15sdp"
-                            android:text="Remove"
+                            android:text="@string/title_remove"
                             android:onClick="@{() -> listener.onRemoveClick(position)}"
                             android:visibility="@{requestView.isLoading ? View.GONE : View.VISIBLE}"
                             app:cornerRadius="@dimen/button_primary_corner_radius" />

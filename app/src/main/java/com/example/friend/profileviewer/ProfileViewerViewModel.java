@@ -30,7 +30,7 @@ public class ProfileViewerViewModel extends BaseViewModel {
     private final MutableLiveData<EGender> gender = new MutableLiveData<>();
     private final MutableLiveData<String> birthdayStr = new MutableLiveData<>();
     private final MutableLiveData<Boolean> isUserInitializing = new MutableLiveData<>();
-    private final MutableLiveData<Boolean> isLoading = new MutableLiveData<>();
+    private final MutableLiveData<Boolean> isButtonLoading = new MutableLiveData<>();
     private final MutableLiveData<EFriendshipStatus> friendshipStatus = new MutableLiveData<>(EFriendshipStatus.NOT_FOUND);
     private final UserRepos userRepos;
     private final AuthRepos authRepos;
@@ -66,8 +66,8 @@ public class ProfileViewerViewModel extends BaseViewModel {
         return isUserInitializing;
     }
 
-    public LiveData<Boolean> getIsLoading() {
-        return isLoading;
+    public LiveData<Boolean> getIsButtonLoading() {
+        return isButtonLoading;
     }
 
     public LiveData<EFriendshipStatus> getFriendshipStatus() {
@@ -82,9 +82,9 @@ public class ProfileViewerViewModel extends BaseViewModel {
         this.friendRequestRepos = friendRequestRepos;
     }
 
-    public void fetchUserInformation() {
+    public void fetchUserInformation(String userId) {
         isUserInitializing.postValue(true);
-        userRepos.getUserByUid(displayedUserId)
+        userRepos.getUserByUid(userId)
                 .addOnSuccessListener(user -> {
                     setUser(user);
                     new Handler().postDelayed(() -> {
@@ -92,33 +92,31 @@ public class ProfileViewerViewModel extends BaseViewModel {
                     }, 200);
                 })
                 .addOnFailureListener(e -> {
+                    Log.e(TAG, e.getMessage(), e);
                     openUserNotFoundDialog();
-                    Log.e(TAG, "Error: " + e);
                 });
     }
 
-    private void setUser(User user) {
-        Bitmap userImageBitmap = Utils.decodeImage(user.getImageUrl());
-        this.userImageBitmap.postValue(userImageBitmap);
-        fullName.postValue(user.getFullName());
-        gender.postValue(user.getGender());
-        Date birthday = user.getBirthday();
-        birthdayStr.postValue(Utils.dateToString(birthday));
-    }
+    public void fetchFriendRequestStatus() {
+        this.isButtonLoading.postValue(true);
+        if (Utils.isEmpty(friendRequestId)) {
+            this.isButtonLoading.postValue(false);
+            this.friendshipStatus.postValue(EFriendshipStatus.NOT_FOUND);
+            return;
+        }
 
-    private void openUserNotFoundDialog() {
-        AlertDialogModel model = new AlertDialogModel.Builder()
-                .setTitle("User Not Found")
-                .setMessage("The user you are trying to access was not found! Click OK to quit!")
-                .setPositiveButton("Ok", aVoid -> {
-                    navigateBack();
+        String curUserId = authRepos.getCurrentUid();
+        friendRequestRepos
+                .getFriendRequest(friendRequestId)
+                .addOnSuccessListener(friendRequest -> {
+                    String senderId = friendRequest.getSenderId();
+                    FriendRequest.EStatus status = friendRequest.getStatus();
+                    handleFriendRequestStatus(curUserId, senderId, status);
                 })
-                .build();
-        openCustomAlertDialog.postValue(model);
-    }
-
-    public void checkFriendRequestStatus() {
-        errorToastMessage.postValue("checkFriendRequestStatus() does not implement");
+                .addOnFailureListener(e -> {
+                    this.isButtonLoading.postValue(false);
+                    Log.e(TAG, e.getMessage(), e);
+                });
     }
 
     public void navigateBack() {
@@ -165,32 +163,32 @@ public class ProfileViewerViewModel extends BaseViewModel {
     }
 
     public void acceptFriendRequest() {
-        isLoading.postValue(true);
+        isButtonLoading.postValue(true);
         friendRequestRepos
                 .updateFriendRequestStatus(friendRequestId, FriendRequest.EStatus.ACCEPTED)
                 .addOnSuccessListener(aVoid -> {
                     successToastMessage.postValue("Accept successfully");
-                    isLoading.postValue(false);
+                    isButtonLoading.postValue(false);
                 })
                 .addOnFailureListener(e -> {
                     errorToastMessage.postValue("Accept unsuccessfully");
                     Log.e(TAG, "Error: " + e.getMessage(), e);
-                    isLoading.postValue(false);
+                    isButtonLoading.postValue(false);
                 });
     }
 
     public void rejectFriendRequest() {
-        isLoading.postValue(true);
+        isButtonLoading.postValue(true);
         friendRequestRepos
                 .updateFriendRequestStatus(friendRequestId, FriendRequest.EStatus.REJECTED)
                 .addOnSuccessListener(aVoid -> {
                     successToastMessage.postValue("Reject successfully");
-                    isLoading.postValue(false);
+                    isButtonLoading.postValue(false);
                 })
                 .addOnFailureListener(e -> {
                     errorToastMessage.postValue("Reject unsuccessfully");
                     Log.e(TAG, "Error: " + e.getMessage(), e);
-                    isLoading.postValue(false);
+                    isButtonLoading.postValue(false);
                 });
     }
 
@@ -199,21 +197,52 @@ public class ProfileViewerViewModel extends BaseViewModel {
                 .setTitle("Unfriend")
                 .setMessage("Are you sure you want to unfriend?")
                 .setPositiveButton("Ok", aVoid -> {
-                    isLoading.postValue(true);
+                    isButtonLoading.postValue(true);
                     friendRequestRepos
-                            .updateFriendRequestStatus(friendRequestId, FriendRequest.EStatus.NONE)
+                            .delete(friendRequestId)
                             .addOnSuccessListener(aUpdateVoid -> {
+                                friendRequestId = "";
+                                friendshipStatus.postValue(EFriendshipStatus.NOT_FRIEND);
                                 successToastMessage.postValue("Unfriend successfully");
-                                isLoading.postValue(false);
+                                isButtonLoading.postValue(false);
                             })
                             .addOnFailureListener(e -> {
                                 errorToastMessage.postValue("Unfriend unsuccessfully");
                                 Log.e(TAG, "Error: " + e.getMessage(), e);
-                                isLoading.postValue(false);
+                                isButtonLoading.postValue(false);
                             });
                 })
                 .setNegativeButton("Cancel", null)
                 .build();
         openCustomAlertDialog.postValue(model);
+    }
+
+    private void setUser(User user) {
+        Bitmap userImageBitmap = Utils.decodeImage(user.getImageUrl());
+        this.userImageBitmap.postValue(userImageBitmap);
+        fullName.postValue(user.getFullName());
+        gender.postValue(user.getGender());
+        Date birthday = user.getBirthday();
+        birthdayStr.postValue(Utils.dateToString(birthday));
+    }
+
+    private void openUserNotFoundDialog() {
+        AlertDialogModel model = new AlertDialogModel.Builder()
+                .setTitle("User Not Found")
+                .setMessage("The user you are trying to access was not found! Click OK to quit!")
+                .setPositiveButton("Ok", aVoid -> {
+                    navigateBack();
+                })
+                .build();
+        openCustomAlertDialog.postValue(model);
+    }
+
+    private void handleFriendRequestStatus(String currentUserId,
+                                           String senderId,
+                                           FriendRequest.EStatus status) {
+        EFriendshipStatus friendshipStatus = Utils
+                .convertFriendRequestStatusToFriendshipStatus(currentUserId, senderId, status);
+        this.friendshipStatus.postValue(friendshipStatus);
+        this.isButtonLoading.postValue(false);
     }
 }

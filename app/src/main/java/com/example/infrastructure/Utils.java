@@ -14,6 +14,8 @@ import android.view.WindowManager;
 import androidx.core.content.res.ResourcesCompat;
 
 import com.example.R;
+import com.example.friend.FriendRequest;
+import com.example.friend.profileviewer.EFriendshipStatus;
 
 import org.jetbrains.annotations.Nullable;
 
@@ -22,6 +24,7 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Objects;
 
 public class Utils {
     public static final String KEY_PREFERENCE_NAME = "chatAppPreference";
@@ -146,5 +149,26 @@ public class Utils {
 
     public static boolean isValidOtp(String text) {
         return text != null && text.length() == PIN_DIGIT_COUNT;
+    }
+
+    public static EFriendshipStatus convertFriendRequestStatusToFriendshipStatus(
+            String curUserId,
+            String senderId,
+            FriendRequest.EStatus status) {
+
+        switch (status) {
+            case PENDING:
+                if (Objects.equals(curUserId, senderId)) {
+                    return EFriendshipStatus.SENT_REQUEST;
+                } else {
+                    return EFriendshipStatus.RECEIVED_REQUEST;
+                }
+            case ACCEPTED:
+                return EFriendshipStatus.FRIEND;
+            case REJECTED:
+                return EFriendshipStatus.NOT_FRIEND;
+            default:
+                return EFriendshipStatus.NOT_FOUND;
+        }
     }
 }

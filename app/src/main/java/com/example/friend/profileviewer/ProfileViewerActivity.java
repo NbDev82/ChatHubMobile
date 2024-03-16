@@ -14,16 +14,12 @@ import com.example.friend.repository.FriendRequestReposImpl;
 import com.example.infrastructure.BaseActivity;
 import com.example.infrastructure.Utils;
 import com.example.navigation.EAnimationType;
-import com.example.navigation.NavigationManager;
-import com.example.navigation.NavigationManagerImpl;
 import com.example.user.repository.AuthRepos;
 import com.example.user.repository.AuthReposImpl;
 import com.example.user.repository.UserRepos;
 import com.example.user.repository.UserReposImpl;
 
 public class ProfileViewerActivity extends BaseActivity<ProfileViewerViewModel, ActivityProfileViewerBinding> {
-
-    private NavigationManager navigationManager;
 
     @Override
     protected @LayoutRes int getLayout() {
@@ -48,19 +44,25 @@ public class ProfileViewerActivity extends BaseActivity<ProfileViewerViewModel, 
         super.onCreate(savedInstanceState);
         Utils.setStatusBarGradiant(this);
 
-        navigationManager = new NavigationManagerImpl(this);
-        binding.setViewModel(viewModel);
-
         setupObservers();
+    }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+        extractIntentData();
+    }
+
+    private void extractIntentData() {
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
             String selectedUserId = extras.getString(Utils.EXTRA_SELECTED_USER_ID, "");
             String selectedFriendRequestId = extras.getString(Utils.EXTRA_SELECTED_FRIEND_REQUEST_ID, "");
             viewModel.setDisplayedUserId(selectedUserId);
             viewModel.setFriendRequestId(selectedFriendRequestId);
-            viewModel.fetchUserInformation();
-            viewModel.checkFriendRequestStatus();
+            viewModel.fetchUserInformation(selectedUserId);
+            viewModel.fetchFriendRequestStatus();
         }
     }
 

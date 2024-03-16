@@ -30,10 +30,10 @@
 
             <FrameLayout
                 android:id="@+id/fl_avatar"
-                android:layout_width="@dimen/_50sdp"
-                android:layout_height="@dimen/_50sdp"
+                android:layout_width="@dimen/_60sdp"
+                android:layout_height="@dimen/_60sdp"
                 android:onClick="@{() -> listener.onItemClick(position)}"
-                android:padding="@dimen/_2sdp">
+                android:padding="@dimen/_4sdp">
 
                 <com.makeramen.roundedimageview.RoundedImageView
                     android:layout_width="match_parent"

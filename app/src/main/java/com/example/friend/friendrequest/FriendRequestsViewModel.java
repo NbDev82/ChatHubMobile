@@ -72,10 +72,11 @@ public class FriendRequestsViewModel extends BaseViewModel implements FriendRequ
 
     @Override
     public void onItemClick(int position) {
-        FriendRequestView request = this.friendRequests.getValue().get(position);
+        FriendRequestView requestView = this.friendRequests.getValue().get(position);
+        FriendRequest friendRequest = requestView.getFriendRequest();
         Bundle data = new Bundle();
-        data.putString(Utils.EXTRA_SELECTED_USER_ID, request.getFriendRequest().getSenderId());
-        data.putString(Utils.EXTRA_SELECTED_FRIEND_REQUEST_ID, request.getFriendRequest().getSenderId());
+        data.putString(Utils.EXTRA_SELECTED_USER_ID, friendRequest.getSenderId());
+        data.putString(Utils.EXTRA_SELECTED_FRIEND_REQUEST_ID, friendRequest.getId());
         this.navigateToProfileViewer.postValue(data);
     }
 
