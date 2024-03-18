@@ -6,6 +6,7 @@ import com.example.friend.EFriendRequestField;
 import com.example.friend.FriendRequest;
 import com.example.friend.FriendRequestNotFoundException;
 import com.example.friend.FriendRequestView;
+import com.example.friend.profileviewer.EFriendshipStatus;
 import com.example.infrastructure.Utils;
 import com.example.user.User;
 import com.example.user.repository.UserRepos;
@@ -19,6 +20,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.firestore.WriteBatch;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -27,7 +29,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicInteger;
+import java.util.Objects;
 
 public class FriendRequestReposImpl implements FriendRequestRepos {
 
@@ -170,23 +172,23 @@ public class FriendRequestReposImpl implements FriendRequestRepos {
                 .whereEqualTo(EFriendRequestField.RECIPIENT_ID.getName(), recipientId);
 
         return query
-                .get()
-                .continueWith(task -> {
-            if (task.isSuccessful()) {
-                QuerySnapshot querySnapshot = task.getResult();
-                if (querySnapshot != null && !querySnapshot.isEmpty()) {
+            .get()
+            .continueWith(task -> {
+                if (task.isSuccessful()) {
+                    QuerySnapshot querySnapshot = task.getResult();
+                    if (querySnapshot == null || querySnapshot.isEmpty()) {
+                        return FriendRequest.EStatus.NOT_FOUND;
+                    }
+
                     DocumentSnapshot documentSnapshot = querySnapshot.getDocuments().get(0);
                     String statusStr = documentSnapshot.getString(EFriendRequestField.STATUS.getName());
                     return FriendRequest.EStatus.valueOf(statusStr);
                 } else {
-                    return FriendRequest.EStatus.NONE;
+                    Exception exception = task.getException();
+                    Log.e(TAG, "Error getting friend request status: " + exception.getMessage(), exception);
+                    return FriendRequest.EStatus.NOT_FOUND;
                 }
-            } else {
-                Exception exception = task.getException();
-                Log.e(TAG, "Error getting friend request status: " + exception.getMessage(), exception);
-                return FriendRequest.EStatus.NONE;
-            }
-        });
+            });
     }
 
     @Override
@@ -301,28 +303,35 @@ public class FriendRequestReposImpl implements FriendRequestRepos {
         TaskCompletionSource<List<FriendRequestView>> taskCompletionSource = new TaskCompletionSource<>();
 
         userRepos.getAll()
-            .addOnSuccessListener(users -> {
-                List<Task<FriendRequest.EStatus>> tasks = new ArrayList<>();
-                List<FriendRequestView> friendRequestViews = new ArrayList<>();
+                .continueWithTask(task -> {
+                    if (task.isSuccessful()) {
+                        List<User> users = task.getResult();
+                        List<Task<EFriendshipStatus>> tasks = new ArrayList<>();
+                        List<FriendRequestView> friendRequestViews = new ArrayList<>();
 
-                for (User potentialFriend : users) {
-                    String potentialFriendId = potentialFriend.getId();
-                    Task<FriendRequest.EStatus> task = getFriendRequestStatus(userId, potentialFriendId)
-                            .addOnSuccessListener(status -> {
-                                if (status != FriendRequest.EStatus.ACCEPTED
-                                        && status != FriendRequest.EStatus.PENDING) {
-                                    FriendRequestView friendRequestView =
-                                            convertUserToFriendRequestView(userId, potentialFriend);
-                                    friendRequestViews.add(friendRequestView);
-                                }
-                            });
-                    tasks.add(task);
-                }
-                Tasks.whenAllSuccess(tasks)
-                        .addOnFailureListener(aVoid -> taskCompletionSource.setResult(friendRequestViews))
-                        .addOnFailureListener(taskCompletionSource::setException);
-            })
-            .addOnFailureListener(taskCompletionSource::setException);
+                        for (User potentialFriend : users) {
+                            String potentialFriendId = potentialFriend.getId();
+                            Task<EFriendshipStatus> firstTask = getEFriendshipStatus(userId, potentialFriendId)
+                                    .addOnSuccessListener(firstStatus -> {
+                                        if (firstStatus == EFriendshipStatus.NOT_FOUND
+                                                || firstStatus == EFriendshipStatus.NOT_FRIEND) {
+                                            FriendRequestView friendRequestView =
+                                                    convertUserToFriendRequestView(userId, potentialFriend);
+                                            friendRequestViews.add(friendRequestView);
+                                        }
+                                    });
+
+                            tasks.add(firstTask);
+                        }
+
+                        return Tasks.whenAllComplete(tasks)
+                                .continueWith(task1 -> friendRequestViews);
+                    } else {
+                        throw task.getException();
+                    }
+                })
+                .addOnSuccessListener(taskCompletionSource::setResult)
+                .addOnFailureListener(taskCompletionSource::setException);
 
         return taskCompletionSource.getTask();
     }
@@ -341,9 +350,40 @@ public class FriendRequestReposImpl implements FriendRequestRepos {
     }
 
     private FriendRequestView convertUserToFriendRequestView(String curUserId, User potentialFriend) {
-        FriendRequest friendRequest = new FriendRequest(curUserId, potentialFriend.getId(), FriendRequest.EStatus.NONE, null);
+        FriendRequest friendRequest = new FriendRequest(curUserId, potentialFriend.getId(), FriendRequest.EStatus.NOT_FOUND, null);
         int mutualFriends = 0;
         return new FriendRequestView(friendRequest, potentialFriend.getImageUrl(), potentialFriend.getFullName(), mutualFriends, false);
+    }
+
+    private Task<EFriendshipStatus> getEFriendshipStatus(String curUserId, String userIdToCheck) {
+        Task<FriendRequest.EStatus> curUserToUserTask = getFriendRequestStatus(curUserId, userIdToCheck);
+        Task<FriendRequest.EStatus> userToCurUserTask = getFriendRequestStatus(userIdToCheck, curUserId);
+
+        return Tasks.whenAllSuccess(curUserToUserTask, userToCurUserTask)
+                .continueWith(task -> {
+                    FriendRequest.EStatus curUserToUserStatus = curUserToUserTask.getResult();
+                    FriendRequest.EStatus userToCurUserStatus = userToCurUserTask.getResult();
+
+                    switch (curUserToUserStatus) {
+                        case PENDING:
+                            return EFriendshipStatus.SENT_REQUEST;
+                        case ACCEPTED:
+                            return EFriendshipStatus.FRIEND;
+                        case REJECTED:
+                            return EFriendshipStatus.NOT_FRIEND;
+                    }
+
+                    switch (userToCurUserStatus) {
+                        case PENDING:
+                            return EFriendshipStatus.RECEIVED_REQUEST;
+                        case ACCEPTED:
+                            return EFriendshipStatus.FRIEND;
+                        case REJECTED:
+                            return EFriendshipStatus.NOT_FRIEND;
+                        default:
+                            return EFriendshipStatus.NOT_FOUND;
+                    }
+                });
     }
 
     private CollectionReference getFriendRequestsRef() {

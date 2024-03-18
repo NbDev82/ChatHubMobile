@@ -138,8 +138,8 @@ public class FriendSuggestionsViewModel extends BaseViewModel implements FriendS
 
     private void loadRecommendedFriends() {
         this.isSuggestionsLoading.postValue(true);
-        String uid = authRepos.getCurrentUid();
-        friendRequestRepos.getRecommendedFriends(uid)
+        String curUserId = authRepos.getCurrentUid();
+        friendRequestRepos.getRecommendedFriends(curUserId)
                 .addOnSuccessListener(friendRequests -> {
                     this.isSuggestionsLoading.postValue(false);
                     this.friendSuggestions.postValue(friendRequests);
