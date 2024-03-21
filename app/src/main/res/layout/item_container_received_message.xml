@@ -3,12 +3,6 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:bind="http://schemas.android.com/tools">
 
-    <data>
-        <variable
-            name="viewModel"
-            type="com.example.chat.message.Message" />
-    </data>
-
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -33,7 +27,7 @@
             android:layout_marginLeft="@dimen/_4sdp"
             android:background="@drawable/background_received_message"
             android:padding="@dimen/_12sdp"
-            android:textColor="@color/color_background_primary"
+            android:textColor="@color/color_text_black"
             android:textSize="@dimen/_13ssp"
 
             app:layout_constraintWidth_max="wrap"

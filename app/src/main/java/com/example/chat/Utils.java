@@ -16,25 +16,20 @@ public class Utils {
     public static final String KEY_USER_ID = "userId";
     public static final String KEY_COLLECTION_CHAT = "chat";
     public static final String KEY_SENDER_ID = "senderId";
-    public static final String KEY_RECEIVER_ID = "receiverId";
     public static final String KEY_MESSAGE = "message";
-    public static final String KEY_COLLECTION_CONVERSATIONS = "conversations";
-    public static final String KEY_SENDER_NAME = "senderName";
-    public static final String KEY_RECEIVER_NAME = "receiverName";
-    public static final String KEY_SENDER_IMAGE = "senderImage";
-    public static final String KEY_RECEIVER_IMAGE = "receiverImage";
     public static final String KEY_IS_VISIBILITY = "visibility";
     public static final String KEY_SENDING_TIME = "sendingTime";
     public static final String KEY_CONVERSATION_NAME = "conversationName";
+    public static final String KEY_CONVERSATION_IMAGE = "conversationImage";
 
-    public static final <T> T convertFromSnapshot(@Nullable DocumentSnapshot documentSnapshot, Class<T> type) {
+    public static <T> T convertFromSnapshot(@Nullable DocumentSnapshot documentSnapshot, Class<T> type) {
         if (documentSnapshot == null) {
             return null;
         }
         return documentSnapshot.toObject(type);
     }
 
-    public static final <T> List<T> convertFromSnapshot(@Nullable QuerySnapshot documents, Class<T> type) {
+    public static <T> List<T> convertFromSnapshot(@Nullable QuerySnapshot documents, Class<T> type) {
         if (documents == null) {
             return new ArrayList<>();
         }

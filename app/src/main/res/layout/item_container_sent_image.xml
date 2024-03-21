@@ -3,36 +3,42 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:bind="http://schemas.android.com/tools">
 
+    <data>
+        <variable
+            name="listener"
+            type="com.example.chat.listeners.ImageListener" />
+
+        <variable
+            name="position"
+            type="int" />
+    </data>
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/_8sdp"
+        android:onClick="@{() -> listener.onImageClick(position)}"
         android:padding="@dimen/_4sdp">
 
-        <TextView
-            android:id="@+id/textMessage"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:background="@drawable/background_sent_message"
-            android:padding="@dimen/_12sdp"
-            android:textColor="@color/color_text_black"
-            android:textSize="@dimen/_13ssp"
-
+        <ImageView
+            android:id="@+id/image"
+            android:layout_width="@dimen/_150sdp"
+            android:layout_height="0dp"
+            android:scaleType="centerCrop"
+            android:layout_marginRight="@dimen/_10ssp"
             app:layout_constraintWidth_max="wrap"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintWidth_percent="0.8"/>
+            app:layout_constraintWidth_percent="0.8" />
 
         <TextView
-            android:id="@+id/textDateTime"
+            android:id="@id/textDateTime"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/_4sdp"
             android:textColor="@color/design_default_color_on_secondary"
             android:textSize="@dimen/_8ssp"
-
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textMessage"/>
-
+            app:layout_constraintStart_toStartOf="@id/image"
+            app:layout_constraintTop_toBottomOf="@id/image"/>
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

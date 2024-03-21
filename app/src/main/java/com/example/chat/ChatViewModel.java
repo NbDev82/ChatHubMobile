@@ -6,6 +6,7 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.example.chat.enums.Evisible;
+import com.example.chat.listeners.ImageListener;
 import com.example.chat.message.Message;
 import com.example.chat.message.repos.MessageRepos;
 import com.example.chat.message.repos.MessageReposImpl;
@@ -24,8 +25,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 
-public class ChatViewModel extends BaseViewModel {
+public class ChatViewModel extends BaseViewModel implements ImageListener {
 
     private static final String TAG = ChatViewModel.class.getSimpleName();
 
@@ -35,12 +37,14 @@ public class ChatViewModel extends BaseViewModel {
 
     private final MutableLiveData<String> curSenderUid = new MutableLiveData<>("");
     private final MutableLiveData<String> curUsername = new MutableLiveData<>("");
-    private final MutableLiveData<String> curConversationId = new MutableLiveData<>(null);;
+    private final MutableLiveData<String> curConversationId = new MutableLiveData<>(null);
     private final MutableLiveData<String> curConversationName = new MutableLiveData<>("");
-    private final MutableLiveData<String> curReceivedUid = new MutableLiveData<>("");
+    private final MutableLiveData<String> curConversationImage = new MutableLiveData<>("");
     private final MutableLiveData<List<Message>> messages = new MutableLiveData<>(new ArrayList<>());
     private final MutableLiveData<String> messageInput = new MutableLiveData<>("");
     private final MutableLiveData<Boolean> isReceiverAvailable = new MutableLiveData<>(false);
+    private final MutableLiveData<Boolean> isOpenImageDialog = new MutableLiveData<>(false);
+    private final MutableLiveData<String> isImageClicked = new MutableLiveData<>("");
     private final MutableLiveData<Boolean> navigateBack = new MutableLiveData<>();
     private final MutableLiveData<AlertDialogModel> openCustomAlertDialog = new MutableLiveData<>();
 
@@ -52,6 +56,10 @@ public class ChatViewModel extends BaseViewModel {
         return navigateBack;
     }
 
+    public LiveData<Boolean> getIsOpenImageDialog() {
+        return isOpenImageDialog;
+    }
+
     public LiveData<String> getCurUsername() {
         return curUsername;
     }
@@ -60,16 +68,16 @@ public class ChatViewModel extends BaseViewModel {
         return curSenderUid;
     }
 
-    public LiveData<String> getCurReceivedUid() {
-        return curReceivedUid;
-    }
-
-    public MutableLiveData<String> getCurConversationId() {
+    public LiveData<String> getCurConversationId() {
         return curConversationId;
     }
 
-    public MutableLiveData<String> getCurConversationName() {
+    public LiveData<String> getCurConversationName() {
         return curConversationName;
+    }
+
+    public LiveData<String> getCurConversationImage() {
+        return curConversationImage;
     }
 
     public MutableLiveData<String> getMessageInput() {
@@ -80,6 +88,9 @@ public class ChatViewModel extends BaseViewModel {
         return messages;
     }
 
+    public LiveData<String> getIsImageClicked() {
+        return isImageClicked;
+    }
 
     public LiveData<Boolean> getIsReceiverAvailable() {
         return isReceiverAvailable;
@@ -99,25 +110,18 @@ public class ChatViewModel extends BaseViewModel {
 
                         String conversationId = preferenceManager.getString(Utils.KEY_CONVERSATION_ID);
                         curConversationId.postValue(conversationId);
-
-                        String receivedUid = preferenceManager.getString(Utils.KEY_RECEIVER_ID);
-                        curReceivedUid.postValue(receivedUid);
                     } else {
-                        Log.d(TAG, "Unauthorize: ");
+                        Log.d(TAG, "Unauthorized: ");
                     }
                 })
-                .addOnFailureListener(e -> {
-                    Log.e(TAG, "Error: " + e);
-                });
+                .addOnFailureListener(e -> Log.e(TAG, "Error: " + e));
     }
 
     private void openConversationNotFoundDialog() {
         AlertDialogModel model = new AlertDialogModel.Builder()
                 .setTitle("Conversation Not Found")
                 .setMessage("The conversation you are trying to access was not found! Click OK to quit!")
-                .setPositiveButton("Ok", aVoid -> {
-                    navigateBack();
-                })
+                .setPositiveButton("Ok", aVoid -> navigateBack())
                 .build();
         openCustomAlertDialog.postValue(model);
     }
@@ -134,11 +138,26 @@ public class ChatViewModel extends BaseViewModel {
         message.setConversationId(curConversationId.getValue());
         message.setSendingTime(formatLocalDateTime(LocalDateTime.now()));
         message.setVisibility(Evisible.ACTIVE);
+        message.setType(Message.EType.TEXT);
 
         messageRepos.sendMessage(message);
         messageInput.postValue("");
 
         Log.i(TAG, "Send button clicked");
+    }
+
+    public void sendImages(List<String> imageUrls) {
+        for(String url : imageUrls) {
+            Message message = new Message(
+                    curSenderUid.getValue(),
+                    url,
+                    Message.EType.IMAGE,
+                    formatLocalDateTime(LocalDateTime.now()),
+                    Evisible.ACTIVE,
+                    curConversationId.getValue()
+            );
+            messageRepos.sendMessage(message);
+        }
     }
 
     private String formatLocalDateTime(LocalDateTime now) {
@@ -174,7 +193,11 @@ public class ChatViewModel extends BaseViewModel {
             if (currentMessages == null)
                 currentMessages = new ArrayList<>();
             currentMessages.addAll(newMessages);
-            Collections.sort(currentMessages, Comparator.comparing(Message::getDateObject));
+            try{
+                Collections.sort(currentMessages, Comparator.comparing(Message::getDateObject));
+            } catch (Exception e){
+                Log.e(TAG, Objects.requireNonNull(e.getMessage()));
+            }
 
             messages.postValue(currentMessages);
         }
@@ -188,8 +211,19 @@ public class ChatViewModel extends BaseViewModel {
             for (DocumentChange documentChange : value.getDocumentChanges()) {
                 if (documentChange.getType() == DocumentChange.Type.MODIFIED) {
                     curConversationName.postValue(documentChange.getDocument().getString(Utils.KEY_CONVERSATION_NAME));
+                    curConversationImage.postValue(documentChange.getDocument().getString(Utils.KEY_CONVERSATION_IMAGE));
                 }
             }
         }
     };
+
+    public void pickImage(){
+        isOpenImageDialog.postValue(true);
+    }
+
+    @Override
+    public void onImageClick(int position) {
+        String urlImage = Objects.requireNonNull(messages.getValue()).get(position).getMessage();
+        isImageClicked.postValue(urlImage);
+    }
 }

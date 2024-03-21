@@ -12,45 +12,36 @@ import java.util.HashMap;
 
 
 public class Message {
-    private String senderId, receiverId, message;
-    private String type;
+    private String senderId, message;
+    private EType type;
     private String sendingTime;
     private Evisible visibility;
     private LocalDateTime dateObject;
 
-    private String conversationId, conversationName, conversationImage;
+    private String conversationId;
 
     public Message() {
         this.message = "";
         this.senderId = "";
-        this.receiverId = "";
-        this.type = "";
+        this.type = EType.TEXT;
         this.sendingTime = LocalDateTime.now().toString();
         this.conversationId = "";
-        this.conversationName = "";
-        this.conversationImage = "";
         this.visibility = Evisible.HIDDEN;
         this.dateObject = LocalDateTime.now();
     }
 
     public Message(String senderId,
-                   String receiverId,
                    String message,
-                   String type,
+                   EType type,
                    String sendingTime,
                    Evisible visibility,
-                   String conversionId,
-                   String conversationName,
-                   String conversationImage) {
+                   String conversionId) {
         this.senderId = senderId;
-        this.receiverId = receiverId;
         this.message = message;
         this.type = type;
         this.sendingTime = sendingTime;
         this.visibility = visibility;
         this.conversationId = conversionId;
-        this.conversationName = conversationName;
-        this.conversationImage = conversationImage;
     }
 
     public LocalDateTime getDateObject() {
@@ -67,14 +58,6 @@ public class Message {
 
     public void setSenderId(String senderId) {
         this.senderId = senderId;
-    }
-
-    public String getReceiverId() {
-        return receiverId;
-    }
-
-    public void setReceiverId(String receiverId) {
-        this.receiverId = receiverId;
     }
 
     public String getMessage() {
@@ -101,27 +84,11 @@ public class Message {
         this.conversationId = conversationId;
     }
 
-    public String getConversationName() {
-        return conversationName;
-    }
-
-    public void setConversationName(String conversationName) {
-        this.conversationName = conversationName;
-    }
-
-    public String getConversationImage() {
-        return conversationImage;
-    }
-
-    public void setConversationImage(String conversationImage) {
-        this.conversationImage = conversationImage;
-    }
-
-    public String getType() {
+    public EType getType() {
         return type;
     }
 
-    public void setType(String type) {
+    public void setType(EType type) {
         this.type = type;
     }
 
@@ -151,7 +118,7 @@ public class Message {
         conversationId = documentChange.getDocument().getString(Utils.KEY_CONVERSATION_ID);
         message = documentChange.getDocument().getString(Utils.KEY_MESSAGE);
         visibility = Evisible.valueOf(documentChange.getDocument().getString(Utils.KEY_IS_VISIBILITY));
-        type = documentChange.getDocument().getString(Utils.KEY_TYPE);
+        type = EType.valueOf(documentChange.getDocument().getString(Utils.KEY_TYPE));
         sendingTime = documentChange.getDocument().getString(Utils.KEY_SENDING_TIME);
         dateObject = getLocalDateTime(sendingTime);
     }
@@ -162,6 +129,21 @@ public class Message {
         } catch (Exception e) {
             Log.e("DateTimeConverter", "Error parsing \"" + dateTimeString + "\" : " + e.getMessage(), e);
             return null;
+        }
+    }
+
+    public enum EType {
+        TEXT("text"),
+        IMAGE("image"),
+        VIDEO("video");
+        private final String name;
+
+        EType(String name) {
+            this.name = name;
+        }
+
+        public String getName() {
+            return name;
         }
     }
 }
