@@ -119,10 +119,9 @@ public class FriendRequestsViewModel extends BaseViewModel implements FriendRequ
 
                     friendRequestRepos
                             .updateFriendRequestStatus(request.getFriendRequest().getId(), status)
-                            .addOnSuccessListener(aVoid -> {
-                            })
-                            .addOnFailureListener(e -> {
+                            .exceptionally(e -> {
                                 Log.e(TAG, "Error: " + e.getMessage(), e);
+                                return null;
                             });
                 })
                 .build();
@@ -133,13 +132,14 @@ public class FriendRequestsViewModel extends BaseViewModel implements FriendRequ
         this.isRequestsLoading.postValue(true);
         String uid = authRepos.getCurrentUid();
         friendRequestRepos.getPendingFriendRequestsByRecipientId(uid)
-                .addOnSuccessListener(friendRequests -> {
+                .thenAccept(friendRequests -> {
                     this.isRequestsLoading.postValue(false);
                     this.friendRequests.postValue(friendRequests);
                 })
-                .addOnFailureListener(e -> {
+                .exceptionally(e -> {
                     this.isRequestsLoading.postValue(false);
                     Log.e(TAG, "Error: " + e.getMessage(), e);
+                    return null;
                 });
     }
 

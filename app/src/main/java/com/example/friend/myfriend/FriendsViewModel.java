@@ -85,13 +85,14 @@ public class FriendsViewModel extends BaseViewModel implements FriendListener {
         this.isFriendsLoading.postValue(true);
         String uid = authRepos.getCurrentUid();
         friendRequestRepos.getAcceptedFriendRequests(uid)
-                .addOnSuccessListener(friendRequests -> {
+                .thenAccept(friendRequests -> {
                     this.isFriendsLoading.postValue(false);
                     this.friendRequests.postValue(friendRequests);
                 })
-                .addOnFailureListener(e -> {
+                .exceptionally(e -> {
                     this.isFriendsLoading.postValue(false);
                     Log.e(TAG, "Error: " + e.getMessage(), e);
+                    return null;
                 });
     }
 }

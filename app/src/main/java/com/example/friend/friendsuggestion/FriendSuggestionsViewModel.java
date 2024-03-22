@@ -100,10 +100,9 @@ public class FriendSuggestionsViewModel extends BaseViewModel implements FriendS
                     friendRequest.setStatus(FriendRequest.EStatus.PENDING);
                     friendRequest.setCreatedTime(new Date());
                     friendRequestRepos.addFriendRequest(friendRequest)
-                            .addOnSuccessListener(aVoid -> {
-                            })
-                            .addOnFailureListener(e -> {
+                            .exceptionally(e -> {
                                 Log.e(TAG, "Error: " + e.getMessage(), e);
+                                return null;
                             });
                 })
                 .build();
@@ -135,13 +134,14 @@ public class FriendSuggestionsViewModel extends BaseViewModel implements FriendS
         this.isSuggestionsLoading.postValue(true);
         String curUserId = authRepos.getCurrentUid();
         friendRequestRepos.getRecommendedFriends(curUserId)
-                .addOnSuccessListener(friendRequests -> {
+                .thenAccept(friendRequests -> {
                     this.isSuggestionsLoading.postValue(false);
                     this.friendSuggestions.postValue(friendRequests);
                 })
-                .addOnFailureListener(e -> {
+                .exceptionally(e -> {
                     this.isSuggestionsLoading.postValue(false);
                     Log.e(TAG, "Error: " + e.getMessage(), e);
+                    return null;
                 });
     }
 }

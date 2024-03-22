@@ -107,14 +107,15 @@ public class ProfileViewerViewModel extends BaseViewModel {
 
         friendRequestRepos
                 .getFriendRequest(friendRequestId)
-                .addOnSuccessListener(friendRequest -> {
+                .thenAccept(friendRequest -> {
                     String senderId = friendRequest.getSenderId();
                     FriendRequest.EStatus status = friendRequest.getStatus();
                     handleFriendRequestStatus(loggedUserId, senderId, status);
                 })
-                .addOnFailureListener(e -> {
+                .exceptionally(e -> {
                     this.isButtonLoading.postValue(false);
                     Log.e(TAG, e.getMessage(), e);
+                    return null;
                 });
     }
 
@@ -165,14 +166,15 @@ public class ProfileViewerViewModel extends BaseViewModel {
         isButtonLoading.postValue(true);
         friendRequestRepos
                 .updateFriendRequestStatus(friendRequestId, FriendRequest.EStatus.ACCEPTED)
-                .addOnSuccessListener(aVoid -> {
+                .thenAccept(aVoid -> {
                     successToastMessage.postValue("Accept successfully");
                     isButtonLoading.postValue(false);
                 })
-                .addOnFailureListener(e -> {
+                .exceptionally(e -> {
                     errorToastMessage.postValue("Accept unsuccessfully");
                     Log.e(TAG, "Error: " + e.getMessage(), e);
                     isButtonLoading.postValue(false);
+                    return null;
                 });
     }
 
@@ -180,14 +182,15 @@ public class ProfileViewerViewModel extends BaseViewModel {
         isButtonLoading.postValue(true);
         friendRequestRepos
                 .updateFriendRequestStatus(friendRequestId, FriendRequest.EStatus.REJECTED)
-                .addOnSuccessListener(aVoid -> {
+                .thenAccept(aVoid -> {
                     successToastMessage.postValue("Reject successfully");
                     isButtonLoading.postValue(false);
                 })
-                .addOnFailureListener(e -> {
+                .exceptionally(e -> {
                     errorToastMessage.postValue("Reject unsuccessfully");
                     Log.e(TAG, "Error: " + e.getMessage(), e);
                     isButtonLoading.postValue(false);
+                    return null;
                 });
     }
 
@@ -199,16 +202,17 @@ public class ProfileViewerViewModel extends BaseViewModel {
                     isButtonLoading.postValue(true);
                     friendRequestRepos
                             .delete(friendRequestId)
-                            .addOnSuccessListener(aUpdateVoid -> {
+                            .thenAccept(aUpdateVoid -> {
                                 friendRequestId = "";
                                 friendshipStatus.postValue(EFriendshipStatus.NOT_FRIEND);
                                 successToastMessage.postValue("Unfriend successfully");
                                 isButtonLoading.postValue(false);
                             })
-                            .addOnFailureListener(e -> {
+                            .exceptionally(e -> {
                                 errorToastMessage.postValue("Unfriend unsuccessfully");
                                 Log.e(TAG, "Error: " + e.getMessage(), e);
                                 isButtonLoading.postValue(false);
+                                return null;
                             });
                 })
                 .setNegativeButton("Cancel", null)

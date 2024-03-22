@@ -98,10 +98,11 @@ public class SentRequestsViewModel extends BaseViewModel implements SentRequestL
                     String friendRequestId = request.getFriendRequest().getId();
                     friendRequestRepos
                             .delete(friendRequestId)
-                            .addOnSuccessListener(aVoid -> {
+                            .thenAccept(aVoid -> {
                             })
-                            .addOnFailureListener(e -> {
+                            .exceptionally(e -> {
                                 Log.e(TAG, "Error: " + e.getMessage(), e);
+                                return null;
                             });
                 })
                 .build();
