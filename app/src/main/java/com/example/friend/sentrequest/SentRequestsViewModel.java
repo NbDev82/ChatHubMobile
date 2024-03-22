@@ -53,8 +53,8 @@ public class SentRequestsViewModel extends BaseViewModel implements SentRequestL
     }
 
     @Override
-    protected void onResume() {
-        super.onResume();
+    protected void onStart() {
+        super.onStart();
 
         loadSentFriendRequests();
     }
