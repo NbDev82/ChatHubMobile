@@ -18,6 +18,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.chaos.view.PinView;
 import com.example.customcontrol.customalertdialog.AlertDialogModel;
 import com.example.customcontrol.customalertdialog.CustomAlertDialog;
+import com.example.customcontrol.inputdialogfragment.CustomInputDialog;
+import com.example.customcontrol.inputdialogfragment.InputDialogModel;
 import com.example.customcontrol.snackbar.CustomSnackbar;
 import com.example.customcontrol.snackbar.SnackbarModel;
 import com.example.infrastructure.Utils;
@@ -57,6 +59,14 @@ public class CustomBindingAdapters {
         if (model != null && view.getContext() instanceof AppCompatActivity) {
             AppCompatActivity activity = (AppCompatActivity) view.getContext();
             CustomAlertDialog.show(activity, model);
+        }
+    }
+
+    @BindingAdapter("customInputDialog")
+    public static void showCustomInputDialog(View view, InputDialogModel model) {
+        if (model != null && view.getContext() instanceof AppCompatActivity) {
+            AppCompatActivity activity = (AppCompatActivity) view.getContext();
+            CustomInputDialog.show(activity, model);
         }
     }
 

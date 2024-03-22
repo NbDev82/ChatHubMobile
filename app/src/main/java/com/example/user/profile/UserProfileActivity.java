@@ -77,8 +77,6 @@ public class UserProfileActivity extends BaseActivity<UserProfileViewModel, Acti
             }
         });
 
-        viewModel.getOpenCustomInputDialog().observe(this, this::openCustomInputDialog);
-
         viewModel.getOpenDatePickerDialog().observe(this, this::openDatePickerDialog);
 
         viewModel.getOpenSingleChoiceGender().observe(this, this::openSingleChoiceGender);
@@ -108,11 +106,6 @@ public class UserProfileActivity extends BaseActivity<UserProfileViewModel, Acti
                 }
             }
     );
-
-    private void openCustomInputDialog(InputDialogModel inputDialogModel) {
-        InputDialogFragment dialog = new InputDialogFragment(inputDialogModel);
-        dialog.show(getSupportFragmentManager(), InputDialogFragment.TAG);
-    }
 
     private void openDatePickerDialog(Calendar currentDate) {
         int year = currentDate.get(Calendar.YEAR);

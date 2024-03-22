@@ -75,8 +75,6 @@ public class AccountLinkingActivity extends BaseActivity<AccountLinkingViewModel
 
         viewModel.getOpenPhoneCredentialDialog().observe(this, this::openPhoneCredentialDialog);
 
-        viewModel.getOpenInputDialog().observe(this, this::openCustomInputDialog);
-
         viewModel.getOpenGithubLinkingFlow().observe(this, this::openGithubSignInFlow);
     }
 
@@ -111,11 +109,6 @@ public class AccountLinkingActivity extends BaseActivity<AccountLinkingViewModel
         PhoneCredentialDialogFragment dialog =
                 new PhoneCredentialDialogFragment(userRepos, authRepos, model);
         dialog.show(getSupportFragmentManager(), PhoneCredentialDialogFragment.TAG);
-    }
-
-    private void openCustomInputDialog(InputDialogModel inputDialogModel) {
-        InputDialogFragment dialog = new InputDialogFragment(inputDialogModel);
-        dialog.show(getSupportFragmentManager(), InputDialogFragment.TAG);
     }
 
     private void openGithubSignInFlow(String email) {

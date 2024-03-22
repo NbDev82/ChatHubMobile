@@ -36,7 +36,6 @@ public class AccountLinkingViewModel extends BaseViewModel {
     private final MutableLiveData<Boolean> isSmsAdding = new MutableLiveData<>();
     private final MutableLiveData<EmailPasswordDialogModel> openEmailPasswordDialog = new MutableLiveData<>();
     private final MutableLiveData<PhoneCredentialDialogModel> openPhoneCredentialDialog = new MutableLiveData<>();
-    private final MutableLiveData<InputDialogModel> openInputDialog = new MutableLiveData<>();
     private final MutableLiveData<String> openGithubLinkingFlow = new MutableLiveData<>();
     private final AuthRepos authRepos;
 
@@ -86,10 +85,6 @@ public class AccountLinkingViewModel extends BaseViewModel {
 
     public LiveData<PhoneCredentialDialogModel> getOpenPhoneCredentialDialog() {
         return openPhoneCredentialDialog;
-    }
-
-    public LiveData<InputDialogModel> getOpenInputDialog() {
-        return openInputDialog;
     }
 
     public LiveData<String> getOpenGithubLinkingFlow() {
@@ -212,7 +207,7 @@ public class AccountLinkingViewModel extends BaseViewModel {
                     this.openGithubLinkingFlow.postValue(email);
                 })
                 .build();
-        openInputDialog.postValue(model);
+        inputDialogModel.postValue(model);
     }
 
     public void loginGithubSuccessfully() {
