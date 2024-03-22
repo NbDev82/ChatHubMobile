@@ -29,6 +29,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 
 public class FriendRequestReposImpl implements FriendRequestRepos {
 
@@ -221,37 +222,39 @@ public class FriendRequestReposImpl implements FriendRequestRepos {
         CompletableFuture<List<FriendRequestView>> future = new CompletableFuture<>();
 
         userRepos.getAll()
-                .continueWithTask(task -> {
-                    if (task.isSuccessful()) {
-                        List<User> users = task.getResult();
-                        List<Task<EFriendshipStatus>> tasks = new ArrayList<>();
-                        List<FriendRequestView> friendRequestViews = new ArrayList<>();
+                .thenAcceptAsync(users -> {
+                    List<Task<EFriendshipStatus>> tasks = new ArrayList<>();
+                    List<FriendRequestView> friendRequestViews = new ArrayList<>();
 
-                        users.removeIf(u -> u.getId().equals(userId));
+                    users.removeIf(u -> u.getId().equals(userId));
 
-                        for (User potentialFriend : users) {
-                            String potentialFriendId = potentialFriend.getId();
-                            Task<EFriendshipStatus> firstTask = getEFriendshipStatus(userId, potentialFriendId)
-                                    .addOnSuccessListener(firstStatus -> {
-                                        if (firstStatus == EFriendshipStatus.NOT_FOUND
-                                                || firstStatus == EFriendshipStatus.NOT_FRIEND) {
-                                            FriendRequestView friendRequestView =
-                                                    convertUserToFriendRequestView(userId, potentialFriend);
-                                            friendRequestViews.add(friendRequestView);
-                                        }
-                                    });
+                    for (User potentialFriend : users) {
+                        String potentialFriendId = potentialFriend.getId();
+                        Task<EFriendshipStatus> friendshipStatusTask = getEFriendshipStatus(userId, potentialFriendId);
+                        tasks.add(friendshipStatusTask);
 
-                            tasks.add(firstTask);
-                        }
+                        friendshipStatusTask.addOnCompleteListener(statusTask -> {
+                            if (statusTask.isSuccessful()) {
+                                EFriendshipStatus firstStatus = statusTask.getResult();
+                                if (firstStatus == EFriendshipStatus.NOT_FOUND || firstStatus == EFriendshipStatus.NOT_FRIEND) {
+                                    FriendRequestView friendRequestView = convertUserToFriendRequestView(userId, potentialFriend);
+                                    friendRequestViews.add(friendRequestView);
+                                }
+                            } else {
+                                Exception exception = statusTask.getException();
+                                future.completeExceptionally(exception);
+                            }
 
-                        return Tasks.whenAllComplete(tasks)
-                                .continueWith(task1 -> friendRequestViews);
-                    } else {
-                        throw task.getException();
+                            if (friendRequestViews.size() == tasks.size()) {
+                                future.complete(friendRequestViews);
+                            }
+                        });
                     }
                 })
-                .addOnSuccessListener(future::complete)
-                .addOnFailureListener(future::completeExceptionally);
+                .exceptionally(e -> {
+                    future.completeExceptionally(e);
+                    return null;
+                });
 
         return future;
     }
@@ -320,7 +323,7 @@ public class FriendRequestReposImpl implements FriendRequestRepos {
         TaskCompletionSource<FriendRequestView> taskCompletionSource = new TaskCompletionSource<>();
 
         userRepos.getUserByUid(senderId)
-                .addOnSuccessListener(sender -> {
+                .thenAccept(sender -> {
                     String senderImgUrl = sender.getImageUrl();
                     String senderName = sender.getFullName();
 
@@ -329,9 +332,10 @@ public class FriendRequestReposImpl implements FriendRequestRepos {
                             senderImgUrl, senderName, mutualFriends, false);
                     taskCompletionSource.setResult(friendRequestView);
                 })
-                .addOnFailureListener(e -> {
+                .exceptionally(e -> {
                     Log.e(TAG, "Error fetching user information: " + e.getMessage(), e);
-                    taskCompletionSource.setException(e);
+                    taskCompletionSource.setException((Exception) e);
+                    return null;
                 });
 
         return taskCompletionSource.getTask();
@@ -352,7 +356,7 @@ public class FriendRequestReposImpl implements FriendRequestRepos {
         TaskCompletionSource<FriendRequestView> taskCompletionSource = new TaskCompletionSource<>();
 
         userRepos.getUserByUid(recipientId)
-                .addOnSuccessListener(recipient -> {
+                .thenAccept(recipient -> {
                     String recipientImgUrl = recipient.getImageUrl();
                     String recipientName = recipient.getFullName();
 
@@ -361,9 +365,10 @@ public class FriendRequestReposImpl implements FriendRequestRepos {
                             recipientImgUrl, recipientName, mutualFriends, false);
                     taskCompletionSource.setResult(friendRequestView);
                 })
-                .addOnFailureListener(e -> {
+                .exceptionally(e -> {
                     Log.e(TAG, "Error fetching user information: " + e.getMessage(), e);
-                    taskCompletionSource.setException(e);
+                    taskCompletionSource.setException((Exception) e);
+                    return null;
                 });
 
         return taskCompletionSource.getTask();

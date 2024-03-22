@@ -23,6 +23,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.CompletableFuture;
 
 public class UserReposImpl implements UserRepos {
 
@@ -35,9 +36,9 @@ public class UserReposImpl implements UserRepos {
     }
 
     @Override
-    public Task<Void> addUser(String uid, User user) {
-        DocumentReference userRef = getUserRef()
-                .document(uid);
+    public CompletableFuture<Void> addUser(String uid, User user) {
+        DocumentReference userRef = getUserRef().document(uid);
+        CompletableFuture<Void> future = new CompletableFuture<>();
 
         Map<String, Object> data = new HashMap<>();
         data.put(EUserField.FULL_NAME.getName(), user.getFullName());
@@ -49,49 +50,70 @@ public class UserReposImpl implements UserRepos {
         data.put(EUserField.IS_ONLINE.getName(), user.isOnline());
         data.put(EUserField.IS_DELETED.getName(), user.isDeleted());
 
-        return userRef.set(data);
+        userRef.set(data)
+                .addOnSuccessListener(future::complete)
+                .addOnFailureListener(future::completeExceptionally);
+
+        return future;
     }
 
     @Override
-    public Task<Void> updateOnlineStatus(String uid, boolean isOnline) {
-        DocumentReference userRef = getUserRef()
-                .document(uid);
-        return userRef.update(EUserField.IS_ONLINE.getName(), isOnline);
+    public CompletableFuture<Void> updateOnlineStatus(String uid, boolean isOnline) {
+        DocumentReference userRef = getUserRef().document(uid);
+        CompletableFuture<Void> future = new CompletableFuture<>();
+
+        userRef.update(EUserField.IS_ONLINE.getName(), isOnline)
+                .addOnSuccessListener(future::complete)
+                .addOnFailureListener(future::completeExceptionally);
+
+        return future;
     }
 
     @Override
-    public Task<Void> updateEmail(String uid, String email) {
-        DocumentReference userRef = getUserRef()
-                .document(uid);
-        return userRef.update(EUserField.EMAIL.getName(), email);
+    public CompletableFuture<Void> updateEmail(String uid, String email) {
+        DocumentReference userRef = getUserRef().document(uid);
+        CompletableFuture<Void> future = new CompletableFuture<>();
+
+        userRef.update(EUserField.EMAIL.getName(), email)
+                .addOnSuccessListener(future::complete)
+                .addOnFailureListener(future::completeExceptionally);
+
+        return future;
     }
 
     @Override
-    public Task<Void> updatePhoneNumber(String uid, String phoneNumber) {
-        DocumentReference userRef = getUserRef()
-                .document(uid);
-        return userRef.update(EUserField.PHONE_NUMBER.getName(), phoneNumber);
+    public CompletableFuture<Void> updatePhoneNumber(String uid, String phoneNumber) {
+        DocumentReference userRef = getUserRef().document(uid);
+        CompletableFuture<Void> future = new CompletableFuture<>();
+
+        userRef.update(EUserField.PHONE_NUMBER.getName(), phoneNumber)
+                .addOnSuccessListener(future::complete)
+                .addOnFailureListener(future::completeExceptionally);
+
+        return future;
     }
 
     @Override
-    public Task<Boolean> checkUserExistsByEmail(String email) {
+    public CompletableFuture<Boolean> checkUserExistsByEmail(String email) {
         CollectionReference usersRef = getUserRef();
+        CompletableFuture<Boolean> future = new CompletableFuture<>();
 
         Query query = usersRef.whereEqualTo(EUserField.EMAIL.getName(), email);
-        return query.get()
-                .continueWith(task -> {
-                    if (task.isSuccessful()) {
-                        return !task.getResult().isEmpty();
-                    } else {
-                        throw Objects.requireNonNull(task.getException());
-                    }
-                });
+        query.get()
+                .addOnSuccessListener(querySnapshot -> {
+                    boolean exists = !querySnapshot.isEmpty();
+                    future.complete(exists);
+                })
+                .addOnFailureListener(future::completeExceptionally);
+
+        return future;
     }
 
     @Override
-    public Task<Void> updateBasicUser(String uid, User user) {
+    public CompletableFuture<Void> updateBasicUser(String uid, User user) {
         CollectionReference usersRef = getUserRef();
         DocumentReference userRef = usersRef.document(uid);
+        CompletableFuture<Void> future = new CompletableFuture<>();
 
         Map<String, Object> updates = new HashMap<>();
         updates.put(EUserField.IMAGE_URL.getName(), user.getImageUrl());
@@ -99,69 +121,79 @@ public class UserReposImpl implements UserRepos {
         updates.put(EUserField.GENDER.getName(), user.getGender());
         updates.put(EUserField.BIRTHDAY.getName(), user.getBirthday());
 
-        return userRef.update(updates);
+        userRef.update(updates)
+                .addOnSuccessListener(future::complete)
+                .addOnFailureListener(future::completeExceptionally);
+
+        return future;
     }
 
     @Override
-    public Task<Boolean> existsByPhoneNumber(String phoneNumber) {
-        TaskCompletionSource<Boolean> source = new TaskCompletionSource<>();
+    public CompletableFuture<Boolean> existsByPhoneNumber(String phoneNumber) {
+        CompletableFuture<Boolean> future = new CompletableFuture<>();
 
         CollectionReference usersRef = getUserRef();
-        Query query = usersRef.whereEqualTo(EUserField.PHONE_NUMBER.getName(), phoneNumber)
+        Query query = usersRef
+                .whereEqualTo(EUserField.PHONE_NUMBER.getName(), phoneNumber)
                 .limit(1);
-        query.get().addOnCompleteListener(task -> {
-            if (task.isSuccessful()) {
-                boolean exists = !task.getResult().isEmpty();
-                source.setResult(exists);
-            } else {
-                Exception exception = task.getException();
-                source.setException(exception);
-            }
-        });
+        query.get()
+                .addOnSuccessListener(querySnapshot -> {
+                    boolean exists = !querySnapshot.isEmpty();
+                    future.complete(exists);
+                })
+                .addOnFailureListener(future::completeExceptionally);
 
-        return source.getTask();
+        return future;
     }
 
     @Override
-    public Task<User> getUserByUid(String uid) {
+    public CompletableFuture<User> getUserByUid(String uid) {
         if (uid == null || uid.isEmpty()) {
-            return Tasks.forException(new IllegalArgumentException("Invalid UID"));
+            CompletableFuture<User> future = new CompletableFuture<>();
+            future.completeExceptionally(new IllegalArgumentException("Invalid UID"));
+            return future;
         }
 
-        return getUserRef()
-                .document(uid)
-                .get()
-                .continueWith(task -> {
-                    if (task.isSuccessful()) {
-                        DocumentSnapshot document = task.getResult();
+        CompletableFuture<User> future = new CompletableFuture<>();
+        getUserRef().document(uid)
+            .get()
+            .addOnCompleteListener(task -> {
+                if (task.isSuccessful()) {
+                    DocumentSnapshot document = task.getResult();
+                    if (document.exists()) {
                         User user = convertDocumentToModel(document);
-                        if (user == null) {
-                            throw new UserNotFoundException("Could not find any user with uid=" + uid);
-                        }
-                        return user;
+                        future.complete(user);
                     } else {
-                        throw task.getException();
+                        future.completeExceptionally(new UserNotFoundException("Could not find any user with uid=" + uid));
                     }
-                });
+                } else {
+                    future.completeExceptionally(task.getException());
+                }
+            });
+
+        return future;
     }
 
     @Override
-    public Task<List<User>> getAll() {
-        return getUserRef()
-                .get()
-                .continueWith(task -> {
-                    if (task.isSuccessful()) {
-                        QuerySnapshot querySnapshot = task.getResult();
-                        List<User> users = new ArrayList<>();
-                        for (QueryDocumentSnapshot documentSnapshot : querySnapshot) {
-                            User user = convertDocumentToModel(documentSnapshot);
-                            users.add(user);
-                        }
-                        return users;
-                    } else {
-                        throw task.getException();
+    public CompletableFuture<List<User>> getAll() {
+        CompletableFuture<List<User>> future = new CompletableFuture<>();
+
+        getUserRef().get()
+            .addOnCompleteListener(task -> {
+                if (task.isSuccessful()) {
+                    QuerySnapshot querySnapshot = task.getResult();
+                    List<User> users = new ArrayList<>();
+                    for (QueryDocumentSnapshot documentSnapshot : querySnapshot) {
+                        User user = convertDocumentToModel(documentSnapshot);
+                        users.add(user);
                     }
-                });
+                    future.complete(users);
+                } else {
+                    future.completeExceptionally(task.getException());
+                }
+            });
+
+        return future;
     }
 
     private User convertDocumentToModel(DocumentSnapshot documentSnapshot) {

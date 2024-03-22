@@ -133,7 +133,7 @@ public class PhoneCredentialDialogFragment extends DialogFragment {
         setPhoneNumberInputInProgress(true);
         String phoneNumber = getFullPhoneNumber();
         userRepos.existsByPhoneNumber(phoneNumber)
-                .addOnSuccessListener(isExists -> {
+                .thenAccept(isExists -> {
                     setPhoneNumberInputInProgress(false);
                     if (isExists) {
                         tilLocalNumber.setError("This phone number is already in use");
@@ -144,10 +144,11 @@ public class PhoneCredentialDialogFragment extends DialogFragment {
                         llVerifyOtp.setVisibility(View.VISIBLE);
                     }
                 })
-                .addOnFailureListener(e -> {
+                .exceptionally(e -> {
                     setPhoneNumberInputInProgress(false);
                     CustomToast.showErrorToast(requireActivity(), "Verify phone number unsuccessfully");
                     Log.e(TAG, "Error: ", e);
+                    return null;
                 });
     }
 

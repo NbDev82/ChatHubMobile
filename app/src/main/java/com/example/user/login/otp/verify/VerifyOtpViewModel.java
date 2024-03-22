@@ -131,15 +131,16 @@ public class VerifyOtpViewModel extends BaseViewModel {
     private void signIn(PhoneAuthCredential phoneCredential) {
         this.isOtpVerifying.postValue(true);
         authRepos.signInWithCredential(phoneCredential)
-                .addOnSuccessListener(aVoid -> {
+                .thenAccept(aVoid -> {
                     this.isOtpVerifying.postValue(false);
                     successToastMessage.postValue("Verify successfully");
                     new Handler().postDelayed(this::navigateToHome, 200);
                 })
-                .addOnFailureListener(e -> {
+                .exceptionally(e -> {
                     this.isOtpVerifying.postValue(false);
                     errorToastMessage.postValue("Verify unsuccessfully");
                     Log.e(PhoneNumberInputActivity.class.getSimpleName(), "Error: ", e);
+                    return null;
                 });
     }
 

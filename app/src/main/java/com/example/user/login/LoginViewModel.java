@@ -87,7 +87,7 @@ public class LoginViewModel extends BaseViewModel {
 
         SignInRequest signInRequest = new SignInRequest(email, password);
         authRepos.signInWithEmailPassword(signInRequest)
-                .addOnSuccessListener(aVoid -> {
+                .thenAccept(aVoid -> {
                     isLogging.postValue(false);
                     successToastMessage.postValue("Login successfully");
                     new Handler().postDelayed(new Runnable() {
@@ -97,7 +97,7 @@ public class LoginViewModel extends BaseViewModel {
                         }
                     }, 100);
                 })
-                .addOnFailureListener(e -> {
+                .exceptionally(e -> {
                     errorToastMessage.postValue(e.getMessage());
                     new Handler().postDelayed(new Runnable() {
                         @Override
@@ -106,6 +106,7 @@ public class LoginViewModel extends BaseViewModel {
                         }
                     }, 500);
                     Log.e(TAG, "Error: " + e);
+                    return null;
                 });
     }
 

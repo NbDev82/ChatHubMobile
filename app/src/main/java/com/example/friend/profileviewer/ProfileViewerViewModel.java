@@ -85,15 +85,16 @@ public class ProfileViewerViewModel extends BaseViewModel {
     public void fetchUserProfile(String userId) {
         isUserInitializing.postValue(true);
         userRepos.getUserByUid(userId)
-                .addOnSuccessListener(user -> {
+                .thenAccept(user -> {
                     setUser(user);
                     new Handler().postDelayed(() -> {
                         isUserInitializing.postValue(false);
                     }, 200);
                 })
-                .addOnFailureListener(e -> {
+                .exceptionally(e -> {
                     Log.e(TAG, e.getMessage(), e);
                     openUserNotFoundDialog();
+                    return null;
                 });
     }
 

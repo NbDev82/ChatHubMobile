@@ -50,11 +50,12 @@ public class EmailDetailsViewModel extends BaseViewModel {
         this.email.postValue(email);
 
         authRepos.checkCurrentEmailVerificationStatus()
-                .addOnSuccessListener(isEmailVerified -> {
+                .thenAccept(isEmailVerified -> {
                     this.isEmailVerified.postValue(isEmailVerified);
                 })
-                .addOnFailureListener(e -> {
+                .exceptionally(e -> {
                     Log.e(TAG, "Error: ", e);
+                    return null;
                 });
 
         this.isRefreshing.postValue(false);
@@ -66,11 +67,13 @@ public class EmailDetailsViewModel extends BaseViewModel {
 
     public void sendEmailVerification() {
         authRepos.sendCurrentUserEmailVerification()
-                .addOnSuccessListener(aVoid -> {
+                .thenAccept(aVoid -> {
                     successToastMessage.postValue("Email verification sent successfully");
-                }).addOnFailureListener(e -> {
+                })
+                .exceptionally(e -> {
                     errorToastMessage.postValue("Failed to send");
                     Log.e(TAG, "Error: ", e);
+                    return null;
                 });
     }
 }

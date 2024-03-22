@@ -189,15 +189,16 @@ public class UserProfileViewModel extends BaseViewModel {
 
         String uid = authRepos.getCurrentUid();
         userRepos.updateBasicUser(uid, originalUser)
-                .addOnSuccessListener(aVoid -> {
+                .thenAccept(aVoid -> {
                     successToastMessage.postValue("Update successfully");
                     isDataChanged.postValue(false);
                     isUserUpdating.postValue(false);
                 })
-                .addOnFailureListener(e -> {
+                .exceptionally(e -> {
                     errorToastMessage.postValue("Update unsuccessfully");
                     isUserUpdating.postValue(false);
                     Log.e(TAG, "Error" + e);
+                    return null;
                 });
     }
 
@@ -210,7 +211,7 @@ public class UserProfileViewModel extends BaseViewModel {
     private void fetchUserProfile() {
         isUserInitializing.postValue(true);
         authRepos.getCurrentUser()
-                .addOnSuccessListener(user -> {
+                .thenAccept(user -> {
                     if (user != null) {
                         setUser(user);
 
@@ -219,9 +220,10 @@ public class UserProfileViewModel extends BaseViewModel {
                         }, 500);
                     }
                 })
-                .addOnFailureListener(e -> {
+                .exceptionally(e -> {
                     Log.e(TAG, "Error: " + e);
                     isUserInitializing.postValue(true);
+                    return null;
                 });
     }
 

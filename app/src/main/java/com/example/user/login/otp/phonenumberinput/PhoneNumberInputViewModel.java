@@ -66,7 +66,7 @@ public class PhoneNumberInputViewModel extends BaseViewModel {
         this.isPhoneVerifying.postValue(true);
         String phoneNumber = getFullPhoneNumber();
         userRepos.existsByPhoneNumber(phoneNumber)
-                .addOnSuccessListener(isExists -> {
+                .thenAccept(isExists -> {
                     this.isPhoneVerifying.postValue(false);
                     if (isExists) {
                         navigateToVerifyOtpWithPhoneNumber();
@@ -74,10 +74,11 @@ public class PhoneNumberInputViewModel extends BaseViewModel {
                         phoneNumberError.postValue("Your phone number is not sign up. Let's sign up");
                     }
                 })
-                .addOnFailureListener(e -> {
+                .exceptionally(e -> {
                     this.isPhoneVerifying.postValue(false);
                     errorToastMessage.postValue("Verify phone number unsuccessfully");
                     Log.e(TAG, "Error: ", e);
+                    return null;
                 });
     }
 

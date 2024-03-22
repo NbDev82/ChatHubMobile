@@ -59,7 +59,7 @@ public class GithubAuthViewModel extends BaseViewModel {
         Activity activity = activityRef.get();
         if (activity != null) {
             authRepos.signInWithGithub(activity, email)
-                    .addOnSuccessListener(authResult -> {
+                    .thenAccept(aVoid -> {
                         isLogging.postValue(false);
                         successToastMessage.postValue("Login successfully");
                         new Handler().postDelayed(new Runnable() {
@@ -69,10 +69,11 @@ public class GithubAuthViewModel extends BaseViewModel {
                             }
                         }, 500);
                     })
-                    .addOnFailureListener(e -> {
+                    .exceptionally(e -> {
                         isLogging.postValue(false);
                         errorToastMessage.postValue(e.getMessage());
                         Log.e(TAG, "Error: ", e);
+                        return null;
                     });
         }
     }

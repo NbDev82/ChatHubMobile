@@ -113,9 +113,12 @@ public class AccountLinkingActivity extends BaseActivity<AccountLinkingViewModel
 
     private void openGithubSignInFlow(String email) {
         authRepos.linkGithubWithCurrentUser(AccountLinkingActivity.this, email)
-                .addOnSuccessListener(authResult -> {
+                .thenAccept(authResult -> {
                     viewModel.loginGithubSuccessfully();
                 })
-                .addOnFailureListener(viewModel::loginGithubUnSuccessfully);
+                .exceptionally(e -> {
+                    viewModel.loginGithubUnSuccessfully((Exception) e);
+                    return null;
+                });
     }
 }

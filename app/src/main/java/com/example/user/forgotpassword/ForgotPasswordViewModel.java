@@ -47,15 +47,16 @@ public class ForgotPasswordViewModel extends BaseViewModel {
 
         this.email.postValue(email.trim());
         authRepos.sendPasswordResetEmail(email)
-                .addOnSuccessListener(aVoid -> {
+                .thenAccept(aVoid -> {
                     successToastMessage.postValue("Password reset link sent to your Email");
                     isSending.postValue(false);
                     new Handler().postDelayed(this::navigateToLogin, 500);
                 })
-                .addOnFailureListener(e -> {
+                .exceptionally(e -> {
                     errorToastMessage.postValue("Failed to reset password");
                     isSending.postValue(false);
                     Log.e(TAG, "Error: " + e);
+                    return null;
                 });
     }
 }

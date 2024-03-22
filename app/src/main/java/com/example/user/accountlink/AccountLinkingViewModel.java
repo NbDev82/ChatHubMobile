@@ -104,7 +104,7 @@ public class AccountLinkingViewModel extends BaseViewModel {
         isGithubAccountLinked.postValue(false);
 
         authRepos.fetchSignInMethods()
-                .addOnSuccessListener(providerIds -> {
+                .thenAccept(providerIds -> {
                     for (String providerId : providerIds) {
                         switch (providerId) {
                             case EmailAuthProvider.PROVIDER_ID:
@@ -122,8 +122,9 @@ public class AccountLinkingViewModel extends BaseViewModel {
                         }
                     }
                 })
-                .addOnFailureListener(e -> {
+                .exceptionally(e -> {
                     Log.e(TAG, "Error: ", e);
+                    return null;
                 });
     }
 
@@ -146,15 +147,16 @@ public class AccountLinkingViewModel extends BaseViewModel {
                     }
 
                     authRepos.updatePassword(password)
-                            .addOnSuccessListener(aVoid -> {
+                            .thenAccept(aVoid -> {
                                 loadProviders();
                                 isInAppAdding.postValue(false);
                                 successToastMessage.postValue("Add password successfully");
                             })
-                            .addOnFailureListener(e -> {
+                            .exceptionally(e -> {
                                 errorToastMessage.postValue("Add password unsuccessfully");
                                 isInAppAdding.postValue(false);
                                 Log.e(TAG, "Error during in-App password linking: " + e.getMessage(), e);
+                                return null;
                             });
                 })
                 .build();
@@ -176,15 +178,16 @@ public class AccountLinkingViewModel extends BaseViewModel {
             String idToken = account.getIdToken();
             AuthCredential googleCredential = GoogleAuthProvider.getCredential(idToken, null);
             authRepos.linkCurrentUserWithCredential(googleCredential)
-                    .addOnSuccessListener(authResult -> {
+                    .thenAccept(authResult -> {
                         loadProviders();
                         successToastMessage.postValue("Link google account successfully");
                         isGoogleAdding.postValue(false);
                     })
-                    .addOnFailureListener(e -> {
+                    .exceptionally(e -> {
                         isGoogleAdding.postValue(false);
                         errorToastMessage.postValue("Link google account unsuccessfully");
                         Log.e(TAG, "Error during Google linking: " + e.getMessage(), e);
+                        return null;
                     });
         } catch (ApiException e) {
             errorToastMessage.postValue("Link google account unsuccessfully");
@@ -227,15 +230,16 @@ public class AccountLinkingViewModel extends BaseViewModel {
                 .setVerifyButtonClickListener(phoneAuthCredential -> {
                     isSmsAdding.postValue(true);
                     authRepos.linkCurrentUserWithPhoneAuthCredential(phoneAuthCredential)
-                            .addOnSuccessListener(authResult -> {
+                            .thenAccept(authResult -> {
                                 loadProviders();
                                 isSmsAdding.postValue(false);
                                 successToastMessage.postValue("Link phone number successfully");
                             })
-                            .addOnFailureListener(e -> {
+                            .exceptionally(e -> {
                                 isSmsAdding.postValue(false);
                                 errorToastMessage.postValue("Link phone number unsuccessfully");
                                 Log.e(TAG, "Error during SMS linking: " + e.getMessage(), e);
+                                return null;
                             });
                 })
                 .build();
