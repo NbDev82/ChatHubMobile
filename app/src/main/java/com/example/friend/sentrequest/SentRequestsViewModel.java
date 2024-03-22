@@ -116,13 +116,14 @@ public class SentRequestsViewModel extends BaseViewModel implements SentRequestL
         this.isSentRequestsLoading.postValue(true);
         String curUserId = authRepos.getCurrentUid();
         friendRequestRepos.getPendingFriendRequestsBySenderId(curUserId)
-                .addOnSuccessListener(friendRequests -> {
+                .thenAccept(friendRequests -> {
                     this.isSentRequestsLoading.postValue(false);
                     this.sentFriendRequests.postValue(friendRequests);
                 })
-                .addOnFailureListener(e -> {
+                .exceptionally(e -> {
                     this.isSentRequestsLoading.postValue(false);
                     Log.e(TAG, "Error: " + e.getMessage(), e);
+                    return null;
                 });
     }
 }

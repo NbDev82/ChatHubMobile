@@ -66,7 +66,7 @@ public class FriendSuggestionsViewModel extends BaseViewModel implements FriendS
         FriendRequest friendRequest = requestView.getFriendRequest();
         Bundle data = new Bundle();
         data.putString(Utils.EXTRA_SELECTED_USER_ID, friendRequest.getSenderId());
-        data.putString(Utils.EXTRA_SELECTED_FRIEND_REQUEST_ID, friendRequest.getId());
+        data.putString(Utils.EXTRA_SELECTED_FRIEND_REQUEST_ID, null);
         this.navigateToProfileViewer.postValue(data);
     }
 

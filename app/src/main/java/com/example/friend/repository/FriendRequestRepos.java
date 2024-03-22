@@ -5,9 +5,10 @@ import com.example.friend.FriendRequestView;
 import com.google.android.gms.tasks.Task;
 
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 public interface FriendRequestRepos {
-    Task<List<FriendRequestView>> getPendingFriendRequestsBySenderId(String senderId);
+    CompletableFuture<List<FriendRequestView>> getPendingFriendRequestsBySenderId(String senderId);
 
     Task<List<FriendRequestView>> getPendingFriendRequestsByRecipientId(String recipientId);
 

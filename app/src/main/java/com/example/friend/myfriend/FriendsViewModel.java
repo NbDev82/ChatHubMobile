@@ -62,7 +62,12 @@ public class FriendsViewModel extends BaseViewModel implements FriendListener {
         FriendRequestView requestView = this.friendRequests.getValue().get(position);
         FriendRequest friendRequest = requestView.getFriendRequest();
         Bundle data = new Bundle();
-        data.putString(Utils.EXTRA_SELECTED_USER_ID, friendRequest.getSenderId());
+
+        String senderId = friendRequest.getSenderId();
+        String recipientId = friendRequest.getRecipientId();
+        String currentUserId = authRepos.getCurrentUid();
+        String selectedUserId = senderId.equals(currentUserId) ? recipientId : senderId;
+        data.putString(Utils.EXTRA_SELECTED_USER_ID, selectedUserId);
         data.putString(Utils.EXTRA_SELECTED_FRIEND_REQUEST_ID, friendRequest.getId());
         this.navigateToProfileViewer.postValue(data);
     }

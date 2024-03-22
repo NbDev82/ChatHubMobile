@@ -35,6 +35,7 @@ public class ProfileViewerViewModel extends BaseViewModel {
     private final UserRepos userRepos;
     private final AuthRepos authRepos;
     private final FriendRequestRepos friendRequestRepos;
+    private String loggedUserId = "";
     private String displayedUserId = "";
     private String friendRequestId = "";
 
@@ -82,7 +83,11 @@ public class ProfileViewerViewModel extends BaseViewModel {
         this.friendRequestRepos = friendRequestRepos;
     }
 
-    public void fetchUserInformation(String userId) {
+    public void fetchLoggedUserId() {
+        this.loggedUserId = authRepos.getCurrentUid();
+    }
+
+    public void fetchUserProfile(String userId) {
         isUserInitializing.postValue(true);
         userRepos.getUserByUid(userId)
                 .addOnSuccessListener(user -> {
@@ -105,13 +110,12 @@ public class ProfileViewerViewModel extends BaseViewModel {
             return;
         }
 
-        String curUserId = authRepos.getCurrentUid();
         friendRequestRepos
                 .getFriendRequest(friendRequestId)
                 .addOnSuccessListener(friendRequest -> {
                     String senderId = friendRequest.getSenderId();
                     FriendRequest.EStatus status = friendRequest.getStatus();
-                    handleFriendRequestStatus(curUserId, senderId, status);
+                    handleFriendRequestStatus(loggedUserId, senderId, status);
                 })
                 .addOnFailureListener(e -> {
                     this.isButtonLoading.postValue(false);

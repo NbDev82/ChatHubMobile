@@ -51,6 +51,7 @@ public class ProfileViewerActivity extends BaseActivity<ProfileViewerViewModel, 
     protected void onStart() {
         super.onStart();
 
+        viewModel.fetchLoggedUserId();
         extractIntentData();
     }
 
@@ -61,7 +62,7 @@ public class ProfileViewerActivity extends BaseActivity<ProfileViewerViewModel, 
             String selectedFriendRequestId = extras.getString(Utils.EXTRA_SELECTED_FRIEND_REQUEST_ID, "");
             viewModel.setDisplayedUserId(selectedUserId);
             viewModel.setFriendRequestId(selectedFriendRequestId);
-            viewModel.fetchUserInformation(selectedUserId);
+            viewModel.fetchUserProfile(selectedUserId);
             viewModel.fetchFriendRequestStatus();
         }
     }
