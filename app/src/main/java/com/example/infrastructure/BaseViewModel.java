@@ -1,14 +1,17 @@
 package com.example.infrastructure;
 
+import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
+import com.example.customcontrol.snackbar.SnackbarModel;
 import com.example.user.repository.AuthRepos;
 
 public abstract class BaseViewModel extends ViewModel {
 
     protected final MutableLiveData<String> successToastMessage = new MutableLiveData<>();
     protected final MutableLiveData<String> errorToastMessage = new MutableLiveData<>();
+    protected final MutableLiveData<SnackbarModel> snackbarModel = new MutableLiveData<>();
 
     protected AuthRepos authRepos;
 
@@ -18,6 +21,10 @@ public abstract class BaseViewModel extends ViewModel {
 
     public MutableLiveData<String> getErrorToastMessage() {
         return errorToastMessage;
+    }
+
+    public LiveData<SnackbarModel> getSnackbarModel() {
+        return snackbarModel;
     }
 
     public BaseViewModel() {

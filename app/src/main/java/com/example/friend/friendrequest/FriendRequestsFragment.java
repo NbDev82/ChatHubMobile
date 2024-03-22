@@ -65,6 +65,12 @@ public class FriendRequestsFragment extends BaseFragment<FriendRequestsViewModel
             }
         });
 
+        viewModel.getNavigateToSentRequests().observe(requireActivity(), navigate -> {
+            if (navigate) {
+                navigationManager.getNavigateToSentRequests(EAnimationType.FADE_IN);
+            }
+        });
+
         viewModel.getNavigateToProfileViewer().observe(requireActivity(), data -> {
             navigationManager.navigateToProfileViewer(data, EAnimationType.FADE_OUT);
         });

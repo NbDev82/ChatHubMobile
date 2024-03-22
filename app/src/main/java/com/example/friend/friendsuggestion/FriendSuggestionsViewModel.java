@@ -25,17 +25,12 @@ public class FriendSuggestionsViewModel extends BaseViewModel implements FriendS
 
     private static final String TAG = FriendSuggestionsViewModel.class.getSimpleName();
 
-    private final MutableLiveData<SnackbarModel> snackbarModel = new MutableLiveData<>();
     private final MutableLiveData<Boolean> navigateBack = new MutableLiveData<>();
     private final MutableLiveData<Bundle> navigateToProfileViewer = new MutableLiveData<>();
     private final MutableLiveData<List<FriendRequestView>> friendSuggestions = new MutableLiveData<>(new ArrayList<>());
     private final MutableLiveData<Boolean> isSuggestionsLoading = new MutableLiveData<>();
     private final AuthRepos authRepos;
     private final FriendRequestRepos friendRequestRepos;
-
-    public LiveData<SnackbarModel> getSnackbarModel() {
-        return snackbarModel;
-    }
 
     public LiveData<Boolean> getNavigateBack() {
         return navigateBack;

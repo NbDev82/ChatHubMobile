@@ -131,37 +131,6 @@ public class FriendRequestReposImpl implements FriendRequestRepos {
         }
     }
 
-    private Task<List<FriendRequestView>> convertModelsToModelViews(List<FriendRequest> friendRequests) {
-        List<Task<FriendRequestView>> conversionTasks = new ArrayList<>();
-        for (FriendRequest friendRequest : friendRequests) {
-            conversionTasks.add(convertModelToModelView(friendRequest));
-        }
-        return Tasks.whenAllSuccess(conversionTasks);
-    }
-
-    private Task<FriendRequestView> convertModelToModelView(@NotNull FriendRequest friendRequest) {
-        String senderId = friendRequest.getSenderId();
-        String recipientId = friendRequest.getRecipientId();
-
-        TaskCompletionSource<FriendRequestView> taskCompletionSource = new TaskCompletionSource<>();
-
-        userRepos.getUserByUid(senderId)
-                .addOnSuccessListener(user -> {
-                    String senderImgUrl = user.getImageUrl();
-                    String senderName = user.getFullName();
-
-                    int mutualFriends = getNumberOfMutualFriends(senderId, recipientId);
-                    FriendRequestView friendRequestView = new FriendRequestView(friendRequest,
-                            senderImgUrl, senderName, mutualFriends, false);
-                    taskCompletionSource.setResult(friendRequestView);
-                })
-                .addOnFailureListener(e -> {
-                    Log.e(TAG, "Error fetching user information: " + e.getMessage(), e);
-                    taskCompletionSource.setException(e);
-                });
-
-        return taskCompletionSource.getTask();
-    }
 
     @Override
     public Task<FriendRequest.EStatus> getFriendRequestStatus(String senderId, String recipientId) {
@@ -343,6 +312,38 @@ public class FriendRequestReposImpl implements FriendRequestRepos {
         return friendRequestsRef
                 .document(friendRequestId)
                 .delete();
+    }
+
+    private Task<List<FriendRequestView>> convertModelsToModelViews(List<FriendRequest> friendRequests) {
+        List<Task<FriendRequestView>> conversionTasks = new ArrayList<>();
+        for (FriendRequest friendRequest : friendRequests) {
+            conversionTasks.add(convertModelToModelView(friendRequest));
+        }
+        return Tasks.whenAllSuccess(conversionTasks);
+    }
+
+    private Task<FriendRequestView> convertModelToModelView(@NotNull FriendRequest friendRequest) {
+        String senderId = friendRequest.getSenderId();
+        String recipientId = friendRequest.getRecipientId();
+
+        TaskCompletionSource<FriendRequestView> taskCompletionSource = new TaskCompletionSource<>();
+
+        userRepos.getUserByUid(senderId)
+                .addOnSuccessListener(user -> {
+                    String senderImgUrl = user.getImageUrl();
+                    String senderName = user.getFullName();
+
+                    int mutualFriends = getNumberOfMutualFriends(senderId, recipientId);
+                    FriendRequestView friendRequestView = new FriendRequestView(friendRequest,
+                            senderImgUrl, senderName, mutualFriends, false);
+                    taskCompletionSource.setResult(friendRequestView);
+                })
+                .addOnFailureListener(e -> {
+                    Log.e(TAG, "Error fetching user information: " + e.getMessage(), e);
+                    taskCompletionSource.setException(e);
+                });
+
+        return taskCompletionSource.getTask();
     }
 
     private int getNumberOfMutualFriends(String firstUserId, String secondUserId) {

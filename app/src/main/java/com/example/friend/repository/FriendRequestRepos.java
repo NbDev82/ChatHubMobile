@@ -2,9 +2,7 @@ package com.example.friend.repository;
 
 import com.example.friend.FriendRequest;
 import com.example.friend.FriendRequestView;
-import com.example.user.User;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.firestore.CollectionReference;
 
 import java.util.List;
 

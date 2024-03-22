@@ -51,4 +51,6 @@ public interface NavigationManager {
     void navigateToChangePasscode(EAnimationType animationType);
 
     void navigateToFriendSuggestions(EAnimationType animationType);
+
+    void getNavigateToSentRequests(EAnimationType animationType);
 }

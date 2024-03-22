@@ -26,7 +26,6 @@ public class FriendsViewModel extends BaseViewModel implements FriendListener {
     private final MutableLiveData<Bundle> navigateToProfileViewer = new MutableLiveData<>();
     private final MutableLiveData<List<FriendRequestView>> friendRequests = new MutableLiveData<>(new ArrayList<>());
     private final MutableLiveData<Boolean> isFriendsLoading = new MutableLiveData<>(true);
-    private MutableLiveData<SnackbarModel> snackbarModel = new MutableLiveData<>();
     private final AuthRepos authRepos;
     private final FriendRequestRepos friendRequestRepos;
 
@@ -44,10 +43,6 @@ public class FriendsViewModel extends BaseViewModel implements FriendListener {
 
     public LiveData<Boolean> getIsFriendsLoading() {
         return isFriendsLoading;
-    }
-
-    public LiveData<SnackbarModel> getSnackbarModel() {
-        return snackbarModel;
     }
 
     public FriendsViewModel(AuthRepos authRepos, FriendRequestRepos friendRequestRepos) {
