@@ -24,7 +24,6 @@ public class ProfileViewerViewModel extends BaseViewModel {
     private static final String TAG = ProfileViewerViewModel.class.getSimpleName();
 
     private final MutableLiveData<Boolean> navigateBack = new MutableLiveData<>();
-    private final MutableLiveData<AlertDialogModel> openCustomAlertDialog = new MutableLiveData<>();
     private final MutableLiveData<Bitmap> userImageBitmap = new MutableLiveData<>();
     private final MutableLiveData<String> fullName = new MutableLiveData<>();
     private final MutableLiveData<EGender> gender = new MutableLiveData<>();
@@ -41,10 +40,6 @@ public class ProfileViewerViewModel extends BaseViewModel {
 
     public LiveData<Boolean> getNavigateBack() {
         return navigateBack;
-    }
-
-    public LiveData<AlertDialogModel> getOpenCustomAlertDialog() {
-        return openCustomAlertDialog;
     }
 
     public LiveData<Bitmap> getUserImageBitmap() {
@@ -151,7 +146,7 @@ public class ProfileViewerViewModel extends BaseViewModel {
                 })
                 .setNegativeButton("Cancel", null)
                 .build();
-        openCustomAlertDialog.postValue(model);
+        alertDialogModel.postValue(model);
     }
 
     public void recallRequest() {
@@ -163,7 +158,7 @@ public class ProfileViewerViewModel extends BaseViewModel {
                 })
                 .setNegativeButton("Cancel", null)
                 .build();
-        openCustomAlertDialog.postValue(model);
+        alertDialogModel.postValue(model);
     }
 
     public void acceptFriendRequest() {
@@ -218,7 +213,7 @@ public class ProfileViewerViewModel extends BaseViewModel {
                 })
                 .setNegativeButton("Cancel", null)
                 .build();
-        openCustomAlertDialog.postValue(model);
+        alertDialogModel.postValue(model);
     }
 
     private void setUser(User user) {
@@ -238,7 +233,7 @@ public class ProfileViewerViewModel extends BaseViewModel {
                     navigateBack();
                 })
                 .build();
-        openCustomAlertDialog.postValue(model);
+        alertDialogModel.postValue(model);
     }
 
     private void handleFriendRequestStatus(String currentUserId,

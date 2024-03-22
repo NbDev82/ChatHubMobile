@@ -11,10 +11,13 @@ import android.widget.ListView;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.BindingAdapter;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.chaos.view.PinView;
+import com.example.customcontrol.customalertdialog.AlertDialogModel;
+import com.example.customcontrol.customalertdialog.CustomAlertDialog;
 import com.example.customcontrol.snackbar.CustomSnackbar;
 import com.example.customcontrol.snackbar.SnackbarModel;
 import com.example.infrastructure.Utils;
@@ -46,6 +49,14 @@ public class CustomBindingAdapters {
         if (model != null && view.getContext() instanceof Activity) {
             Activity activity = (Activity) view.getContext();
             CustomSnackbar.show(activity, model);
+        }
+    }
+
+    @BindingAdapter("customAlertDialog")
+    public static void showCustomAlertDialog(View view, AlertDialogModel model) {
+        if (model != null && view.getContext() instanceof AppCompatActivity) {
+            AppCompatActivity activity = (AppCompatActivity) view.getContext();
+            CustomAlertDialog.show(activity, model);
         }
     }
 

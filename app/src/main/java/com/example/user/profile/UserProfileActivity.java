@@ -81,8 +81,6 @@ public class UserProfileActivity extends BaseActivity<UserProfileViewModel, Acti
 
         viewModel.getOpenDatePickerDialog().observe(this, this::openDatePickerDialog);
 
-        viewModel.getOpenCustomAlertDialog().observe(this, this::openCustomAlertDialog);
-
         viewModel.getOpenSingleChoiceGender().observe(this, this::openSingleChoiceGender);
     }
 
@@ -131,11 +129,6 @@ public class UserProfileActivity extends BaseActivity<UserProfileViewModel, Acti
         }, year, month, dayOfMonth);
 
         datePickerDialog.show();
-    }
-
-    private void openCustomAlertDialog(AlertDialogModel alertDialogModel) {
-        AlertDialogFragment dialog = new AlertDialogFragment(alertDialogModel);
-        dialog.show(getSupportFragmentManager(), AlertDialogFragment.TAG);
     }
 
     private void openSingleChoiceGender(int selectedItem) {

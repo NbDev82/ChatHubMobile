@@ -21,7 +21,7 @@ public class LockAppViewModel extends BaseViewModel {
     private final MutableLiveData<Boolean> isFingerprintUnlockChecked = new MutableLiveData<>();
     private final MutableLiveData<EAutoLockTime> selectedAutoLockTime = new MutableLiveData<>();
     private final MutableLiveData<Integer> openSingleChoiceAutoLockTime = new MutableLiveData<>();
-    private final MutableLiveData<AlertDialogModel> openCustomAlertDialog = new MutableLiveData<>();
+
     private final PreferenceManagerRepos preferenceManagerRepos;
     private int selectedAutoLockTimeIndex = 0;
 
@@ -60,10 +60,6 @@ public class LockAppViewModel extends BaseViewModel {
 
     public LiveData<Integer> getOpenSingleChoiceAutoLockTime() {
         return openSingleChoiceAutoLockTime;
-    }
-
-    public LiveData<AlertDialogModel> getOpenCustomAlertDialog() {
-        return openCustomAlertDialog;
     }
 
     public void setSelectedAutoLockTime(String selectedAutoLockTimeStr) {
@@ -135,7 +131,7 @@ public class LockAppViewModel extends BaseViewModel {
                 .setPositiveButton("Ok", aVoid -> turnOffPasscode())
                 .setNegativeButton("Cancel", null)
                 .build();
-        openCustomAlertDialog.postValue(model);
+        alertDialogModel.postValue(model);
     }
 
     private void turnOffPasscode() {

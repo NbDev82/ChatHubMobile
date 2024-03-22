@@ -34,7 +34,6 @@ public class UserProfileViewModel extends BaseViewModel {
     private final MutableLiveData<Boolean> openImagePicker = new MutableLiveData<>();
     private final MutableLiveData<InputDialogModel> openInputDialog = new MutableLiveData<>();
     private final MutableLiveData<Calendar> openDatePickerDialog = new MutableLiveData<>();
-    private final MutableLiveData<AlertDialogModel> openCustomAlertDialog = new MutableLiveData<>();
     private final MutableLiveData<Integer> openSingleChoiceGender = new MutableLiveData<>();
     private final UserRepos userRepos;
     private User originalUser;
@@ -99,10 +98,6 @@ public class UserProfileViewModel extends BaseViewModel {
 
     public MutableLiveData<Calendar> getOpenDatePickerDialog() {
         return openDatePickerDialog;
-    }
-
-    public LiveData<AlertDialogModel> getOpenCustomAlertDialog() {
-        return openCustomAlertDialog;
     }
 
     public LiveData<Integer> getOpenSingleChoiceGender() {
@@ -193,7 +188,7 @@ public class UserProfileViewModel extends BaseViewModel {
                     resetAllFields();
                 })
                 .build();
-        openCustomAlertDialog.postValue(model);
+        alertDialogModel.postValue(model);
     }
 
     public void updateUserToFirebase() {

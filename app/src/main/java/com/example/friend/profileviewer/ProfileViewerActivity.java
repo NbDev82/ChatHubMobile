@@ -71,12 +71,5 @@ public class ProfileViewerActivity extends BaseActivity<ProfileViewerViewModel, 
         viewModel.getNavigateBack().observe(this, navigate -> {
             navigationManager.navigateBack(null, EAnimationType.FADE_OUT);
         });
-
-        viewModel.getOpenCustomAlertDialog().observe(this, this::openCustomAlertDialog);
-    }
-
-    private void openCustomAlertDialog(AlertDialogModel alertDialogModel) {
-        AlertDialogFragment dialog = new AlertDialogFragment(alertDialogModel);
-        dialog.show(getSupportFragmentManager(), AlertDialogFragment.TAG);
     }
 }

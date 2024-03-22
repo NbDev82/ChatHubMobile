@@ -65,8 +65,6 @@ public class LockAppActivity extends BaseActivity<LockAppViewModel, ActivityLock
         });
 
         viewModel.getOpenSingleChoiceAutoLockTime().observe(this, this::openSingleChoiceAutoLockTime);
-
-        viewModel.getOpenCustomAlertDialog().observe(this, this::openCustomAlertDialog);
     }
 
     private ActivityResultLauncher<Intent> setPasscodeLauncher = registerForActivityResult(
@@ -111,10 +109,5 @@ public class LockAppActivity extends BaseActivity<LockAppViewModel, ActivityLock
                     }
                 });
         builder.show();
-    }
-
-    private void openCustomAlertDialog(AlertDialogModel alertDialogModel) {
-        AlertDialogFragment dialog = new AlertDialogFragment(alertDialogModel);
-        dialog.show(getSupportFragmentManager(), AlertDialogFragment.TAG);
     }
 }
