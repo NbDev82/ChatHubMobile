@@ -87,7 +87,7 @@ public class SettingsViewModel extends BaseViewModel {
         this.authRepos = authRepos;
 
         this.authRepos.getCurrentUser()
-                .addOnSuccessListener(user -> {
+                .thenAccept(user -> {
                     if (user != null) {
                         originalUser = user;
 
@@ -98,8 +98,9 @@ public class SettingsViewModel extends BaseViewModel {
                         email.postValue(user.getEmail());
                     }
                 })
-                .addOnFailureListener(e -> {
+                .exceptionally(e -> {
                     Log.e(TAG, "Error: ", e);
+                    return null;
                 });
     }
 

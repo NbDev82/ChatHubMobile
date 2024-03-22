@@ -20,4 +20,12 @@
     <string name="title_messages">Messages</string>
     <string name="title_friends">Friends</string>
     <string name="title_settings">Settings</string>
+    <string name="empty_title">NOTHING!!</string>
+    <string name="title_add_friends">Add friend</string>
+    <string name="title_recall_request">Recall request</string>
+    <string name="title_accept">Accept</string>
+    <string name="title_reject">Reject</string>
+    <string name="title_unfriend">Unfriend</string>
+    <string name="title_add_friend">Add friend</string>
+    <string name="title_remove">Remove</string>
 </resources>

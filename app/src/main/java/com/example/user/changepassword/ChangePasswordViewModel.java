@@ -82,13 +82,14 @@ public class ChangePasswordViewModel extends BaseViewModel {
 
     private void checkPasswordSetStatus() {
         authRepos.fetchSignInMethods()
-                .addOnSuccessListener(providerIds -> {
+                .thenAccept(providerIds -> {
                     boolean isPasswordSet = providerIds.stream()
                             .anyMatch(signInMethod -> Objects.equals(signInMethod, EmailAuthProvider.PROVIDER_ID));
                     this.isPasswordSet.postValue(isPasswordSet);
                 })
-                .addOnFailureListener(e -> {
+                .exceptionally(e -> {
                     Log.e(TAG, "Error: ", e);
+                    return null;
                 });
     }
 
@@ -147,17 +148,18 @@ public class ChangePasswordViewModel extends BaseViewModel {
         String newPassword = this.newPassword.getValue();
         UpdatePasswordRequest request = new UpdatePasswordRequest(email, currentPassword, newPassword);
         authRepos.updatePassword(request)
-                .addOnSuccessListener(aVoid -> {
+                .thenAccept(aVoid -> {
                     successToastMessage.postValue("Update successfully");
                     isUpdating.postValue(false);
                 })
-                .addOnFailureListener(e -> {
+                .exceptionally(e -> {
                     if (e instanceof UserNotAuthenticatedException) {
                         oldPasswordError.postValue(e.getMessage());
                     } else {
                         errorToastMessage.postValue("Update unsuccessfully");
                     }
                     isUpdating.postValue(false);
+                    return null;
                 });
     }
 

@@ -4,8 +4,11 @@ import android.util.Log;
 
 import com.example.friend.EFriendRequestField;
 import com.example.friend.FriendRequest;
+import com.example.friend.FriendRequestNotFoundException;
 import com.example.friend.FriendRequestView;
-import com.example.user.repository.AuthRepos;
+import com.example.friend.profileviewer.EFriendshipStatus;
+import com.example.infrastructure.Utils;
+import com.example.user.User;
 import com.example.user.repository.UserRepos;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.TaskCompletionSource;
@@ -25,26 +28,25 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 
 public class FriendRequestReposImpl implements FriendRequestRepos {
 
     private static final String TAG = FriendRequestReposImpl.class.getSimpleName();
 
     private final UserRepos userRepos;
-    private final AuthRepos authRepos;
     private final FirebaseFirestore db;
 
-    public FriendRequestReposImpl(UserRepos userRepos, AuthRepos authRepos) {
+    public FriendRequestReposImpl(UserRepos userRepos) {
         this.userRepos = userRepos;
-        this.authRepos = authRepos;
         db = FirebaseFirestore.getInstance();
     }
 
     @Override
-    public Task<List<FriendRequestView>> getPendingFriendRequestsBySenderId(String senderId) {
+    public CompletableFuture<List<FriendRequestView>> getPendingFriendRequestsBySenderId(String senderId) {
         CollectionReference friendRequestsRef = getFriendRequestsRef();
-
-        TaskCompletionSource<List<FriendRequestView>> taskCompletionSource = new TaskCompletionSource<>();
+        CompletableFuture<List<FriendRequestView>> future = new CompletableFuture<>();
 
         friendRequestsRef
                 .whereEqualTo(EFriendRequestField.SENDER_ID.getName(), senderId)
@@ -54,50 +56,228 @@ public class FriendRequestReposImpl implements FriendRequestRepos {
                     List<FriendRequest> friendRequests =
                             convertQueryDocumentSnapshotsToFriendRequests(documentSnapshots);
 
-                    Task<List<FriendRequestView>> conversionTask = convertModelsToModelViews(friendRequests);
-                    conversionTask.addOnSuccessListener(friendRequestViews -> {
-                        taskCompletionSource.setResult(friendRequestViews);
-                    }).addOnFailureListener(e -> {
-                        Log.e(TAG, "Error converting FriendRequests to FriendRequestViews: " + e.getMessage(), e);
-                        taskCompletionSource.setException(e);
-                    });
+                    convertModelsToRecipientModelViews(friendRequests)
+                            .addOnSuccessListener(friendRequestViews -> {
+                                future.complete(friendRequestViews);
+                            })
+                            .addOnFailureListener(e -> {
+                                Log.e(TAG, "Error converting FriendRequests to FriendRequestViews: " + e.getMessage(), e);
+                                future.completeExceptionally(e);
+                            });
                 })
                 .addOnFailureListener(e -> {
                     Log.e(TAG, "Error getting friend requests by sender ID: " + e.getMessage(), e);
-                    taskCompletionSource.setException(e);
+                    future.completeExceptionally(e);
                 });
 
-        return taskCompletionSource.getTask();
+        return future;
     }
 
     @Override
-    public Task<List<FriendRequestView>> getPendingFriendRequestsByRecipientId(String recipientId) {
+    public CompletableFuture<List<FriendRequestView>> getPendingFriendRequestsByRecipientId(String recipientId) {
         CollectionReference friendRequestsRef = getFriendRequestsRef();
-
-        TaskCompletionSource<List<FriendRequestView>> taskCompletionSource = new TaskCompletionSource<>();
+        CompletableFuture<List<FriendRequestView>> future = new CompletableFuture<>();
 
         friendRequestsRef
                 .whereEqualTo(EFriendRequestField.RECIPIENT_ID.getName(), recipientId)
                 .whereEqualTo(EFriendRequestField.STATUS.getName(), FriendRequest.EStatus.PENDING)
                 .get()
-                .addOnSuccessListener(documentSnapshots -> {
+                .addOnSuccessListener(querySnapshot -> {
                     List<FriendRequest> friendRequests =
-                            convertQueryDocumentSnapshotsToFriendRequests(documentSnapshots);
+                            convertQueryDocumentSnapshotsToFriendRequests(querySnapshot);
 
-                    Task<List<FriendRequestView>> conversionTask = convertModelsToModelViews(friendRequests);
+                    Task<List<FriendRequestView>> conversionTask = convertModelsToSenderModelViews(friendRequests);
                     conversionTask.addOnSuccessListener(friendRequestViews -> {
-                        taskCompletionSource.setResult(friendRequestViews);
+                        future.complete(friendRequestViews);
                     }).addOnFailureListener(e -> {
                         Log.e(TAG, "Error converting FriendRequests to FriendRequestViews: " + e.getMessage(), e);
-                        taskCompletionSource.setException(e);
+                        future.completeExceptionally(e);
                     });
                 })
                 .addOnFailureListener(e -> {
                     Log.e(TAG, "Error getting friend requests by sender ID: " + e.getMessage(), e);
-                    taskCompletionSource.setException(e);
+                    future.completeExceptionally(e);
                 });
 
-        return taskCompletionSource.getTask();
+        return future;
+    }
+
+    @Override
+    public CompletableFuture<Void> addFriendRequest(FriendRequest request) {
+        CollectionReference friendRequestsRef = getFriendRequestsRef();
+        CompletableFuture<Void> future = new CompletableFuture<>();
+
+        Map<String, Object> data = new HashMap<>();
+        data.put(EFriendRequestField.SENDER_ID.getName(), request.getSenderId());
+        data.put(EFriendRequestField.RECIPIENT_ID.getName(), request.getRecipientId());
+        data.put(EFriendRequestField.STATUS.getName(), request.getStatus());
+        data.put(EFriendRequestField.CREATED_TIME.getName(), request.getCreatedTime());
+
+        friendRequestsRef
+                .document()
+                .set(data)
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        future.complete(null);
+                    } else {
+                        Exception e = task.getException();
+                        Log.e(TAG, "Error adding friend request: " + e.getMessage(), e);
+                        future.completeExceptionally(e);
+                    }
+                });
+
+        return future;
+    }
+
+    @Override
+    public CompletableFuture<Void> updateFriendRequestStatus(String friendRequestId, FriendRequest.EStatus status) {
+        CollectionReference friendRequestsRef = getFriendRequestsRef();
+        DocumentReference friendRequestRef = friendRequestsRef.document(friendRequestId);
+        CompletableFuture<Void> future = new CompletableFuture<>();
+
+        friendRequestRef
+            .update(EFriendRequestField.STATUS.getName(), status)
+            .addOnCompleteListener(task -> {
+                if (task.isSuccessful()) {
+                    future.complete(null);
+                } else {
+                    Exception e = task.getException();
+                    Log.e(TAG, "Error updating friend request: " + e.getMessage(), e);
+                    future.completeExceptionally(e);
+                }
+            });
+
+        return future;
+    }
+
+    @Override
+    public CompletableFuture<FriendRequest> getFriendRequest(String friendRequestId) {
+        if (Utils.isEmpty(friendRequestId)) {
+            CompletableFuture<FriendRequest> future = new CompletableFuture<>();
+            future.completeExceptionally(new IllegalArgumentException("Invalid friendRequestId"));
+            return future;
+        }
+
+        CompletableFuture<FriendRequest> future = new CompletableFuture<>();
+        getFriendRequestsRef()
+            .document(friendRequestId)
+            .get()
+            .addOnCompleteListener(task -> {
+                if (task.isSuccessful()) {
+                    DocumentSnapshot document = task.getResult();
+                    if (document.exists()) {
+                        FriendRequest friendRequest = convertDocumentToModel(document);
+                        future.complete(friendRequest);
+                    } else {
+                        future.completeExceptionally(new FriendRequestNotFoundException("Could not find any request with id=" + friendRequestId));
+                    }
+                } else {
+                    future.completeExceptionally(task.getException());
+                }
+            });
+
+        return future;
+    }
+
+    @Override
+    public CompletableFuture<List<FriendRequestView>> getAcceptedFriendRequests(String userId) {
+        CollectionReference friendRequestsRef = getFriendRequestsRef();
+        CompletableFuture<List<FriendRequestView>> future = new CompletableFuture<>();
+
+        Query senderQuery = friendRequestsRef
+                .whereEqualTo(EFriendRequestField.SENDER_ID.getName(), userId)
+                .whereEqualTo(EFriendRequestField.STATUS.getName(), FriendRequest.EStatus.ACCEPTED);
+        Query recipientQuery = friendRequestsRef
+                .whereEqualTo(EFriendRequestField.RECIPIENT_ID.getName(), userId)
+                .whereEqualTo(EFriendRequestField.STATUS.getName(), FriendRequest.EStatus.ACCEPTED);
+
+        Task<QuerySnapshot> senderTask = senderQuery.get();
+        Task<QuerySnapshot> recipientTask = recipientQuery.get();
+
+        Tasks.whenAllSuccess(senderTask, recipientTask)
+                .addOnSuccessListener(objects -> {
+                    List<FriendRequest> friendRequests = new ArrayList<>();
+                    for (Object object : objects) {
+                        if (object instanceof QuerySnapshot) {
+                            QuerySnapshot querySnapshot = (QuerySnapshot) object;
+                            List<FriendRequest> fetchedFriendRequests =
+                                    convertQueryDocumentSnapshotsToFriendRequests(querySnapshot);
+                            friendRequests.addAll(fetchedFriendRequests);
+                        }
+                    }
+                    Task<List<FriendRequestView>> conversionTask = convertModelsToRecipientModelViews(friendRequests);
+                    conversionTask.addOnSuccessListener(friendRequestViews -> {
+                        future.complete(friendRequestViews);
+                    }).addOnFailureListener(e -> {
+                        Log.e(TAG, "Error converting FriendRequests to FriendRequestViews: " + e.getMessage(), e);
+                        future.completeExceptionally(e);
+                    });
+                });
+
+        return future;
+    }
+
+    @Override
+    public CompletableFuture<List<FriendRequestView>> getRecommendedFriends(String userId) {
+        CompletableFuture<List<FriendRequestView>> future = new CompletableFuture<>();
+
+        userRepos.getAll()
+                .thenAcceptAsync(users -> {
+                    List<Task<EFriendshipStatus>> tasks = new ArrayList<>();
+                    List<FriendRequestView> friendRequestViews = new ArrayList<>();
+
+                    users.removeIf(u -> u.getId().equals(userId));
+
+                    for (User potentialFriend : users) {
+                        String potentialFriendId = potentialFriend.getId();
+                        Task<EFriendshipStatus> friendshipStatusTask = getEFriendshipStatus(userId, potentialFriendId);
+                        tasks.add(friendshipStatusTask);
+
+                        friendshipStatusTask.addOnCompleteListener(statusTask -> {
+                            if (statusTask.isSuccessful()) {
+                                EFriendshipStatus firstStatus = statusTask.getResult();
+                                if (firstStatus == EFriendshipStatus.NOT_FOUND || firstStatus == EFriendshipStatus.NOT_FRIEND) {
+                                    FriendRequestView friendRequestView = convertUserToFriendRequestView(userId, potentialFriend);
+                                    friendRequestViews.add(friendRequestView);
+                                }
+                            } else {
+                                Exception exception = statusTask.getException();
+                                future.completeExceptionally(exception);
+                            }
+
+                            if (friendRequestViews.size() == tasks.size()) {
+                                future.complete(friendRequestViews);
+                            }
+                        });
+                    }
+                })
+                .exceptionally(e -> {
+                    future.completeExceptionally(e);
+                    return null;
+                });
+
+        return future;
+    }
+
+    @Override
+    public CompletableFuture<Void> delete(String friendRequestId) {
+        CollectionReference friendRequestsRef = getFriendRequestsRef();
+        CompletableFuture<Void> future = new CompletableFuture<>();
+
+        friendRequestsRef
+            .document(friendRequestId)
+            .delete()
+            .addOnCompleteListener(task -> {
+                if (task.isSuccessful()) {
+                    future.complete(null);
+                } else {
+                    Exception e = task.getException();
+                    Log.e(TAG, "Error deleting friend request: " + e.getMessage(), e);
+                    future.completeExceptionally(e);
+                }
+            });
+
+        return future;
     }
 
     private List<FriendRequest> convertQueryDocumentSnapshotsToFriendRequests(
@@ -128,33 +308,67 @@ public class FriendRequestReposImpl implements FriendRequestRepos {
         }
     }
 
-    private Task<List<FriendRequestView>> convertModelsToModelViews(List<FriendRequest> friendRequests) {
+    private Task<List<FriendRequestView>> convertModelsToSenderModelViews(List<FriendRequest> friendRequests) {
         List<Task<FriendRequestView>> conversionTasks = new ArrayList<>();
         for (FriendRequest friendRequest : friendRequests) {
-            conversionTasks.add(convertModelToModelView(friendRequest));
+            conversionTasks.add(convertModelToSenderModelView(friendRequest));
         }
         return Tasks.whenAllSuccess(conversionTasks);
     }
 
-    private Task<FriendRequestView> convertModelToModelView(@NotNull FriendRequest friendRequest) {
+    private Task<FriendRequestView> convertModelToSenderModelView(@NotNull FriendRequest friendRequest) {
         String senderId = friendRequest.getSenderId();
         String recipientId = friendRequest.getRecipientId();
 
         TaskCompletionSource<FriendRequestView> taskCompletionSource = new TaskCompletionSource<>();
 
         userRepos.getUserByUid(senderId)
-                .addOnSuccessListener(user -> {
-                    String senderImgUrl = user.getImageUrl();
-                    String senderName = user.getFullName();
+                .thenAccept(sender -> {
+                    String senderImgUrl = sender.getImageUrl();
+                    String senderName = sender.getFullName();
 
                     int mutualFriends = getNumberOfMutualFriends(senderId, recipientId);
                     FriendRequestView friendRequestView = new FriendRequestView(friendRequest,
                             senderImgUrl, senderName, mutualFriends, false);
                     taskCompletionSource.setResult(friendRequestView);
                 })
-                .addOnFailureListener(e -> {
+                .exceptionally(e -> {
                     Log.e(TAG, "Error fetching user information: " + e.getMessage(), e);
-                    taskCompletionSource.setException(e);
+                    taskCompletionSource.setException((Exception) e);
+                    return null;
+                });
+
+        return taskCompletionSource.getTask();
+    }
+
+    private Task<List<FriendRequestView>> convertModelsToRecipientModelViews(List<FriendRequest> friendRequests) {
+        List<Task<FriendRequestView>> conversionTasks = new ArrayList<>();
+        for (FriendRequest friendRequest : friendRequests) {
+            conversionTasks.add(convertModelToRecipientModelView(friendRequest));
+        }
+        return Tasks.whenAllSuccess(conversionTasks);
+    }
+
+    private Task<FriendRequestView> convertModelToRecipientModelView(@NotNull FriendRequest friendRequest) {
+        String senderId = friendRequest.getSenderId();
+        String recipientId = friendRequest.getRecipientId();
+
+        TaskCompletionSource<FriendRequestView> taskCompletionSource = new TaskCompletionSource<>();
+
+        userRepos.getUserByUid(recipientId)
+                .thenAccept(recipient -> {
+                    String recipientImgUrl = recipient.getImageUrl();
+                    String recipientName = recipient.getFullName();
+
+                    int mutualFriends = getNumberOfMutualFriends(senderId, recipientId);
+                    FriendRequestView friendRequestView = new FriendRequestView(friendRequest,
+                            recipientImgUrl, recipientName, mutualFriends, false);
+                    taskCompletionSource.setResult(friendRequestView);
+                })
+                .exceptionally(e -> {
+                    Log.e(TAG, "Error fetching user information: " + e.getMessage(), e);
+                    taskCompletionSource.setException((Exception) e);
+                    return null;
                 });
 
         return taskCompletionSource.getTask();
@@ -164,7 +378,43 @@ public class FriendRequestReposImpl implements FriendRequestRepos {
         return 0;
     }
 
-    @Override
+    private FriendRequestView convertUserToFriendRequestView(String curUserId, User potentialFriend) {
+        FriendRequest friendRequest = new FriendRequest(curUserId, potentialFriend.getId(), FriendRequest.EStatus.NOT_FOUND, null);
+        int mutualFriends = 0;
+        return new FriendRequestView(friendRequest, potentialFriend.getImageUrl(), potentialFriend.getFullName(), mutualFriends, false);
+    }
+
+    private Task<EFriendshipStatus> getEFriendshipStatus(String curUserId, String userIdToCheck) {
+        Task<FriendRequest.EStatus> curUserToUserTask = getFriendRequestStatus(curUserId, userIdToCheck);
+        Task<FriendRequest.EStatus> userToCurUserTask = getFriendRequestStatus(userIdToCheck, curUserId);
+
+        return Tasks.whenAllSuccess(curUserToUserTask, userToCurUserTask)
+                .continueWith(task -> {
+                    FriendRequest.EStatus curUserToUserStatus = curUserToUserTask.getResult();
+                    FriendRequest.EStatus userToCurUserStatus = userToCurUserTask.getResult();
+
+                    switch (curUserToUserStatus) {
+                        case PENDING:
+                            return EFriendshipStatus.SENT_REQUEST;
+                        case ACCEPTED:
+                            return EFriendshipStatus.FRIEND;
+                        case REJECTED:
+                            return EFriendshipStatus.NOT_FRIEND;
+                    }
+
+                    switch (userToCurUserStatus) {
+                        case PENDING:
+                            return EFriendshipStatus.RECEIVED_REQUEST;
+                        case ACCEPTED:
+                            return EFriendshipStatus.FRIEND;
+                        case REJECTED:
+                            return EFriendshipStatus.NOT_FRIEND;
+                        default:
+                            return EFriendshipStatus.NOT_FOUND;
+                    }
+                });
+    }
+
     public Task<FriendRequest.EStatus> getFriendRequestStatus(String senderId, String recipientId) {
         CollectionReference friendRequestsRef = getFriendRequestsRef();
 
@@ -172,108 +422,26 @@ public class FriendRequestReposImpl implements FriendRequestRepos {
                 .whereEqualTo(EFriendRequestField.SENDER_ID.getName(), senderId)
                 .whereEqualTo(EFriendRequestField.RECIPIENT_ID.getName(), recipientId);
 
-        return query.get().continueWith(task -> {
+        final TaskCompletionSource<FriendRequest.EStatus> taskCompletionSource = new TaskCompletionSource<>();
+
+        query.get().addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
                 QuerySnapshot querySnapshot = task.getResult();
-                if (querySnapshot != null && !querySnapshot.isEmpty()) {
+                if (querySnapshot == null || querySnapshot.isEmpty()) {
+                    taskCompletionSource.setResult(FriendRequest.EStatus.NOT_FOUND);
+                } else {
                     DocumentSnapshot documentSnapshot = querySnapshot.getDocuments().get(0);
                     String statusStr = documentSnapshot.getString(EFriendRequestField.STATUS.getName());
-                    return FriendRequest.EStatus.valueOf(statusStr);
-                } else {
-                    return FriendRequest.EStatus.NONE;
+                    taskCompletionSource.setResult(FriendRequest.EStatus.valueOf(statusStr));
                 }
             } else {
                 Exception exception = task.getException();
                 Log.e(TAG, "Error getting friend request status: " + exception.getMessage(), exception);
-                return FriendRequest.EStatus.NONE;
+                taskCompletionSource.setException(exception);
             }
         });
-    }
 
-    @Override
-    public Task<Void> addFriendRequest(FriendRequest request) {
-        CollectionReference friendRequestsRef = getFriendRequestsRef();
-
-        Map<String, Object> data = new HashMap<>();
-        data.put(EFriendRequestField.SENDER_ID.getName(), request.getSenderId());
-        data.put(EFriendRequestField.RECIPIENT_ID.getName(), request.getRecipientId());
-        data.put(EFriendRequestField.STATUS.getName(), request.getStatus());
-        data.put(EFriendRequestField.CREATED_TIME.getName(), request.getCreatedTime());
-
-        return friendRequestsRef
-                .document()
-                .set(data);
-    }
-
-    @Override
-    public Task<Void> updateFriendRequestStatus(String friendRequestId, FriendRequest.EStatus status) {
-        CollectionReference friendRequestsRef = getFriendRequestsRef();
-        DocumentReference friendRequestRef = friendRequestsRef.document(friendRequestId);
-
-        return friendRequestRef
-                .update(EFriendRequestField.STATUS.getName(), status);
-    }
-
-    @Override
-    public Task<FriendRequest> getFriendRequest(String senderId, String recipientId) {
-        CollectionReference friendRequestsRef = getFriendRequestsRef();
-        return friendRequestsRef
-                .whereEqualTo(EFriendRequestField.SENDER_ID.getName(), senderId)
-                .whereEqualTo(EFriendRequestField.RECIPIENT_ID.getName(), recipientId)
-                .limit(1)
-                .get()
-                .continueWith(task -> {
-                    if (task.isSuccessful()) {
-                        List<DocumentSnapshot> documentSnapshots = task.getResult().getDocuments();
-                        if (documentSnapshots.isEmpty()) {
-                            return null;
-                        }
-                        DocumentSnapshot documentSnapshot = documentSnapshots.get(0);
-                        return convertDocumentToModel(documentSnapshot);
-                    } else {
-                        throw task.getException();
-                    }
-                });
-    }
-
-    @Override
-    public Task<List<FriendRequestView>> getAcceptedFriendRequests(String userId) {
-        CollectionReference friendRequestsRef = getFriendRequestsRef();
-
-        Query senderQuery = friendRequestsRef
-                .whereEqualTo(EFriendRequestField.SENDER_ID.getName(), userId)
-                .whereEqualTo(EFriendRequestField.STATUS.getName(), FriendRequest.EStatus.ACCEPTED);
-        Query recipientQuery = friendRequestsRef
-                .whereEqualTo(EFriendRequestField.RECIPIENT_ID.getName(), userId)
-                .whereEqualTo(EFriendRequestField.STATUS.getName(), FriendRequest.EStatus.ACCEPTED);
-
-        Task<QuerySnapshot> senderTask = senderQuery.get();
-        Task<QuerySnapshot> recipientTask = recipientQuery.get();
-
-        return Tasks.whenAllSuccess(senderTask, recipientTask)
-                .continueWith(task -> {
-                    if (task.isSuccessful()) {
-                        List<FriendRequestView> acceptedRequests = new ArrayList<>();
-                        for (Object object : task.getResult()) {
-                            if (object instanceof QuerySnapshot) {
-                                QuerySnapshot querySnapshot = (QuerySnapshot) object;
-                                for (QueryDocumentSnapshot document : querySnapshot) {
-                                    FriendRequest friendRequest = convertDocumentToModel(document);
-                                    convertModelToModelView(friendRequest)
-                                            .addOnSuccessListener(friendRequestView -> {
-                                                acceptedRequests.add(friendRequestView);
-                                            })
-                                            .addOnFailureListener(e -> {
-
-                                            });
-                                }
-                            }
-                        }
-                        return acceptedRequests;
-                    } else {
-                        throw task.getException();
-                    }
-                });
+        return taskCompletionSource.getTask();
     }
 
     private CollectionReference getFriendRequestsRef() {

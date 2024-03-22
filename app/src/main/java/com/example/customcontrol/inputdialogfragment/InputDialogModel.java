@@ -20,7 +20,7 @@ public class InputDialogModel {
     }
 
     public EInputType getType() {
-        return type;
+        return type == null ? EInputType.NORMAL : type;
     }
 
     public String getCurContent() {

@@ -9,7 +9,7 @@
 
         <variable
             name="listener"
-            type="com.example.friend.myfriend.adapter.FriendListener" />
+            type="com.example.friend.sentrequest.adapter.SentRequestListener" />
 
         <variable
             name="position"
@@ -88,14 +88,14 @@
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btn_more"
-                    style="@style/ButtonTertiaryNeutral"
+                    style="@style/ButtonTertiaryDanger"
                     android:layout_width="@dimen/_40sdp"
                     android:layout_height="@dimen/_40sdp"
                     android:layout_alignParentEnd="true"
                     android:layout_centerVertical="true"
-                    android:onClick="@{()-> listener.onOpenChatClick(position)}"
+                    android:onClick="@{()-> listener.onRecallClick(position)}"
                     app:iconGravity="textEnd"
-                    app:icon="@drawable/ic_chat_lines" />
+                    app:icon="@drawable/ic_undo" />
             </RelativeLayout>
         </LinearLayout>
     </com.google.android.material.card.MaterialCardView>

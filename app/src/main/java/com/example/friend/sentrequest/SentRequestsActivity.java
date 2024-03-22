@@ -1,15 +1,14 @@
-package com.example.friend.myfriend;
+package com.example.friend.sentrequest;
 
 import android.os.Bundle;
 
-import androidx.annotation.LayoutRes;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.example.R;
-import com.example.databinding.ActivityFriendsBinding;
-import com.example.friend.myfriend.adapter.FriendAdapter;
+import com.example.databinding.ActivitySentRequestsBinding;
 import com.example.friend.repository.FriendRequestRepos;
 import com.example.friend.repository.FriendRequestReposImpl;
+import com.example.friend.sentrequest.adapter.SentRequestAdapter;
 import com.example.infrastructure.BaseActivity;
 import com.example.navigation.EAnimationType;
 import com.example.user.repository.AuthRepos;
@@ -19,18 +18,18 @@ import com.example.user.repository.UserReposImpl;
 
 import java.util.ArrayList;
 
-public class FriendsActivity extends BaseActivity<FriendsViewModel, ActivityFriendsBinding> {
+public class SentRequestsActivity extends BaseActivity<SentRequestsViewModel, ActivitySentRequestsBinding> {
 
-    private FriendAdapter friendsAdapter;
+    private SentRequestAdapter sentRequestAdapter;
 
     @Override
-    protected @LayoutRes int getLayout() {
-        return R.layout.activity_friends;
+    protected int getLayout() {
+        return R.layout.activity_sent_requests;
     }
 
     @Override
-    protected Class<FriendsViewModel> getViewModelClass() {
-        return FriendsViewModel.class;
+    protected Class<SentRequestsViewModel> getViewModelClass() {
+        return SentRequestsViewModel.class;
     }
 
     @Override
@@ -38,20 +37,20 @@ public class FriendsActivity extends BaseActivity<FriendsViewModel, ActivityFrie
         UserRepos userRepos = new UserReposImpl();
         AuthRepos authRepos = new AuthReposImpl(userRepos);
         FriendRequestRepos friendRequestRepos = new FriendRequestReposImpl(userRepos);
-        return new FriendsViewModelFactory(authRepos, friendRequestRepos);
+        return new SentRequestsViewModelFactory(authRepos, friendRequestRepos);
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        friendsAdapter = new FriendAdapter(new ArrayList<>(), viewModel);
-        binding.setFriendAdapter(friendsAdapter);
+        sentRequestAdapter = new SentRequestAdapter(new ArrayList<>(), viewModel);
+        binding.setRequestAdapter(sentRequestAdapter);
 
-        setupObservers();
+        observers();
     }
 
-    private void setupObservers() {
+    private void observers() {
         viewModel.getNavigateBack().observe(this, navigate -> {
             if (navigate) {
                 navigationManager.navigateBack(null, EAnimationType.FADE_OUT);
@@ -62,9 +61,9 @@ public class FriendsActivity extends BaseActivity<FriendsViewModel, ActivityFrie
             navigationManager.navigateToProfileViewer(data, EAnimationType.FADE_IN);
         });
 
-        viewModel.getFriendRequests().observe(this, newFriendRequests -> {
-            if (newFriendRequests != null) {
-                friendsAdapter.setItems(newFriendRequests);
+        viewModel.getSentFriendRequests().observe(this, newSentRequests -> {
+            if (newSentRequests != null) {
+                sentRequestAdapter.setItems(newSentRequests);
             }
         });
     }

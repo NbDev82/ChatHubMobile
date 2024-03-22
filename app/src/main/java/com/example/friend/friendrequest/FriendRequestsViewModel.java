@@ -25,16 +25,20 @@ public class FriendRequestsViewModel extends BaseViewModel implements FriendRequ
     private static final String TAG = FriendRequestsViewModel.class.getSimpleName();
 
     private final MutableLiveData<Boolean> navigateToFriends = new MutableLiveData<>();
+    private final MutableLiveData<Boolean> navigateToSentRequests = new MutableLiveData<>();
     private final MutableLiveData<Boolean> navigateToFriendSuggestions = new MutableLiveData<>();
     private final MutableLiveData<Bundle> navigateToProfileViewer = new MutableLiveData<>();
     private final MutableLiveData<List<FriendRequestView>> friendRequests = new MutableLiveData<>(new ArrayList<>());
     private final MutableLiveData<Boolean> isRequestsLoading = new MutableLiveData<>();
-    private final MutableLiveData<SnackbarModel> snackbarModel = new MutableLiveData<>();
     private final AuthRepos authRepos;
     private final FriendRequestRepos friendRequestRepos;
 
     public LiveData<Boolean> getNavigateToFriends() {
         return navigateToFriends;
+    }
+
+    public LiveData<Boolean> getNavigateToSentRequests() {
+        return navigateToSentRequests;
     }
 
     public LiveData<Boolean> getNavigateToFriendSuggestions() {
@@ -53,44 +57,26 @@ public class FriendRequestsViewModel extends BaseViewModel implements FriendRequ
         return isRequestsLoading;
     }
 
-    public LiveData<SnackbarModel> getSnackbarModel() {
-        return snackbarModel;
-    }
-
     public FriendRequestsViewModel(AuthRepos authRepos,
                                    FriendRequestRepos friendRequestRepos) {
         this.authRepos = authRepos;
         this.friendRequestRepos = friendRequestRepos;
     }
 
-    public void loadFriendRequests() {
-        this.isRequestsLoading.postValue(true);
-        String uid = authRepos.getCurrentUid();
-        friendRequestRepos.getPendingFriendRequestsByRecipientId(uid)
-                .addOnSuccessListener(friendRequests -> {
-                    this.isRequestsLoading.postValue(false);
-                    this.friendRequests.postValue(friendRequests);
-                })
-                .addOnFailureListener(e -> {
-                    this.isRequestsLoading.postValue(false);
-                    Log.e(TAG, "Error: " + e.getMessage(), e);
-                });
-    }
+    @Override
+    protected void onStart() {
+        super.onStart();
 
-    public void navigateToFriendSuggestions() {
-        this.navigateToFriendSuggestions.postValue(true);
-    }
-
-    public void navigateToFriends() {
-        this.navigateToFriends.postValue(true);
+        loadFriendRequests();
     }
 
     @Override
     public void onItemClick(int position) {
-        FriendRequestView request = this.friendRequests.getValue().get(position);
+        FriendRequestView requestView = this.friendRequests.getValue().get(position);
+        FriendRequest friendRequest = requestView.getFriendRequest();
         Bundle data = new Bundle();
-        data.putString(Utils.EXTRA_SELECTED_USER_ID, request.getFriendRequest().getSenderId());
-        data.putString(Utils.EXTRA_SELECTED_FRIEND_REQUEST_ID, request.getFriendRequest().getSenderId());
+        data.putString(Utils.EXTRA_SELECTED_USER_ID, friendRequest.getSenderId());
+        data.putString(Utils.EXTRA_SELECTED_FRIEND_REQUEST_ID, friendRequest.getId());
         this.navigateToProfileViewer.postValue(data);
     }
 
@@ -133,13 +119,39 @@ public class FriendRequestsViewModel extends BaseViewModel implements FriendRequ
 
                     friendRequestRepos
                             .updateFriendRequestStatus(request.getFriendRequest().getId(), status)
-                            .addOnSuccessListener(aVoid -> {
-                            })
-                            .addOnFailureListener(e -> {
+                            .exceptionally(e -> {
                                 Log.e(TAG, "Error: " + e.getMessage(), e);
+                                return null;
                             });
                 })
                 .build();
         snackbarModel.postValue(model);
+    }
+
+    private void loadFriendRequests() {
+        this.isRequestsLoading.postValue(true);
+        String uid = authRepos.getCurrentUid();
+        friendRequestRepos.getPendingFriendRequestsByRecipientId(uid)
+                .thenAccept(friendRequests -> {
+                    this.isRequestsLoading.postValue(false);
+                    this.friendRequests.postValue(friendRequests);
+                })
+                .exceptionally(e -> {
+                    this.isRequestsLoading.postValue(false);
+                    Log.e(TAG, "Error: " + e.getMessage(), e);
+                    return null;
+                });
+    }
+
+    public void navigateToFriendSuggestions() {
+        this.navigateToFriendSuggestions.postValue(true);
+    }
+
+    public void navigateToFriends() {
+        this.navigateToFriends.postValue(true);
+    }
+
+    public void navigateToSentRequests() {
+        this.navigateToSentRequests.postValue(true);
     }
 }

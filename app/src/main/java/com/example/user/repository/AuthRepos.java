@@ -16,49 +16,50 @@ import com.google.firebase.auth.PhoneAuthCredential;
 import com.google.firebase.auth.PhoneAuthProvider;
 
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 public interface AuthRepos {
-    Task<Void> signUp(SignUpRequest signUpRequest);
+    CompletableFuture<Void> signUp(SignUpRequest signUpRequest);
 
-    Task<AuthResult> signInWithEmailPassword(SignInRequest signInRequest);
+    CompletableFuture<Void> signInWithEmailPassword(SignInRequest signInRequest);
 
-    Task<AuthResult> signInWithGithub(Activity activity, String email);
+    CompletableFuture<Void> signInWithGithub(Activity activity, String email);
 
     String getCurrentUid();
 
-    Task<User> getCurrentUser();
+    CompletableFuture<User> getCurrentUser();
 
     void signOut();
 
-    Task<Void> sendPasswordResetEmail(String email);
+    CompletableFuture<Void> sendPasswordResetEmail(String email);
 
     boolean isLoggedIn();
 
-    Task<Void> updatePassword(String newPassword);
+    CompletableFuture<Void> updatePassword(String newPassword);
 
-    Task<Void> updatePassword(UpdatePasswordRequest updateRequest);
+    CompletableFuture<Void> updatePassword(UpdatePasswordRequest updateRequest);
 
-    Task<Void> checkOldPassword(String email, String password);
+    CompletableFuture<Void> checkOldPassword(String email, String password);
 
-    Task<List<String>> fetchSignInMethods();
+    CompletableFuture<List<String>> fetchSignInMethods();
 
-    Task<AuthResult> linkCurrentUserWithCredential(AuthCredential authCredential);
+    CompletableFuture<Void> linkCurrentUserWithCredential(AuthCredential authCredential);
 
-    Task<AuthResult> linkCurrentUserWithPhoneAuthCredential(PhoneAuthCredential phoneAuthCredential);
+    CompletableFuture<Void> linkCurrentUserWithPhoneAuthCredential(PhoneAuthCredential phoneAuthCredential);
 
-    Task<AuthResult> linkEmailPasswordWithCurrentUser(String email, String password);
+    CompletableFuture<Void> linkEmailPasswordWithCurrentUser(String email, String password);
 
     boolean isCurrentUserEmail(@Nullable String email);
 
     String getCurrentEmail();
 
-    Task<Boolean> checkCurrentEmailVerificationStatus();
+    CompletableFuture<Boolean> checkCurrentEmailVerificationStatus();
 
-    Task<Void> sendCurrentUserEmailVerification();
+    CompletableFuture<Void> sendCurrentUserEmailVerification();
 
     FirebaseAuth getFirebaseAuth();
 
-    Task<Void> signInWithCredential(AuthCredential authCredential);
+    CompletableFuture<Void> signInWithCredential(AuthCredential authCredential);
 
     void sendOtp(Activity activity,
                  String phoneNumber,
@@ -66,5 +67,5 @@ public interface AuthRepos {
                  PhoneAuthProvider.ForceResendingToken resendingToken,
                  PhoneAuthProvider.OnVerificationStateChangedCallbacks callbacks);
 
-    Task<AuthResult> linkGithubWithCurrentUser(Activity activity, String email);
+    CompletableFuture<AuthResult> linkGithubWithCurrentUser(Activity activity, String email);
 }

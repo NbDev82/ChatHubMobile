@@ -15,6 +15,8 @@
         android:layout_height="match_parent"
         android:orientation="vertical"
         android:background="@color/color_background_primary"
+        app:customInputDialog="@{viewModel.inputDialogModel}"
+        app:customAlertDialog="@{viewModel.alertDialogModel}"
         tools:successToastMessage="@{viewModel.successToastMessage}"
         tools:errorToastMessage="@{viewModel.errorToastMessage}">
 

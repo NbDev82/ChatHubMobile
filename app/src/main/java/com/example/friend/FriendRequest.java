@@ -69,6 +69,6 @@ public class FriendRequest {
     }
 
     public enum EStatus {
-        ACCEPTED, REJECTED, PENDING, NONE
+        ACCEPTED, REJECTED, PENDING, NOT_FOUND
     }
 }

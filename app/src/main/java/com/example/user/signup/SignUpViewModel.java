@@ -79,15 +79,16 @@ public class SignUpViewModel extends BaseViewModel {
         }
         SignUpRequest signUpRequest = new SignUpRequest(email, password, confirmPassword);
         authRepos.signUp(signUpRequest)
-                .addOnSuccessListener(aVoid -> {
+                .thenAccept(aVoid -> {
                     successToastMessage.postValue("Sign up successful");
                     isSigningUp.postValue(false);
                     new Handler().postDelayed(this::navigateToHome, 500);
                 })
-                .addOnFailureListener(e -> {
+                .exceptionally(e -> {
                     errorToastMessage.postValue(e.getMessage());
                     new Handler().postDelayed(() -> isSigningUp.postValue(false), 500);
                     Log.e(TAG, "Error: " + e);
+                    return null;
                 });
     }
 

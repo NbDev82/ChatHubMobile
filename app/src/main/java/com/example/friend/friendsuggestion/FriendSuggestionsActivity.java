@@ -38,8 +38,8 @@ public class FriendSuggestionsActivity extends BaseActivity<FriendSuggestionsVie
     protected ViewModelProvider.Factory getViewModelFactory() {
         UserRepos userRepos = new UserReposImpl();
         AuthRepos authRepos = new AuthReposImpl(userRepos);
-        FriendRequestRepos friendRequestRepos = new FriendRequestReposImpl(userRepos, authRepos);
-        return new FriendRequestsViewModelFactory(authRepos, friendRequestRepos);
+        FriendRequestRepos friendRequestRepos = new FriendRequestReposImpl(userRepos);
+        return new FriendSuggestionsViewModelFactory(authRepos, friendRequestRepos);
     }
 
     @Override
@@ -56,6 +56,16 @@ public class FriendSuggestionsActivity extends BaseActivity<FriendSuggestionsVie
         viewModel.getNavigateBack().observe(this, navigate -> {
             if (navigate) {
                 navigationManager.navigateBack(null, EAnimationType.FADE_OUT);
+            }
+        });
+
+        viewModel.getNavigateToProfileViewer().observe(this, data -> {
+            navigationManager.navigateToProfileViewer(data, EAnimationType.FADE_IN);
+        });
+
+        viewModel.getFriendSuggestions().observe(this, friendRequestViews -> {
+            if (friendRequestViews != null) {
+                suggestionAdapter.setItems(friendRequestViews);
             }
         });
     }

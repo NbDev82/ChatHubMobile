@@ -16,6 +16,7 @@
         android:layout_height="match_parent"
         android:orientation="vertical"
         android:background="@color/color_background_secondary"
+        app:customAlertDialog="@{viewModel.alertDialogModel}"
         tools:successToastMessage="@{viewModel.successToastMessage}"
         tools:errorToastMessage="@{viewModel.errorToastMessage}">
 
@@ -32,6 +33,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:src="@drawable/ic_nav_arrow_left"
+                android:background="@drawable/circle_ripple_effect"
                 app:tint="@android:color/white"
                 android:onClickListener="@{() -> viewModel.navigateBack()}"
                 android:contentDescription="Back to home" />
@@ -69,6 +71,7 @@
             <ScrollView
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                app:setupOverScroll="@{true}"
                 android:visibility="@{viewModel.isUserInitializing ? View.GONE : View.VISIBLE}">
 
                 <LinearLayout
@@ -110,16 +113,26 @@
                         android:layout_height="@dimen/_40sdp"
                         android:layout_marginTop="@dimen/_20sdp"
                         android:layout_marginHorizontal="@dimen/profile_item_padding_horizontal"
-                        android:visibility="@{viewModel.friendshipStatus == EFriendshipStatus.NOT_FOUND ? View.GONE : View.VISIBLE}"
                         android:animateLayoutChanges="true">
+
+                        <com.google.android.material.button.MaterialButton
+                            style="@style/ButtonSecondaryDanger"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:text="@string/title_unfriend"
+                            android:onClick="@{()-> viewModel.unfriend()}"
+                            android:visibility="@{!viewModel.isButtonLoading &amp;&amp; viewModel.friendshipStatus == EFriendshipStatus.FRIEND ? View.VISIBLE : View.GONE}"
+                            app:icon="@drawable/ic_xmark"
+                            app:cornerRadius="@dimen/button_primary_corner_radius"
+                            tools:visibility="gone" />
 
                         <com.google.android.material.button.MaterialButton
                             style="@style/ButtonSecondaryHighlight"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
-                            android:text="Add friend"
+                            android:text="@string/title_add_friends"
                             android:onClick="@{()-> viewModel.sendFriendRequest()}"
-                            android:visibility="@{viewModel.friendshipStatus == EFriendshipStatus.FRIEND || viewModel.isLoading ? View.GONE : View.VISIBLE}"
+                            android:visibility="@{!viewModel.isButtonLoading &amp;&amp; viewModel.friendshipStatus == EFriendshipStatus.NOT_FOUND &amp;&amp; viewModel.friendshipStatus == EFriendshipStatus.NOT_FRIEND ? View.VISIBLE : View.GONE}"
                             app:icon="@drawable/ic_user_plus"
                             app:cornerRadius="@dimen/button_primary_corner_radius"
                             tools:visibility="gone"/>
@@ -128,9 +141,9 @@
                             style="@style/ButtonSecondaryHighlight"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
-                            android:text="Recall request"
+                            android:text="@string/title_recall_request"
                             android:onClick="@{()-> viewModel.recallRequest()}"
-                            android:visibility="@{viewModel.friendshipStatus != EFriendshipStatus.SENT_REQUEST || viewModel.isLoading ? View.GONE : View.VISIBLE}"
+                            android:visibility="@{!viewModel.isButtonLoading &amp;&amp; viewModel.friendshipStatus == EFriendshipStatus.SENT_REQUEST ? View.VISIBLE : View.GONE}"
                             app:icon="@drawable/ic_undo"
                             app:cornerRadius="@dimen/button_primary_corner_radius"
                             tools:visibility="gone" />
@@ -139,7 +152,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
                             android:orientation="horizontal"
-                            android:visibility="@{viewModel.friendshipStatus != EFriendshipStatus.RECEIVED_REQUEST || viewModel.isLoading ? View.GONE : View.VISIBLE}"
+                            android:visibility="@{!viewModel.isButtonLoading &amp;&amp; viewModel.friendshipStatus == EFriendshipStatus.RECEIVED_REQUEST ? View.VISIBLE : View.GONE}"
                             android:weightSum="2">
 
                             <com.google.android.material.button.MaterialButton
@@ -147,7 +160,7 @@
                                 android:layout_width="0dp"
                                 android:layout_height="match_parent"
                                 android:layout_weight="1"
-                                android:text="Accept"
+                                android:text="@string/title_accept"
                                 android:onClick="@{()-> viewModel.acceptFriendRequest()}"
                                 app:icon="@drawable/ic_check"
                                 app:cornerRadius="@dimen/button_primary_corner_radius" />
@@ -158,29 +171,17 @@
                                 android:layout_height="match_parent"
                                 android:layout_weight="1"
                                 android:layout_marginStart="@dimen/_10sdp"
-                                android:text="Reject"
+                                android:text="@string/title_reject"
                                 android:onClick="@{()-> viewModel.rejectFriendRequest()}"
                                 app:icon="@drawable/ic_xmark"
                                 app:cornerRadius="@dimen/button_primary_corner_radius" />
                         </LinearLayout>
 
-
-                        <com.google.android.material.button.MaterialButton
-                            style="@style/ButtonSecondaryDanger"
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:text="Unfriend"
-                            android:onClick="@{()-> viewModel.unfriend()}"
-                            android:visibility="@{viewModel.friendshipStatus == EFriendshipStatus.NOT_FRIEND || !viewModel.isLoading ? View.VISIBLE : View.GONE}"
-                            app:icon="@drawable/ic_xmark"
-                            app:cornerRadius="@dimen/button_primary_corner_radius"
-                            tools:visibility="gone" />
-
                         <ProgressBar
                             android:layout_width="@dimen/_25sdp"
                             android:layout_height="@dimen/_25sdp"
                             android:layout_gravity="center"
-                            android:visibility="@{viewModel.isLoading ? View.VISIBLE : View.GONE}"
+                            android:visibility="@{viewModel.isButtonLoading ? View.VISIBLE : View.GONE}"
                             tools:visibility="gone"/>
                     </FrameLayout>
 

@@ -9,8 +9,10 @@ import android.os.Bundle;
 import androidx.activity.result.ActivityResultLauncher;
 
 import com.example.R;
+import com.example.friend.friendsuggestion.FriendSuggestionsActivity;
 import com.example.friend.myfriend.FriendsActivity;
 import com.example.friend.profileviewer.ProfileViewerActivity;
+import com.example.friend.sentrequest.SentRequestsActivity;
 import com.example.home.HomeActivity;
 import com.example.passcode.changepasscode.ChangePasscodeActivity;
 import com.example.passcode.lockapp.LockAppActivity;
@@ -142,6 +144,16 @@ public class NavigationManagerImpl implements NavigationManager {
     @Override
     public void navigateToChangePasscode(EAnimationType animationType) {
         navigateToActivity(ChangePasscodeActivity.class, animationType);
+    }
+
+    @Override
+    public void navigateToFriendSuggestions(EAnimationType animationType) {
+        navigateToActivity(FriendSuggestionsActivity.class, animationType);
+    }
+
+    @Override
+    public void getNavigateToSentRequests(EAnimationType animationType) {
+        navigateToActivity(SentRequestsActivity.class, animationType);
     }
 
     private void setResultAndFinish(Intent resultIntent, EAnimationType animationType) {

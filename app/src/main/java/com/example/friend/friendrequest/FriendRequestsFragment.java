@@ -40,7 +40,7 @@ public class FriendRequestsFragment extends BaseFragment<FriendRequestsViewModel
     protected ViewModelProvider.Factory getViewModelFactory() {
         UserRepos userRepos = new UserReposImpl();
         AuthRepos authRepos = new AuthReposImpl(userRepos);
-        FriendRequestRepos friendRequestRepos = new FriendRequestReposImpl(userRepos, authRepos);
+        FriendRequestRepos friendRequestRepos = new FriendRequestReposImpl(userRepos);
         return new FriendRequestsViewModelFactory(authRepos, friendRequestRepos);
     }
 
@@ -52,17 +52,22 @@ public class FriendRequestsFragment extends BaseFragment<FriendRequestsViewModel
         setupObservers();
     }
 
-    @Override
-    public void onStart() {
-        super.onStart();
-
-        viewModel.loadFriendRequests();
-    }
-
     private void setupObservers() {
+        viewModel.getNavigateToFriendSuggestions().observe(requireActivity(), navigate -> {
+            if (navigate) {
+                navigationManager.navigateToFriendSuggestions(EAnimationType.FADE_IN);
+            }
+        });
+
         viewModel.getNavigateToFriends().observe(requireActivity(), navigate -> {
             if (navigate) {
                 navigationManager.navigateToFriends(EAnimationType.FADE_IN);
+            }
+        });
+
+        viewModel.getNavigateToSentRequests().observe(requireActivity(), navigate -> {
+            if (navigate) {
+                navigationManager.getNavigateToSentRequests(EAnimationType.FADE_IN);
             }
         });
 
