@@ -28,4 +28,6 @@
     <string name="title_unfriend">Unfriend</string>
     <string name="title_add_friend">Add friend</string>
     <string name="title_remove">Remove</string>
+
+    <string name="type_a_message">Type a message</string>
 </resources>
