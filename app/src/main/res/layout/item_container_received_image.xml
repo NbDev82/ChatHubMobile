@@ -6,7 +6,7 @@ xmlns:bind="http://schemas.android.com/tools">
     <data>
         <variable
             name="listener"
-            type="com.example.chat.listeners.ImageListener" />
+            type="com.example.chat.listener.ImageListener" />
 
         <variable
             name="position"
@@ -17,6 +17,7 @@ xmlns:bind="http://schemas.android.com/tools">
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/_8sdp"
+        android:onClick="@{() -> listener.onImageClick(position)}"
         android:padding="@dimen/_4sdp">
 
         <com.makeramen.roundedimageview.RoundedImageView
@@ -29,11 +30,24 @@ xmlns:bind="http://schemas.android.com/tools">
         app:layout_constraintStart_toStartOf="parent"
         app:riv_oval="true"/>
 
-        <ImageView
+        <TextView
+            android:id="@+id/userName"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/_4sdp"
+            android:textColor="@color/color_text_black"
+
+            app:layout_constraintWidth_max="wrap"
+            app:layout_constraintStart_toStartOf="@id/image"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintWidth_percent="0.75"/>
+
+        <com.example.customcontrol.customimageview.CustomImageView
             android:id="@+id/image"
             android:layout_width="@dimen/_150sdp"
             android:layout_height="0dp"
             android:scaleType="centerCrop"
+
             app:layout_constraintWidth_max="wrap"
             app:layout_constraintStart_toEndOf="@id/imageProfile"
             app:layout_constraintTop_toTopOf="parent"

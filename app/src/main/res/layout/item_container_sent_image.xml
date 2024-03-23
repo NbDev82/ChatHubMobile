@@ -6,7 +6,7 @@
     <data>
         <variable
             name="listener"
-            type="com.example.chat.listeners.ImageListener" />
+            type="com.example.chat.listener.ImageListener" />
 
         <variable
             name="position"
@@ -20,12 +20,13 @@
         android:onClick="@{() -> listener.onImageClick(position)}"
         android:padding="@dimen/_4sdp">
 
-        <ImageView
+        <com.example.customcontrol.customimageview.CustomImageView
             android:id="@+id/image"
             android:layout_width="@dimen/_150sdp"
             android:layout_height="0dp"
             android:scaleType="centerCrop"
             android:layout_marginRight="@dimen/_10ssp"
+
             app:layout_constraintWidth_max="wrap"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
