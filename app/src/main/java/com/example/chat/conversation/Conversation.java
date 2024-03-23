@@ -1,6 +1,5 @@
 package com.example.chat.conversation;
 
-import com.example.chat.enums.EType;
 import com.example.chat.Utils;
 
 import java.util.HashMap;
@@ -66,5 +65,20 @@ public class Conversation {
         conversation.put(Utils.KEY_IS_DELETED, isDeleted);
 
         return  conversation;
+    }
+
+    public enum EType {
+        PRIVATE("private"),
+        GROUP("group"),
+        CHANNEL("channel");
+        private String name;
+
+        EType(String name) {
+            this.name = name;
+        }
+
+        public String getName() {
+            return name;
+        }
     }
 }

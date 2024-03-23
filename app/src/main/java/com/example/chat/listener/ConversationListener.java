@@ -1,4 +1,4 @@
-package com.example.chat.listeners;
+package com.example.chat.listener;
 
 
 public interface ConversationListener {

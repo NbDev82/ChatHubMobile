@@ -1,13 +1,11 @@
 package com.example.chat;
 
-import static com.example.infrastructure.Utils.decodeImage;
 import static com.example.infrastructure.Utils.encodeImage;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.PickVisualMediaRequest;
 import androidx.activity.result.contract.ActivityResultContracts;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.databinding.DataBindingUtil;
+import androidx.lifecycle.ViewModelProvider;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -19,13 +17,12 @@ import android.view.View;
 
 import com.example.R;
 import com.example.chat.image.ImageActivity;
+import com.example.chat.message.repos.MessageRepos;
+import com.example.chat.message.repos.MessageReposImpl;
 import com.example.databinding.ActivityChatBinding;
 import com.example.home.HomeActivity;
-import com.example.infrastructure.PreferenceManager;
-import com.example.navigation.NavigationManager;
-import com.example.navigation.NavigationManagerImpl;
-import com.example.user.User;
-import com.example.chat.message.Message;
+import com.example.infrastructure.BaseActivity;
+import com.example.infrastructure.PreferenceManagerRepos;
 import com.example.user.repository.AuthRepos;
 import com.example.user.repository.AuthReposImpl;
 import com.example.user.repository.UserRepos;
@@ -37,38 +34,38 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public class ChatActivity extends AppCompatActivity {
+public class ChatActivity extends BaseActivity<ChatViewModel,ActivityChatBinding> {
+    private static final String TAG = ChatActivity.class.getSimpleName();
 
-    private NavigationManager navigationManager;
-    private ActivityChatBinding binding;
-    private ChatViewModel viewModel;
-    private User receiverUser;
-    private List<Message> chatMessages;
     private ChatAdapter chatAdapter;
-    private PreferenceManager preferenceManager;
+    private PreferenceManagerRepos preferenceManager;
     ActivityResultLauncher<PickVisualMediaRequest> pickMultipleMedia;
+
+    @Override
+    protected int getLayout() {
+        return R.layout.activity_chat;
+    }
+
+    @Override
+    protected Class<ChatViewModel> getViewModelClass() {
+        return ChatViewModel.class;
+    }
+
+    @Override
+    protected ViewModelProvider.Factory getViewModelFactory() {
+        UserRepos userRepos = new UserReposImpl();
+        AuthRepos authRepos = new AuthReposImpl(userRepos);
+        MessageRepos messageRepos = new MessageReposImpl();
+        preferenceManager = new PreferenceManagerRepos(getApplicationContext());
+        return new ChatViewModelFactory(authRepos, userRepos, messageRepos, preferenceManager);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        preferenceManager = new PreferenceManager(getApplicationContext());
-        navigationManager = new NavigationManagerImpl(this);
-
-        binding = DataBindingUtil.setContentView(
-                this, R.layout.activity_chat);
-
-        UserRepos userRepos = new UserReposImpl();
-        AuthRepos authRepos = new AuthReposImpl(userRepos);
-
-        viewModel = new ChatViewModel(preferenceManager, userRepos, authRepos);
-        binding.setViewModel(viewModel);
-
-        chatMessages = new ArrayList<>();
-
         chatAdapter = new ChatAdapter(
-                chatMessages,
-                decodeImage(receiverUser.getImageUrl()),
+                new ArrayList<>(),
                 preferenceManager.getString(Utils.KEY_USER_ID),
                 viewModel
         );
@@ -119,7 +116,7 @@ public class ChatActivity extends AppCompatActivity {
             if(!imageClickedUrl.isEmpty()) {
                 Intent intent = new Intent(getApplicationContext(), ImageActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-                intent.putExtra("imageClickedUrl", imageClickedUrl);
+                intent.putExtra(Utils.KEY_IMAGE_CLICKED_URL, imageClickedUrl);
                 startActivity(intent);
             }
         });
@@ -134,13 +131,13 @@ public class ChatActivity extends AppCompatActivity {
                         mediaImageUrls.add(handleSelectedMedia(uri));
                     }
                     viewModel.sendImages(mediaImageUrls);
-                    Log.d("PhotoPicker", "Number of items selected: " + uris.size());
+                    Log.d(TAG, "Number of items selected: " + uris.size());
                 } else {
-                    Log.d("PhotoPicker", "No media selected");
+                    Log.d(TAG, "No media selected");
                 }
             });
         } catch (Exception e){
-            Log.e("PhotoPicker", Objects.requireNonNull(e.getMessage()));
+            Log.e(TAG, Objects.requireNonNull(e.getMessage()));
         }
     }
 
@@ -150,13 +147,13 @@ public class ChatActivity extends AppCompatActivity {
                 Bitmap bitmapImage = BitmapFactory.decodeStream(inputStream);
                 return encodeImage(bitmapImage);
             } catch (IOException e) {
-                Log.e("MediaPicker", "Error handling image: ", e);
+                Log.e(TAG, "Error handling image: ", e);
             }
         } else if (isVideo(uri)) {
-            Log.d("MediaPicker", "Video selected: " + uri.toString());
-            Log.d("MediaPicker", "Unsupported media type");
+            Log.d(TAG, "Video selected: " + uri.toString());
+            Log.d(TAG, "Unsupported media type");
         } else {
-            Log.d("MediaPicker", "Unsupported media type");
+            Log.d(TAG, "Unsupported media type");
         }
         return null;
     }

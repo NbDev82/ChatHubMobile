@@ -1,9 +1,11 @@
 package com.example.chat.message;
 
+import static com.example.infrastructure.Utils.decodeImage;
+
+import android.graphics.Bitmap;
 import android.util.Log;
 
 import com.example.chat.Utils;
-import com.example.chat.enums.Evisible;
 import com.google.firebase.firestore.DocumentChange;
 
 import java.time.LocalDateTime;
@@ -12,31 +14,37 @@ import java.util.HashMap;
 
 
 public class Message {
-    private String senderId, message;
+    private String senderId, senderName, message;
+    private Bitmap senderImage;
     private EType type;
     private String sendingTime;
-    private Evisible visibility;
+    private EVisible visibility;
     private LocalDateTime dateObject;
 
     private String conversationId;
 
     public Message() {
-        this.message = "";
         this.senderId = "";
+        this.senderImage = decodeImage("");
+        this.message = "";
         this.type = EType.TEXT;
         this.sendingTime = LocalDateTime.now().toString();
         this.conversationId = "";
-        this.visibility = Evisible.HIDDEN;
+        this.visibility = EVisible.HIDDEN;
         this.dateObject = LocalDateTime.now();
     }
 
     public Message(String senderId,
+                   String senderName,
+                   String senderImage,
                    String message,
                    EType type,
                    String sendingTime,
-                   Evisible visibility,
+                   EVisible visibility,
                    String conversionId) {
         this.senderId = senderId;
+        this.senderName = senderName;
+        this.senderImage = decodeImage(senderImage);
         this.message = message;
         this.type = type;
         this.sendingTime = sendingTime;
@@ -58,6 +66,22 @@ public class Message {
 
     public void setSenderId(String senderId) {
         this.senderId = senderId;
+    }
+
+    public String getSenderName() {
+        return senderName;
+    }
+
+    public void setSenderName(String senderName) {
+        this.senderName = senderName;
+    }
+
+    public Bitmap getSenderImage() {
+        return senderImage;
+    }
+
+    public void setSenderImage(Bitmap senderImage) {
+        this.senderImage = senderImage;
     }
 
     public String getMessage() {
@@ -92,11 +116,11 @@ public class Message {
         this.type = type;
     }
 
-    public Evisible getVisibility() {
+    public EVisible getVisibility() {
         return visibility;
     }
 
-    public void setVisibility(Evisible visibility) {
+    public void setVisibility(EVisible visibility) {
         this.visibility = visibility;
     }
 
@@ -117,20 +141,13 @@ public class Message {
         senderId = documentChange.getDocument().getString(Utils.KEY_SENDER_ID);
         conversationId = documentChange.getDocument().getString(Utils.KEY_CONVERSATION_ID);
         message = documentChange.getDocument().getString(Utils.KEY_MESSAGE);
-        visibility = Evisible.valueOf(documentChange.getDocument().getString(Utils.KEY_IS_VISIBILITY));
+        visibility = EVisible.valueOf(documentChange.getDocument().getString(Utils.KEY_IS_VISIBILITY));
         type = EType.valueOf(documentChange.getDocument().getString(Utils.KEY_TYPE));
         sendingTime = documentChange.getDocument().getString(Utils.KEY_SENDING_TIME);
-        dateObject = getLocalDateTime(sendingTime);
+        dateObject = Utils.getLocalDateTime(sendingTime);
     }
 
-    private LocalDateTime getLocalDateTime(String dateTimeString) {
-        try {
-            return LocalDateTime.parse(dateTimeString, DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm"));
-        } catch (Exception e) {
-            Log.e("DateTimeConverter", "Error parsing \"" + dateTimeString + "\" : " + e.getMessage(), e);
-            return null;
-        }
-    }
+
 
     public enum EType {
         TEXT("text"),
@@ -139,6 +156,21 @@ public class Message {
         private final String name;
 
         EType(String name) {
+            this.name = name;
+        }
+
+        public String getName() {
+            return name;
+        }
+    }
+
+    public enum EVisible {
+        ACTIVE("active"),
+        DELETE("delete"),
+        HIDDEN("hidden");
+        private String name;
+
+        EVisible(String name) {
             this.name = name;
         }
 

@@ -1,18 +1,21 @@
 package com.example.chat;
 
+import static com.example.infrastructure.Utils.decodeImage;
+
+import android.graphics.Bitmap;
 import android.util.Log;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
-import com.example.chat.enums.Evisible;
-import com.example.chat.listeners.ImageListener;
+import com.example.chat.listener.ImageListener;
 import com.example.chat.message.Message;
 import com.example.chat.message.repos.MessageRepos;
 import com.example.chat.message.repos.MessageReposImpl;
 import com.example.customcontrol.customalertdialog.AlertDialogModel;
+import com.example.friend.FriendRequestView;
 import com.example.infrastructure.BaseViewModel;
-import com.example.infrastructure.PreferenceManager;
+import com.example.infrastructure.PreferenceManagerRepos;
 import com.example.user.repository.AuthRepos;
 import com.example.user.repository.UserRepos;
 import com.google.firebase.firestore.DocumentChange;
@@ -31,10 +34,6 @@ public class ChatViewModel extends BaseViewModel implements ImageListener {
 
     private static final String TAG = ChatViewModel.class.getSimpleName();
 
-    private final UserRepos userRepos;
-    private final MessageRepos messageRepos;
-    private final AuthRepos authRepos;
-
     private final MutableLiveData<String> curSenderUid = new MutableLiveData<>("");
     private final MutableLiveData<String> curUsername = new MutableLiveData<>("");
     private final MutableLiveData<String> curConversationId = new MutableLiveData<>(null);
@@ -47,6 +46,11 @@ public class ChatViewModel extends BaseViewModel implements ImageListener {
     private final MutableLiveData<String> isImageClicked = new MutableLiveData<>("");
     private final MutableLiveData<Boolean> navigateBack = new MutableLiveData<>();
     private final MutableLiveData<AlertDialogModel> openCustomAlertDialog = new MutableLiveData<>();
+
+    private final UserRepos userRepos;
+    private final MessageRepos messageRepos;
+    private final AuthRepos authRepos;
+    private final PreferenceManagerRepos preferenceManager;
 
     public LiveData<AlertDialogModel> getOpenCustomAlertDialog() {
         return openCustomAlertDialog;
@@ -96,25 +100,40 @@ public class ChatViewModel extends BaseViewModel implements ImageListener {
         return isReceiverAvailable;
     }
 
-    public ChatViewModel(PreferenceManager preferenceManager, UserRepos userRepos, AuthRepos authRepos) {
+    public ChatViewModel(PreferenceManagerRepos preferenceManager,
+                         UserRepos userRepos,
+                         AuthRepos authRepos,
+                         MessageRepos messageRepos) {
         this.userRepos = userRepos;
         this.authRepos = authRepos;
+        this.preferenceManager = preferenceManager;
+        this.messageRepos = messageRepos;
 
-        messageRepos = new MessageReposImpl();
+        onStart();
+    }
 
+    @Override
+    public void onStart() {
+        fetchInformation();
+    }
+
+    public void fetchInformation() {
         this.authRepos.getCurrentUser()
-                .addOnSuccessListener(user -> {
+                .thenAccept(user -> {
                     if (user != null) {
                         curUsername.postValue(user.getFullName());
                         curSenderUid.postValue(user.getId());
 
-                        String conversationId = preferenceManager.getString(Utils.KEY_CONVERSATION_ID);
+                        String conversationId = this.preferenceManager.getString(Utils.KEY_CONVERSATION_ID);
                         curConversationId.postValue(conversationId);
                     } else {
                         Log.d(TAG, "Unauthorized: ");
                     }
                 })
-                .addOnFailureListener(e -> Log.e(TAG, "Error: " + e));
+                .exceptionally(e -> {
+                    Log.e(TAG, "Error: " + e);
+                    return null;
+                });
     }
 
     private void openConversationNotFoundDialog() {
@@ -131,14 +150,7 @@ public class ChatViewModel extends BaseViewModel implements ImageListener {
     }
 
     public void onSendBtnClick() {
-        Message message = new Message();
-
-        message.setMessage(messageInput.getValue());
-        message.setSenderId(curSenderUid.getValue());
-        message.setConversationId(curConversationId.getValue());
-        message.setSendingTime(formatLocalDateTime(LocalDateTime.now()));
-        message.setVisibility(Evisible.ACTIVE);
-        message.setType(Message.EType.TEXT);
+        Message message = createMessageWithMessageAndType(messageInput.getValue(), Message.EType.TEXT);
 
         messageRepos.sendMessage(message);
         messageInput.postValue("");
@@ -148,21 +160,22 @@ public class ChatViewModel extends BaseViewModel implements ImageListener {
 
     public void sendImages(List<String> imageUrls) {
         for(String url : imageUrls) {
-            Message message = new Message(
-                    curSenderUid.getValue(),
-                    url,
-                    Message.EType.IMAGE,
-                    formatLocalDateTime(LocalDateTime.now()),
-                    Evisible.ACTIVE,
-                    curConversationId.getValue()
-            );
+            Message message = createMessageWithMessageAndType(url, Message.EType.IMAGE);
             messageRepos.sendMessage(message);
         }
     }
 
-    private String formatLocalDateTime(LocalDateTime now) {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm");
-        return formatter.format(now);
+    private Message createMessageWithMessageAndType(String url, Message.EType eType) {
+        Message message = new Message();
+
+        message.setMessage(url);
+        message.setType(eType);
+        message.setSenderId(curSenderUid.getValue());
+        message.setConversationId(curConversationId.getValue());
+        message.setSendingTime(Utils.formatLocalDateTime(LocalDateTime.now()));
+        message.setVisibility(Message.EVisible.ACTIVE);
+
+        return message;
     }
 
     public void listenMessages() {
@@ -183,7 +196,8 @@ public class ChatViewModel extends BaseViewModel implements ImageListener {
             List<Message> newMessages = new ArrayList<>();
             for (DocumentChange documentChange : value.getDocumentChanges()) {
                 if (documentChange.getType() == DocumentChange.Type.ADDED) {
-                    Message chatMessage = new Message();
+                    Message chatMessage = setImageAndNameFromUserUid(documentChange.getDocument().getString(Utils.KEY_SENDER_ID));
+
                     chatMessage.convertDocumentChangeToModel(documentChange);
                     newMessages.add(chatMessage);
                 }
@@ -202,6 +216,22 @@ public class ChatViewModel extends BaseViewModel implements ImageListener {
             messages.postValue(currentMessages);
         }
     };
+
+    private Message setImageAndNameFromUserUid(String senderUid) {
+        userRepos.getUserByUid(senderUid)
+                .thenAccept(sender -> {
+                    Message message = new Message();
+
+                    Bitmap img = decodeImage(sender.getImageUrl());
+                    message.setSenderImage(img);
+                    message.setSenderName(sender.getFullName());
+                })
+                .exceptionally(e -> {
+                    Log.e(TAG, "Error fetching user information: " + e.getMessage(), e);
+                    return null;
+                });
+        return new Message();
+    }
 
     private final EventListener<QuerySnapshot> eventConversationListener = (value, error) -> {
         if (error != null) {

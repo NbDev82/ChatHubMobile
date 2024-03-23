@@ -11,7 +11,7 @@ import androidx.databinding.DataBindingUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.R;
-import com.example.chat.listeners.ImageListener;
+import com.example.chat.listener.ImageListener;
 import com.example.chat.message.Message;
 import com.example.databinding.ItemContainerReceivedImageBinding;
 import com.example.databinding.ItemContainerReceivedMessageBinding;
@@ -23,7 +23,6 @@ import java.util.List;
 public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
 
     private List<Message> messages;
-    private final Bitmap receiverProfileImage;
     private final String senderId;
     private final ImageListener listener;
 
@@ -32,9 +31,8 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
     public static final int VIEW_MESSAGE_RECEIVED = 3;
     public static final int VIEW_IMAGE_RECEIVED = 4;
 
-    public ChatAdapter(List<Message> messages, Bitmap receiverProfileImage, String senderId, ImageListener listener) {
+    public ChatAdapter(List<Message> messages, String senderId, ImageListener listener) {
         this.messages = messages;
-        this.receiverProfileImage = receiverProfileImage;
         this.senderId = senderId;
         this.listener = listener;
     }
@@ -75,15 +73,15 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
 
         switch (viewType) {
             case VIEW_MESSAGE_RECEIVED: {
-                ((ReceivedMessageViewHolder) holder).setData(messages.get(position), receiverProfileImage);
+                ((ReceivedMessageViewHolder) holder).setData(messages.get(position));
                 break;
             }
             case VIEW_IMAGE_RECEIVED: {
-                ((ReceivedImageViewHolder) holder).setData(messages.get(position), receiverProfileImage, position);
+                ((ReceivedImageViewHolder) holder).setData(messages.get(position), position);
                 break;
             }
             case VIEW_MESSAGE_SENT: {
-                ((SendMessageViewHolder) holder).setData(messages.get(position) );
+                ((SendMessageViewHolder) holder).setData(messages.get(position));
                 break;
             }
             case VIEW_IMAGE_SENT: {
@@ -120,6 +118,7 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
         void setData(Message message){
             binding.textMessage.setText(message.getMessage());
             binding.textDateTime.setText(message.getSendingTime());
+
             binding.executePendingBindings();
         }
     }
@@ -132,10 +131,12 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
             this.binding = itemContainerReceivedMessageBinding;
         }
 
-        void setData(Message message, Bitmap receiverProfileImage){
+        void setData(Message message){
+            binding.imageProfile.setImageBitmap(message.getSenderImage());
             binding.textMessage.setText(message.getMessage());
+            binding.userName.setText(message.getSenderName());
             binding.textDateTime.setText(message.getSendingTime());
-            binding.imageProfile.setImageBitmap(receiverProfileImage);
+
             binding.executePendingBindings();
         }
     }
@@ -148,13 +149,15 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
             this.binding = binding;
         }
 
-        void setData(Message message, Bitmap receiverProfileImage, int position){
+        void setData(Message message, int position){
             Bitmap bitmap = decodeImage(message.getMessage());
             binding.image.setImageBitmap(bitmap);
             binding.textDateTime.setText(message.getSendingTime());
-            binding.imageProfile.setImageBitmap(receiverProfileImage);
+            binding.userName.setText(message.getSenderName());
+            binding.imageProfile.setImageBitmap(message.getSenderImage());
             binding.setListener(listener);
             binding.setPosition(position);
+
             binding.executePendingBindings();
         }
     }
@@ -173,6 +176,7 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
             binding.textDateTime.setText(message.getSendingTime());
             binding.setListener(listener);
             binding.setPosition(position);
+
             binding.executePendingBindings();
         }
     }
